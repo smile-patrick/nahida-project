@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>纳西妲の净善宫</title>
+    
+    <!-- Meta Descriptions for SEO -->
+    <meta name="description" content="纳西妲的虚空终端主题仪表盘，集成了北京时间、2026年时间流逝百分比、实时须弥气象站、所闻悉所见心声读取器以及云图工具箱(wintool.cc)推荐，带您感受须弥智慧的纯净风范。">
+    <meta name="keywords" content="纳西妲,原神,虚空终端,云图工具箱,wintool.cc,wintool,草神,小吉祥草王">
+    <link rel="icon" href="http://q.qlogo.cn/headimg_dl?dst_uin=1250986144&spec=640&img_type=jpg" type="image/jpeg">
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&family=Noto+Serif+SC:wght@400;600;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Global Loader Overlay -->
+    <div class="loader-overlay" id="loaderOverlay">
+        <div class="loader-content">
+            <!-- Glowing Official Branch Icon (Pure SVG) -->
+            <!-- Official Genshin Dendro Element Icon -->
+            <div class="loader-icon">
+                <i class="fa-solid fa-leaf"></i>
+            </div>
+            
+            <!-- Thicker Progress Bar -->
+            <div class="loader-bar-container">
+                <div class="loader-bar-fill" id="loaderBar"></div>
+            </div>
+        </div>
+    </div>
+    <!-- Floating Leaves Particle Container -->
+    <div class="leaf-container" id="leafContainer"></div>
+
+    <!-- Akasha Terminal HUD Glow Grid Background -->
+    <div class="hud-grid"></div>
+
+    <!-- Main Container -->
+    <main class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="akasha-symbol">
+                    <svg viewBox="0 0 100 100" class="leaf-svg">
+                        <path d="M50,15 C55,35 75,45 85,55 C70,60 55,50 50,85 C45,50 30,60 15,55 C25,45 45,35 50,15 Z" fill="currentColor"/>
+                        <circle cx="50" cy="50" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>AKASHA<span>.TERMINAL</span></h1>
+                    <p class="subtitle">虚空系统 · 智慧神座链接</p>
+                </div>
+            </div>
+            <div class="header-widgets">
+                <!-- Audio Synth Toggle -->
+                <button class="synth-btn" id="synthBtn" title="播放须弥微风曲（网页合成音）">
+                    <i class="fa-solid fa-volume-xmark"></i>
+                    <span>草元素律动</span>
+                </button>
+                <div class="sys-status">
+                    <span class="status-dot online"></span>
+                    <span class="status-txt">世界树网络: 已连接</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Grid Layout -->
+        <div class="dashboard-grid">
+            
+            <!-- LEFT COLUMN: Main Nahida Profile Card -->
+            <section class="grid-main-col">
+                <div class="card main-card glass">
+                    <div class="card-bg-overlay" style="background-image: url('https://upload-bbs.miyoushe.com/upload/2024/11/23/341443505/0e2783a7169f55edb000020189354d25_5352761198484612535.jpg');"></div>
+                    
+                    <div class="profile-header">
+                        <div class="avatar-wrapper">
+                            <img src="http://q.qlogo.cn/headimg_dl?dst_uin=1250986144&spec=640&img_type=jpg" alt="纳西妲" class="nahida-avatar" id="nahidaAvatar">
+                            <div class="akasha-earpiece">
+                                <div class="ear-leaf"></div>
+                            </div>
+                        </div>
+                        <div class="profile-info">
+                            <h2>纳西妲 <span class="title-sc">Nahida</span></h2>
+                            <p class="role">尘世七执政 · 小吉祥草王</p>
+                            
+                            <div class="profile-divider">
+                                <span class="divider-line"></span>
+                                <i class="fa-solid fa-leaf"></i>
+                                <span class="divider-line"></span>
+                            </div>
+
+                            <div class="author-info">
+                                <span class="author-tag"><i class="fa-solid fa-code"></i> 构建者: smile_小沐</span>
+                                <span class="ai-tag"><i class="fa-solid fa-robot"></i> 虚空协同: Antigravity AI</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inner Dialogue / Quotes Box -->
+                    <div class="quote-box">
+                        <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
+                        <p class="quote-text" id="quoteText">“你想知道我的梦境吗？那就把手伸过来吧。”</p>
+                        <div class="quote-footer">
+                            <span class="quote-author">— 纳西妲的心语</span>
+                            <button class="change-quote-btn" id="changeQuoteBtn" title="换一句惸惸话">
+                                <i class="fa-solid fa-rotate"></i> 倘听梦境
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Interactive "All Schemes to Know" Mind Reader Widget -->
+                <div class="card mind-reader-card glass" style="overflow:visible;">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-camera"></i> 元素战技：所闻悉所见</h3>
+                        <span class="widget-tag">Mind Reading</span>
+                    </div>
+                    <div class="scanner-container">
+                        <!-- Viewfinder: inline style guarantees height on ALL devices -->
+                        <div class="scanner-viewfinder" style="height:240px;min-height:240px;display:block;">
+                            <div class="scan-grid"></div>
+                            <div class="scan-line"></div>
+                            <div class="scan-target" id="scanTarget">
+                                <div class="target-box">
+                                    <div class="corner top-left"></div>
+                                    <div class="corner top-right"></div>
+                                    <div class="corner bottom-left"></div>
+                                    <div class="corner bottom-right"></div>
+                                    <div class="target-face">
+                                        <div class="target-avatar-container">
+                                            <i class="fa-solid fa-user-astronaut" id="targetIcon"></i>
+                                            <img src="" alt="" id="targetAvatar" class="target-avatar-img">
+                                            <div class="dendro-lock-icon" id="dendroLock"><i class="fa-solid fa-leaf"></i></div>
+                                        </div>
+                                        <span class="target-name" id="targetName">准备扫描...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scanner-info">
+                            <p class="scan-instruction">
+                                纳西妲按下元素战技，通过虚空终端读取周围须弥伙伴的"所思所想"。
+                            </p>
+                            <div class="thought-bubble" id="thoughtBubble">
+                                <i class="fa-solid fa-comment-dots"></i>
+                                <span id="thoughtText">点击下方按钮，开始透视心灵...</span>
+                            </div>
+                            <button class="btn btn-primary" id="startScanBtn">
+                                <i class="fa-solid fa-expand"></i> 开启心意读取
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WIDGET 3: Wintool.cc Card -->
+                <div class="card wintool-card glass">
+                    <div class="card-badge"><i class="fa-solid fa-circle-check"></i> 虚空官方推荐</div>
+                    <div class="wintool-header">
+                        <div class="wintool-logo">
+                            <svg viewBox="0 0 100 100" class="wintool-svg">
+                                <rect x="15" y="15" width="30" height="30" rx="6" fill="#10B981" />
+                                <rect x="55" y="15" width="30" height="30" rx="6" fill="#34D399" />
+                                <rect x="15" y="55" width="30" height="30" rx="6" fill="#6EE7B7" />
+                                <rect x="55" y="55" width="30" height="30" rx="6" fill="#A7F3D0" />
+                            </svg>
+                        </div>
+                        <div class="wintool-meta">
+                            <h4>云图工具箱</h4>
+                            <a href="https://wintool.cc" target="_blank" class="wintool-link">wintool.cc <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </div>
+                    <p class="wintool-desc">
+                        “方便·轻盈·快捷·守护·干净·新生~” 一款极客打造的纯净 Windows 工具箱。无广告弹窗、体积小巧、功能齐全。
+                    </p>
+                    
+                    <div class="wintool-features">
+                        <span class="feature-tag"><i class="fa-solid fa-shield-halved"></i> 纯净无广告</span>
+                        <span class="feature-tag"><i class="fa-solid fa-feather"></i> 极速轻量化</span>
+                        <span class="feature-tag"><i class="fa-solid fa-bolt"></i> 一键快捷使用</span>
+                        <span class="feature-tag"><i class="fa-solid fa-wand-magic-sparkles"></i> 持续功能优化</span>
+                    </div>
+
+                    <div class="wintool-actions">
+                        <a href="https://www.lanzoui.com/b015rasqd" target="_blank" class="btn btn-download-initial">
+                            <i class="fa-solid fa-cloud-arrow-down"></i> 初始版下载
+                        </a>
+                        <a href="https://wintool.cc" target="_blank" class="btn btn-primary btn-wintool-home">
+                            <i class="fa-solid fa-globe"></i> 访问官网
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT COLUMN: Surrounding Widgets -->
+            <section class="grid-side-col">
+                
+                <!-- WIDGET 1: Akasha Core (Clock & Year Progress) -->
+                <div class="card clock-card glass">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-clock"></i> 虚空核心数据中心</h3>
+                        <span class="widget-tag">Time & Progress</span>
+                    </div>
+                    <div class="clock-display">
+                        <div class="time-main" id="timeMain">12:00:00</div>
+                        <div class="time-sub">
+                            <span id="timeMs">.000</span>
+                            <span class="time-zone">UTC+8</span>
+                        </div>
+                    </div>
+                    <div class="date-display">
+                        <span id="dateText">2026年07月10日</span>
+                        <span id="dayOfWeek">星期五</span>
+                    </div>
+
+                    <div class="year-progress-section">
+                        <div class="year-label-row">
+                            <span><i class="fa-solid fa-hourglass-half"></i> 2026 年已悄然逝去</span>
+                            <span class="percentage-value" id="yearPercent">00.000000%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" id="yearProgressBar"></div>
+                            <div class="glow-point"></div>
+                        </div>
+                        <div class="year-tips">
+                            <span>年轮如树，落叶为土，智慧在岁月中生长。</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WIDGET 2: Weather Widget -->
+                <div class="card weather-card glass">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-cloud-sun"></i> 须弥气象站</h3>
+                        <span class="widget-tag">Live Weather</span>
+                    </div>
+                    <div class="weather-search">
+                        <input type="text" id="cityInput" placeholder="输入城市（如：深圳）" value="深圳">
+                        <button id="searchWeatherBtn" title="查询天气"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </div>
+                    
+                    <div class="weather-display" id="weatherDisplay">
+                        <div class="weather-loading"><i class="fa-solid fa-spinner fa-spin"></i> 正在连接须弥气象网...</div>
+                    </div>
+                </div>
+
+                <!-- WIDGET C: Irminsul Fortune -->
+                <div class="card fortune-card glass">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-code-branch"></i> 世界树·地脉运势</h3>
+                        <span class="widget-tag">Irminsul Oracle</span>
+                    </div>
+                    <div class="fortune-content" id="fortuneContent">
+                        <div class="fortune-idle">
+                            <i class="fa-brands fa-pagelines" style="font-size: 2rem; color: var(--dendro-primary); margin-bottom: 0.5rem; filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4));"></i>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">连接须弥地脉，解析今日的智慧箴言与代码运势。</p>
+                            <button id="drawFortuneBtn" class="btn btn-primary"><i class="fa-solid fa-link"></i> 抽取今日运势</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WIDGET D: Sanctuary Music Player (Native UI) -->
+                <div class="card music-card glass">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-music"></i> 净善宫·留声机</h3>
+                        <span class="widget-tag">Sumeru OST</span>
+                    </div>
+                    <div class="music-player-container">
+                        <!-- Native Aesthetic UI -->
+                        <div class="native-music-player">
+                            <div class="cd-cover">
+                                <i class="fa-solid fa-compact-disc"></i>
+                            </div>
+                            <div class="music-info">
+                                <h4>Surasthana Fantasia</h4>
+                                <p>HOYO-MiX · 净善的遐歌</p>
+                            </div>
+                            <a href="#" id="nativePlayBtn" class="play-btn" title="播放"><i class="fa-solid fa-play"></i></a>
+                        </div>
+                        
+                        <div class="playlist-recommendations" style="margin-top: 1rem;">
+                            <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;"><i class="fa-solid fa-list-ul"></i> 须弥精选歌单 (外部直达)</h4>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <a href="https://y.qq.com/n/ryqq/playlist/8920199966" target="_blank" class="playlist-link-btn">
+                                    <i class="fa-brands fa-qq"></i> 纳西妲专属BGM集
+                                </a>
+                                <a href="https://y.qq.com/n/ryqq/album/3303666" target="_blank" class="playlist-link-btn">
+                                    <i class="fa-brands fa-qq"></i> 须弥OST《智妙明论之林》
+                                </a>
+                            </div>
+                        </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <p>
+            © 2026 纳西妲虚空生态圈 · 智慧之叶常青 | 制作人: <strong>smile_小沐</strong>
+        </p>
+        <p class="ai-tip" style="margin: 0.3rem 0; opacity: 0.8; font-size: 0.7rem; color: var(--dendro-light);">
+            <i class="fa-solid fa-robot"></i> 本项目部分工作流由 <strong>Antigravity AI</strong> 协同完成（包含代码逻辑编写与同人素材优化提示）。
+        </p>
+        <p>
+            特别致敬合作伙伴项目: <a href="https://wintool.cc" target="_blank">云图工具箱 (wintool.cc)</a>
+        </p>
+        <p class="copyright-tip">
+            免责声明：本站仅为同人网页设计展示，包含纳西妲及原神相关素材，版权归属原厂米哈游（miHoYo）。
+        </p>
+    </footer>
+
+    <!-- Audio Element (Silent fallbacks, synthesizers inside script.js will generate magic chime sounds directly) -->
+    <script src="script.js"></script>
+</body>
+</html>
