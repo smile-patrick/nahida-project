@@ -1,9 +1,10 @@
 /* CSS Design System - Nahida Akasha Terminal Dashboard */
 
 :root {
-    --dendro-primary: #10B981;       /* Emerald Green */
+    --dendro-primary: #10B981;
+    --dendro-primary-rgb: 16, 185, 129;       /* Emerald Green */
     --dendro-light: #34D399;         /* Lime Green */
-    --dendro-bg-glow: rgba(16, 185, 129, 0.15);
+    --dendro-bg-glow: rgba(var(--dendro-primary-rgb), 0.15);
     --dendro-accent: #A7F3D0;        /* Mint Green */
     --gold-accent: #FBBF24;          /* Warm Gold */
     --gold-glow: rgba(251, 191, 36, 0.3);
@@ -13,7 +14,7 @@
     
     --glass-bg: rgba(255, 255, 255, 0.05);
     --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-border-glow: rgba(16, 185, 129, 0.3);
+    --glass-border-glow: rgba(var(--dendro-primary-rgb), 0.3);
     --glass-blur: blur(16px);
     
     --text-primary: #E2E8F0;
@@ -23,6 +24,28 @@
     --font-cyber: 'Share Tech Mono', monospace;
     --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --font-serif: 'Noto Serif SC', Georgia, serif;
+}
+
+/* Dream Mode Overrides */
+body.dream-mode {
+    --bg-darker: #050a14;
+    --dendro-primary: #3b82f6;
+    --dendro-primary-rgb: 59, 130, 246;
+    --dendro-light: #93c5fd;
+    --glass-bg: rgba(5, 10, 20, 0.6);
+    --gold-accent: #c4b5fd;
+    --gold-glow: rgba(196, 181, 253, 0.4);
+}
+
+.interaction-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Let clicks pass through to elements */
+    z-index: 1; /* Above background, behind cards */
+    opacity: 0.8;
 }
 
 /* Global Reset & Base */
@@ -41,9 +64,10 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
+    transition: background-color 2s ease, filter 2s ease, background-image 2s ease;
     /* Elegant radial gradients to simulate Akasha virtual space */
     background-image: 
-        radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 10% 20%, rgba(var(--dendro-primary-rgb), 0.08) 0%, transparent 40%),
         radial-gradient(circle at 90% 80%, rgba(251, 191, 36, 0.04) 0%, transparent 40%),
         linear-gradient(180deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
 }
@@ -56,7 +80,7 @@ body {
     background: var(--bg-darker);
 }
 ::-webkit-scrollbar-thumb {
-    background: rgba(16, 185, 129, 0.3);
+    background: rgba(var(--dendro-primary-rgb), 0.3);
     border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -113,8 +137,8 @@ body {
     pointer-events: none;
     z-index: 0;
     background-image: 
-        linear-gradient(rgba(16, 185, 129, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(16, 185, 129, 0.02) 1px, transparent 1px);
+        linear-gradient(rgba(var(--dendro-primary-rgb), 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(var(--dendro-primary-rgb), 0.02) 1px, transparent 1px);
     background-size: 40px 40px;
     mask-image: radial-gradient(ellipse at 50% 50%, black 40%, transparent 90%);
     -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 40%, transparent 90%);
@@ -138,7 +162,7 @@ body {
     align-items: center;
     padding-bottom: 1.5rem;
     margin-bottom: 2rem;
-    border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+    border-bottom: 1px solid rgba(var(--dendro-primary-rgb), 0.15);
 }
 
 .logo-area {
@@ -151,7 +175,7 @@ body {
     width: 48px;
     height: 48px;
     color: var(--dendro-primary);
-    filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.5));
+    filter: drop-shadow(0 0 10px rgba(var(--dendro-primary-rgb), 0.5));
     animation: pulseGlow 3s ease-in-out infinite alternate;
 }
 
@@ -172,7 +196,7 @@ body {
 .logo-text h1 span {
     color: var(--dendro-primary);
     -webkit-text-fill-color: initial;
-    text-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+    text-shadow: 0 0 15px rgba(var(--dendro-primary-rgb), 0.6);
 }
 
 .logo-text .subtitle {
@@ -188,9 +212,15 @@ body {
     gap: 1.5rem;
 }
 
+.audio-controls-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
 .synth-btn {
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: rgba(var(--dendro-primary-rgb), 0.1);
+    border: 1px solid rgba(var(--dendro-primary-rgb), 0.3);
     color: var(--dendro-light);
     padding: 0.5rem 1rem;
     border-radius: 30px;
@@ -207,13 +237,13 @@ body {
 .synth-btn:hover {
     background: var(--dendro-primary);
     color: var(--bg-darker);
-    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 0 15px rgba(var(--dendro-primary-rgb), 0.4);
     transform: translateY(-2px);
 }
 
 .synth-btn.playing {
     animation: activeGlow 1.5s ease-in-out infinite alternate;
-    background: rgba(16, 185, 129, 0.2);
+    background: rgba(var(--dendro-primary-rgb), 0.2);
 }
 
 .sys-status {
@@ -259,7 +289,7 @@ body {
 
 .card:hover {
     border-color: var(--glass-border-glow);
-    box-shadow: 0 8px 32px 0 rgba(16, 185, 129, 0.05);
+    box-shadow: 0 8px 32px 0 rgba(var(--dendro-primary-rgb), 0.05);
 }
 
 .card-header {
@@ -288,7 +318,7 @@ body {
 .widget-tag {
     font-size: 0.7rem;
     font-family: var(--font-cyber);
-    background: rgba(16, 185, 129, 0.1);
+    background: rgba(var(--dendro-primary-rgb), 0.1);
     color: var(--dendro-light);
     padding: 0.2rem 0.6rem;
     border-radius: 4px;
@@ -322,7 +352,7 @@ body {
     background-size: cover;
     background-position: center;
     position: relative;
-    border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+    border-bottom: 1px solid rgba(var(--dendro-primary-rgb), 0.1);
     /* Smooth gradient mask to dissolve the background image into the card glass container */
     mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
     -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
@@ -356,7 +386,7 @@ body {
     border-radius: 50%;
     padding: 5px;
     background: linear-gradient(135deg, var(--dendro-primary), var(--gold-accent));
-    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 8px 24px rgba(var(--dendro-primary-rgb), 0.4);
     position: relative;
 }
 
@@ -442,11 +472,11 @@ body {
 .profile-divider .divider-line {
     flex: 1;
     height: 1px;
-    background: linear-gradient(90deg, rgba(16, 185, 129, 0.5), transparent);
+    background: linear-gradient(90deg, rgba(var(--dendro-primary-rgb), 0.5), transparent);
 }
 
 .profile-divider .divider-line:first-child {
-    background: linear-gradient(270deg, rgba(16, 185, 129, 0.5), transparent);
+    background: linear-gradient(270deg, rgba(var(--dendro-primary-rgb), 0.5), transparent);
 }
 
 .profile-divider i {
@@ -476,8 +506,8 @@ body {
 }
 
 .ai-tag {
-    background: rgba(16, 185, 129, 0.05);
-    border: 1px solid rgba(16, 185, 129, 0.15);
+    background: rgba(var(--dendro-primary-rgb), 0.05);
+    border: 1px solid rgba(var(--dendro-primary-rgb), 0.15);
     padding: 0.25rem 0.5rem;
     border-radius: 6px;
     font-size: 0.7rem;
@@ -491,7 +521,7 @@ body {
 /* Quote Box Styling */
 .quote-box {
     margin: 2rem;
-    background: rgba(16, 185, 129, 0.04);
+    background: rgba(var(--dendro-primary-rgb), 0.04);
     border-left: 3px solid var(--dendro-primary);
     padding: 1.5rem;
     border-radius: 0 12px 12px 0;
@@ -500,7 +530,7 @@ body {
 
 .quote-icon {
     font-size: 1.8rem;
-    color: rgba(16, 185, 129, 0.15);
+    color: rgba(var(--dendro-primary-rgb), 0.15);
     position: absolute;
     top: 10px;
     left: 15px;
@@ -526,12 +556,17 @@ body {
 
 .quote-author {
     font-size: 0.8rem;
-    color: var(--text-secondary);
+    color: var(--dendro-light);
+    background: rgba(var(--dendro-primary-rgb), 0.05);
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    border-left: 3px solid var(--dendro-primary);
+    font-weight: 500;
 }
 
 .change-quote-btn {
     background: transparent;
-    border: 1px solid rgba(16, 185, 129, 0.25);
+    border: 1px solid rgba(var(--dendro-primary-rgb), 0.25);
     color: var(--dendro-light);
     padding: 0.4rem 0.8rem;
     border-radius: 6px;
@@ -544,7 +579,7 @@ body {
 }
 
 .change-quote-btn:hover {
-    background: rgba(16, 185, 129, 0.1);
+    background: rgba(var(--dendro-primary-rgb), 0.1);
     border-color: var(--dendro-primary);
     color: #FFF;
     transform: scale(1.05);
@@ -564,7 +599,7 @@ body {
     height: 240px;
     min-height: 240px;
     background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(var(--dendro-primary-rgb), 0.2);
     border-radius: 12px;
     position: relative;
     overflow: hidden;
@@ -575,8 +610,8 @@ body {
     width: 100%;
     height: 100%;
     background-image: 
-        linear-gradient(rgba(16, 185, 129, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(16, 185, 129, 0.05) 1px, transparent 1px);
+        linear-gradient(rgba(var(--dendro-primary-rgb), 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(var(--dendro-primary-rgb), 0.05) 1px, transparent 1px);
     background-size: 20px 20px;
 }
 
@@ -616,7 +651,7 @@ body {
     width: 100%;
     height: 100%;
     position: relative;
-    border: 1px dashed rgba(16, 185, 129, 0.2);
+    border: 1px dashed rgba(var(--dendro-primary-rgb), 0.2);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -626,7 +661,7 @@ body {
 
 .target-box.active {
     border-color: var(--dendro-light);
-    background: rgba(16, 185, 129, 0.05);
+    background: rgba(var(--dendro-primary-rgb), 0.05);
     animation: targetPulsate 1s infinite alternate;
 }
 
@@ -662,8 +697,8 @@ body {
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-    background: rgba(16, 185, 129, 0.05);
-    border: 1px solid rgba(16, 185, 129, 0.15);
+    background: rgba(var(--dendro-primary-rgb), 0.05);
+    border: 1px solid rgba(var(--dendro-primary-rgb), 0.15);
     transition: all 0.3s ease;
 }
 
@@ -674,7 +709,7 @@ body {
     object-fit: cover;
     display: none;
     border: 2px solid var(--dendro-light);
-    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 0 15px rgba(var(--dendro-primary-rgb), 0.4);
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
 }
@@ -698,7 +733,7 @@ body {
     justify-content: center;
     align-items: center;
     font-size: 0.75rem;
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+    box-shadow: 0 0 10px rgba(var(--dendro-primary-rgb), 0.6);
     opacity: 0;
     transform: scale(0);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -711,13 +746,13 @@ body {
 }
 
 @keyframes pulseLock {
-    0% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.5); }
-    100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.9); transform: scale(1.1); }
+    0% { box-shadow: 0 0 5px rgba(var(--dendro-primary-rgb), 0.5); }
+    100% { box-shadow: 0 0 15px rgba(var(--dendro-primary-rgb), 0.9); transform: scale(1.1); }
 }
 
 .target-face i#targetIcon {
     font-size: 3rem;
-    color: rgba(16, 185, 129, 0.3);
+    color: rgba(var(--dendro-primary-rgb), 0.3);
     transition: all 0.5s;
 }
 
@@ -789,7 +824,7 @@ body {
     font-weight: 800;
     color: #FFF;
     letter-spacing: 1px;
-    text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+    text-shadow: 0 0 20px rgba(var(--dendro-primary-rgb), 0.4);
 }
 
 .time-sub {
@@ -846,7 +881,7 @@ body {
     font-size: 0.9rem;
     color: var(--dendro-light);
     font-weight: bold;
-    text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    text-shadow: 0 0 10px rgba(var(--dendro-primary-rgb), 0.3);
 }
 
 .progress-bar-container {
@@ -908,12 +943,12 @@ body {
 .weather-search input:focus {
     outline: none;
     border-color: var(--dendro-primary);
-    box-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 0 8px rgba(var(--dendro-primary-rgb), 0.2);
 }
 
 .weather-search button {
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    background: rgba(var(--dendro-primary-rgb), 0.1);
+    border: 1px solid rgba(var(--dendro-primary-rgb), 0.2);
     color: var(--dendro-light);
     border-radius: 8px;
     width: 36px;
@@ -1013,7 +1048,7 @@ body {
     font-family: var(--font-serif);
     font-size: 0.8rem;
     color: var(--text-secondary);
-    background: rgba(16, 185, 129, 0.04);
+    background: rgba(var(--dendro-primary-rgb), 0.04);
     border-left: 2px solid var(--dendro-primary);
     padding: 0.5rem 0.8rem;
     border-radius: 0 6px 6px 0;
@@ -1022,15 +1057,15 @@ body {
 
 /* WIDGET 3: WINTOOL.CC RECOMMENDED */
 .wintool-card {
-    border: 1px solid rgba(16, 185, 129, 0.2);
-    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.05);
+    border: 1px solid rgba(var(--dendro-primary-rgb), 0.2);
+    box-shadow: 0 4px 20px rgba(var(--dendro-primary-rgb), 0.05);
 }
 
 .card-badge {
     position: absolute;
     top: 12px;
     right: 12px;
-    background: rgba(16, 185, 129, 0.1);
+    background: rgba(var(--dendro-primary-rgb), 0.1);
     border: 1px solid var(--dendro-primary);
     color: var(--dendro-light);
     font-size: 0.6rem;
@@ -1153,18 +1188,18 @@ body {
 
 .btn-primary:hover {
     background: var(--dendro-light);
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 4px 15px rgba(var(--dendro-primary-rgb), 0.3);
     transform: translateY(-1px);
 }
 
 .btn-download-initial {
     background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    border: 1px solid rgba(var(--dendro-primary-rgb), 0.3);
     color: var(--dendro-light);
 }
 
 .btn-download-initial:hover {
-    background: rgba(16, 185, 129, 0.1);
+    background: rgba(var(--dendro-primary-rgb), 0.1);
     color: #FFF;
     border-color: var(--dendro-primary);
     transform: translateY(-1px);
@@ -1193,13 +1228,13 @@ body {
 
 /* Animations Helper */
 @keyframes pulseGlow {
-    0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.3)); }
-    100% { transform: scale(1.05); filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.7)); }
+    0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(var(--dendro-primary-rgb), 0.3)); }
+    100% { transform: scale(1.05); filter: drop-shadow(0 0 15px rgba(var(--dendro-primary-rgb), 0.7)); }
 }
 
 @keyframes activeGlow {
-    0% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.2); }
-    100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.6); }
+    0% { box-shadow: 0 0 5px rgba(var(--dendro-primary-rgb), 0.2); }
+    100% { box-shadow: 0 0 15px rgba(var(--dendro-primary-rgb), 0.6); }
 }
 
 @keyframes statusBlink {
@@ -1210,36 +1245,266 @@ body {
 /* Footer Styling */
 .app-footer {
     border-top: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 2rem 1.5rem;
-    margin-top: 3rem;
-    text-align: center;
-    font-size: 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+    margin-top: 4rem;
     color: var(--text-muted);
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    padding: 3rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-section h4 {
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    margin-bottom: 1rem;
+    font-size: 1rem;
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 0.5rem;
 }
 
-.app-footer a {
+.footer-section p {
+    font-size: 0.8rem;
+    line-height: 1.6;
+    margin-bottom: 0.8rem;
+}
+
+.copyright-text {
+    opacity: 0.6;
+}
+
+.footer-link {
     color: var(--dendro-light);
     text-decoration: none;
+    transition: all 0.3s ease;
 }
 
-.app-footer a:hover {
-    text-decoration: underline;
+.footer-link:hover {
+    color: var(--dendro-primary);
+    text-shadow: 0 0 10px rgba(var(--dendro-primary-rgb), 0.5);
 }
 
-.copyright-tip {
-    font-size: 0.7rem;
+.stat-highlight {
+    font-family: var(--font-mono);
+    color: var(--dendro-primary);
+    font-weight: bold;
+}
+
+.ai-tip {
+    opacity: 0.8;
+    color: var(--dendro-light);
+    background: rgba(var(--dendro-primary-rgb), 0.05);
+    padding: 0.5rem;
+    border-radius: 4px;
+    border-left: 3px solid var(--dendro-primary);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
     opacity: 0.6;
+}
+
+/* ==========================================================================
+   FUN FEATURES (Pet, Quiz, Secret Code)
+   ========================================================================== */
+
+/* 1. Companion Pet */
+.companion-pet {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 100px;
+    height: 100px;
+    z-index: 1000;
+    cursor: pointer;
+    animation: floatPet 4s ease-in-out infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#companionImg {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid rgba(var(--dendro-primary-rgb), 0.6);
+    box-shadow: 0 0 15px rgba(var(--dendro-primary-rgb), 0.4), inset 0 0 10px rgba(var(--dendro-primary-rgb), 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+    transition: transform 0.1s ease-out;
+}
+
+.companion-speech {
+    position: absolute;
+    top: -50px;
+    right: 50px;
+    background: var(--glass-bg);
+    border: 1px solid var(--dendro-primary);
+    backdrop-filter: blur(10px);
+    padding: 0.8rem 1rem;
+    border-radius: 12px 12px 0 12px;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.companion-speech.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+@keyframes floatPet {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+/* 2. Akasha Quiz Modal */
+.quiz-modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.quiz-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.quiz-modal-content {
+    background: var(--glass-bg);
+    border: 1px solid var(--dendro-primary);
+    border-radius: 20px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 40px rgba(var(--dendro-primary-rgb), 0.3);
+    transform: scale(0.9);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.quiz-modal.active .quiz-modal-content {
+    transform: scale(1);
+}
+
+.quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 1rem;
+}
+
+.quiz-header h3 {
+    color: var(--dendro-light);
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close-btn:hover { color: var(--text-primary); }
+
+.quiz-question {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.quiz-option-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    padding: 1rem;
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s ease;
+}
+
+.quiz-option-btn:hover {
+    background: rgba(var(--dendro-primary-rgb), 0.2);
+    border-color: var(--dendro-primary);
+    transform: translateX(5px);
+}
+
+.quiz-option-btn.correct {
+    background: rgba(var(--dendro-primary-rgb), 0.4);
+    border-color: var(--dendro-primary);
+}
+
+.quiz-option-btn.wrong {
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.6), rgba(239, 68, 68, 0.2));
+    border-color: #ef4444;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+    transform: scale(0.98);
 }
 
 /* RESPONSIVE DESIGN (Adaptive layout) */
 @media (max-width: 1024px) {
     .dashboard-grid {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
         gap: 1.5rem;
+        align-items: stretch;
     }
+
+    .dashboard-grid .card {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .grid-main-col, .grid-side-col {
+        display: contents;
+    }
+
+    .main-card { order: 1; } /* 纳西妲 */
+    .mind-reader-card { order: 2; } /* 元素战技 */
+    .clock-card { order: 3; } /* 虚空数据中心 */
+    .weather-card { order: 4; } /* 气象站 */
+    .fortune-card { order: 5; } /* 运势 */
+    .music-card { order: 6; } /* 留声机 */
+    .speed-dial-card { order: 7; } /* 导航 */
+    .wintool-card { order: 8; } /* 工具箱 */
 
     .scanner-container {
         display: flex;
@@ -1267,8 +1532,44 @@ body {
     }
     
     .header-widgets {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
         width: 100%;
-        justify-content: space-between;
+    }
+    
+    .audio-controls-wrapper {
+        display: contents;
+    }
+    
+    .header-actions {
+        display: contents;
+    }
+    
+    .synth-btn {
+        grid-column: 1 / 2;
+        width: 100%;
+        justify-content: center;
+        border-radius: 8px;
+    }
+    
+    .sys-status {
+        grid-column: 2 / 3;
+        width: 100%;
+        justify-content: center;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        padding: 0.5rem;
+        text-align: center;
+    }
+    
+    #akashaAuthBtn {
+        grid-column: 1 / 3;
+        width: 100%;
+        justify-content: center;
+        border-radius: 8px;
+        height: 44px;
+        font-size: 0.95rem;
     }
     
     .profile-header {
@@ -1340,8 +1641,8 @@ body {
 
 .fortune-result {
     padding: 1rem;
-    background: rgba(16, 185, 129, 0.05);
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    background: rgba(var(--dendro-primary-rgb), 0.05);
+    border: 1px solid rgba(var(--dendro-primary-rgb), 0.2);
     border-radius: 8px;
     text-align: center;
     animation: fadeInScale 0.5s ease-out;
@@ -1377,7 +1678,7 @@ body {
 }
 
 .playlist-link-btn:hover {
-    background: rgba(16, 185, 129, 0.15);
+    background: rgba(var(--dendro-primary-rgb), 0.15);
     border-color: var(--dendro-primary);
     color: #FFF;
     transform: translateY(-2px);
@@ -1402,7 +1703,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 10px rgba(var(--dendro-primary-rgb), 0.3);
 }
 
 .cd-cover i {
@@ -1458,6 +1759,12 @@ body {
     100% { opacity: 1; transform: scale(1); }
 }
 
+.animate-fade-in {
+    animation: fadeInScale 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+
+
 /* ==========================================================================
    GLOBAL LOADER OVERLAY
    ========================================================================== */
@@ -1490,7 +1797,7 @@ body {
     font-size: 5rem;
     color: var(--dendro-primary);
     animation: loaderPulse 2.5s ease-in-out infinite;
-    filter: drop-shadow(0 0 18px rgba(16, 185, 129, 0.9));
+    filter: drop-shadow(0 0 18px rgba(var(--dendro-primary-rgb), 0.9));
 }
 
 .loader-icon img {
@@ -1510,7 +1817,7 @@ body {
     width: 320px;
     height: 12px;
     background: rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(var(--dendro-primary-rgb), 0.2);
     border-radius: 12px;
     overflow: hidden;
     position: relative;
@@ -1533,10 +1840,132 @@ body {
 
 @keyframes loaderPulse {
     0%, 100% { transform: scale(1); opacity: 0.8; }
-    50% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 25px rgba(16, 185, 129, 0.9)); }
+    50% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 25px rgba(var(--dendro-primary-rgb), 0.9)); }
 }
 
 @keyframes loaderDots {
     0% { clip-path: inset(0 100% 0 0); }
     100% { clip-path: inset(0 -10% 0 0); }
 }
+
+.shake {
+    animation: shakeAnim 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+@keyframes shakeAnim {
+    10%, 90% { transform: translate3d(-2px, 0, 0); }
+    20%, 80% { transform: translate3d(4px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+    40%, 60% { transform: translate3d(6px, 0, 0); }
+}
+
+/* ==========================================================================
+   SPEED DIAL (Data Nodes) & MUSIC GLOW
+   ========================================================================== */
+
+/* Speed Dial Grid */
+.speed-dial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 15px;
+    padding: 10px;
+}
+
+.dial-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 8px;
+    background: rgba(var(--dendro-primary-rgb), 0.05);
+    border: 1px solid rgba(var(--dendro-primary-rgb), 0.1);
+    border-radius: 8px;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dial-item i {
+    font-size: 1.4rem;
+    color: var(--dendro-primary);
+    margin-bottom: 5px;
+    transition: transform 0.3s ease;
+}
+
+.dial-item span {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.dial-item:hover {
+    background: rgba(var(--dendro-primary-rgb), 0.15);
+    border-color: rgba(var(--dendro-primary-rgb), 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(var(--dendro-primary-rgb), 0.2);
+}
+
+.dial-item:hover i {
+    transform: scale(1.1);
+}
+
+/* Music Background Glow */
+@keyframes musicPulseGlow {
+    0% { opacity: 0.05; }
+    50% { opacity: 0.35; }
+    100% { opacity: 0.05; }
+}
+
+.music-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.music-card::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(var(--dendro-primary-rgb), 0.4) 0%, transparent 60%);
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s ease;
+}
+
+.music-card.playing-glow::before {
+    animation: musicPulseGlow 4s infinite ease-in-out;
+    opacity: 1;
+}
+
+.music-player-container, .card-header {
+    position: relative;
+    z-index: 1; /* Keep content above glow */
+}
+
+/* Subtle Dust Particles */
+.dust-particle {
+    position: fixed;
+    bottom: -20px;
+    background: var(--dendro-light);
+    border-radius: 50%;
+    filter: drop-shadow(0 0 4px var(--dendro-primary));
+    animation: driftUp linear infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes driftUp {
+    0% {
+        transform: translateY(0) translateX(0) scale(0.5);
+        opacity: 0;
+    }
+    20% { opacity: 0.1; }
+    80% { opacity: 0.1; }
+    100% {
+        transform: translateY(-110vh) translateX(30px) scale(1.2);
+        opacity: 0;
+    }
+}
+

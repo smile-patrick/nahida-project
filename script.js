@@ -8,7 +8,53 @@ document.addEventListener('DOMContentLoaded', () => {
     initInteractiveQuotes();
     initSumeruSynth();
     initFortune();
+    initParticleInteraction();
+    initParallax();
+    initDreamMode();
+    initCompanionPet();
+    initAkashaQuiz();
 });
+
+// Utility: Smoothly replace innerHTML with cross-fade and height transition
+window.smoothReplaceHTML = function(element, newHTML, duration = 300, callback = null) {
+    if (!element) return;
+    
+    // 1. Lock current height
+    const currentHeight = element.offsetHeight;
+    element.style.height = currentHeight + 'px';
+    element.style.overflow = 'hidden';
+    element.style.transition = `opacity ${duration}ms ease, height ${duration}ms ease`;
+    
+    // 2. Fade out old content
+    element.style.opacity = '0';
+    
+    setTimeout(() => {
+        // 3. Swap content
+        element.innerHTML = newHTML;
+        
+        // 4. Measure new natural height
+        element.style.height = 'auto';
+        const newHeight = element.offsetHeight;
+        
+        // 5. Snap back to old height and force reflow
+        element.style.height = currentHeight + 'px';
+        void element.offsetHeight;
+        
+        // 6. Animate to new height and fade in
+        element.style.height = newHeight + 'px';
+        element.style.opacity = '1';
+        
+        if (typeof callback === 'function') {
+            callback();
+        }
+        
+        // 7. Cleanup after animation completes
+        setTimeout(() => {
+            element.style.height = 'auto';
+            element.style.overflow = '';
+        }, duration);
+    }, duration);
+};
 
 /* ==========================================================================
    1. AMBIENT LEAF PARTICLES GENERATOR
@@ -198,7 +244,7 @@ function initWeather() {
     }
 
     async function fetchWeather(cityName) {
-        display.innerHTML = '<div class="weather-loading"><i class="fa-solid fa-spinner fa-spin"></i> 正在向世界树检索气象数据...</div>';
+        await new Promise(r => window.smoothReplaceHTML(display, '<div class="weather-loading"><i class="fa-solid fa-spinner fa-spin"></i> 读取中...</div>', 200, r));
         
         try {
             // Step 1: Geocoding API to resolve City name to Lat/Lon
@@ -207,7 +253,7 @@ function initWeather() {
             const geoData = await geoRes.json();
             
             if (!geoData.results || geoData.results.length === 0) {
-                display.innerHTML = `<div class="weather-loading" style="color: #F87171;"><i class="fa-solid fa-triangle-exclamation"></i> 虚空未检索到此城市：${cityName}</div>`;
+                window.smoothReplaceHTML(display, `<div class="weather-loading" style="color: #F87171;"><i class="fa-solid fa-triangle-exclamation"></i> 未找到城市：${cityName}</div>`);
                 return;
             }
 
@@ -215,6 +261,11 @@ function initWeather() {
             const lat = city.latitude;
             const lon = city.longitude;
             const displayName = city.name + (city.admin1 ? ` (${city.admin1})` : '');
+            
+            // Auto-correct the input field to the localized Chinese name (e.g. 'Beijing' -> '北京')
+            if (cityInput) {
+                cityInput.value = city.name;
+            }
 
             // Step 2: Forecast API to fetch current weather details
             const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&relative_humidity_2m=true&timezone=auto`;
@@ -222,7 +273,7 @@ function initWeather() {
             const weatherData = await weatherRes.json();
             
             if (!weatherData.current_weather) {
-                display.innerHTML = `<div class="weather-loading" style="color: #F87171;"><i class="fa-solid fa-triangle-exclamation"></i> 天气数据解析失败</div>`;
+                window.smoothReplaceHTML(display, `<div class="weather-loading" style="color: #F87171;"><i class="fa-solid fa-triangle-exclamation"></i> 天气数据解析失败</div>`);
                 return;
             }
 
@@ -233,7 +284,7 @@ function initWeather() {
             const wind = current.windspeed;
             
             // Format output HTML
-            display.innerHTML = `
+            window.smoothReplaceHTML(display, `
                 <div class="weather-info animate-fade-in">
                     <div class="weather-main-row">
                         <div class="weather-city-status">
@@ -261,7 +312,7 @@ function initWeather() {
                             <span>${lon.toFixed(2)}°E</span>
                         </div>
                         <div class="detail-item">
-                            <span>气流状态</span>
+                            <span>网络状态</span>
                             <span>稳定</span>
                         </div>
                     </div>
@@ -269,11 +320,11 @@ function initWeather() {
                         ${meta.tip}
                     </div>
                 </div>
-            `;
+            `);
 
         } catch (error) {
             console.error('Weather Fetch Error:', error);
-            display.innerHTML = `<div class="weather-loading" style="color: #F87171;"><i class="fa-solid fa-triangle-exclamation"></i> 虚空网络阻塞，请稍后再试</div>`;
+            window.smoothReplaceHTML(display, `<div class="weather-loading" style="color: #F87171;"><i class="fa-solid fa-triangle-exclamation"></i> 连接气象卫星超时</div>`);
         }
     }
 
@@ -297,8 +348,27 @@ function initWeather() {
         }
     });
 
-    // Load Shenzhen weather by default
-    fetchWeather('深圳');
+    // Auto locate via IP
+    async function autoLocate() {
+        try {
+            const res = await fetch('https://get.geojs.io/v1/ip/geo.json');
+            if (res.ok) {
+                const data = await res.json();
+                if (data.city) {
+                    fetchWeather(data.city);
+                    return;
+                }
+            }
+        } catch (error) {
+            console.log('IP Location failed, using default', error);
+        }
+        // Fallback to Shenzhen if detection fails
+        const fallbackCity = '深圳';
+        fetchWeather(fallbackCity);
+    }
+
+    // Initialize with auto location
+    autoLocate();
 }
 
 /* ==========================================================================
@@ -365,6 +435,26 @@ function initMindReader() {
             name: '纳西妲 (Nahida)',
             avatar: 'https://enka.network/ui/UI_AvatarIcon_Nahida.png',
             thoughts: '“哎呀，你正在用虚空终端读取我的心灵吗？其实我并没有什么秘密，我的一半思维在观察树叶的摆动，另一半……正在想着你哦。”'
+        },
+        {
+            name: '珐露珊 (Faruzan)',
+            avatar: 'https://enka.network/ui/UI_AvatarIcon_Faruzan.png',
+            thoughts: '“（整理教案）这群教令院的晚辈，真是一届不如一届！连基础的机关解密都能算错三个小数点，下次必须让他们抄写一百遍古文！”'
+        },
+        {
+            name: '坎蒂丝 (Candace)',
+            avatar: 'https://enka.network/ui/UI_AvatarIcon_Candace.png',
+            thoughts: '“阿如村今天的风沙有点大。希望那些远道而来的客人们都带足了水……如果有盗宝团敢来捣乱，我会用盾牌让他们认识沙漠的严酷。”'
+        },
+        {
+            name: '赛索斯 (Sethos)',
+            avatar: 'https://enka.network/ui/UI_AvatarIcon_Sethos.png',
+            thoughts: '“（擦拭着弓箭）哎呀，又到了该和赛诺比试牌技的时候了。这次我可要用那一招让他大吃一惊……”'
+        },
+        {
+            name: '多莉 (Dori)',
+            avatar: 'https://enka.network/ui/UI_AvatarIcon_Dori.png',
+            thoughts: '“摩拉，摩拉，亮闪闪的摩拉~今天那位艾尔海森书记官要是再来光顾，我一定要把那批古代文书的价格再抬高两成，嘿嘿嘿……”'
         }
     ];
 
@@ -413,7 +503,7 @@ function initMindReader() {
         }, 50);
 
         thoughtBubble.style.opacity = '0.5';
-        thoughtText.textContent = '正在破解脑电波频率，同步世界树信息层...';
+        window.smoothReplaceHTML(thoughtText, '正在建立潜意识频道，同步脑电波...', 200);
 
         // Select a random character
         const char = characters[Math.floor(Math.random() * characters.length)];
@@ -439,10 +529,10 @@ function initMindReader() {
             targetName.textContent = char.name;
             
             thoughtBubble.style.opacity = '1';
-            thoughtText.textContent = char.thoughts;
+            window.smoothReplaceHTML(thoughtText, char.thoughts, 400);
             
             startScanBtn.disabled = false;
-            startScanBtn.innerHTML = '<i class="fa-solid fa-expand"></i> 开启心意读取';
+            startScanBtn.innerHTML = '<i class="fa-solid fa-expand"></i> 重新读取';
             
             isScanning = false;
             
@@ -786,14 +876,14 @@ function initFortune() {
         { level: "平", text: "普通的须弥一日。没有太多的波澜，保持平常心，享受平淡的快乐也是一种智慧。" }
     ];
 
-    drawBtn.addEventListener('click', () => {
+    const doDraw = () => {
         // Animation states
-        content.innerHTML = `
-            <div style="text-align: center; padding: 1.5rem 0; color: var(--dendro-primary);">
+        window.smoothReplaceHTML(content, `
+            <div class="animate-fade-in" style="text-align: center; padding: 1.5rem 0; color: var(--dendro-primary);">
                 <i class="fa-solid fa-arrows-spin fa-spin" style="font-size: 2rem;"></i>
-                <p style="margin-top: 0.8rem; font-size: 0.85rem; color: var(--text-secondary);">正在向世界树发送查询请求...</p>
+                <p style="margin-top: 0.8rem; font-size: 0.85rem; color: var(--text-secondary);">正在向世界树发送请求...</p>
             </div>
-        `;
+        `);
         
         playScanSynthSequence(); // Reuse the same cool sound
 
@@ -803,38 +893,42 @@ function initFortune() {
             if (result.level === "大吉") color = 'var(--gold-accent)';
             else if (result.level === "中吉") color = '#60A5FA';
             
-            content.innerHTML = `
-                <div class="fortune-result">
+            window.smoothReplaceHTML(content, `
+                <div class="fortune-result animate-fade-in">
                     <div class="fortune-level" style="color: ${color};">${result.level}</div>
                     <div class="fortune-text">${result.text}</div>
                     <button id="resetFortuneBtn" class="btn" style="margin-top: 1rem; background: rgba(255,255,255,0.05); color: var(--text-secondary); width: 100%; border: 1px solid rgba(255,255,255,0.1);">
                         <i class="fa-solid fa-rotate-right"></i> 重新链接
                     </button>
                 </div>
-            `;
-            
-            // Add listener to new reset button
-            document.getElementById('resetFortuneBtn').addEventListener('click', initFortuneBox);
+            `, 300, () => {
+                // Add listener to new reset button to immediately draw again
+                const resetBtn = document.getElementById('resetFortuneBtn');
+                if (resetBtn) resetBtn.addEventListener('click', doDraw);
+            });
             
             // Success sound
             playSynthSound(523.25, 'sine', 0.12, 0.06); 
             setTimeout(() => playSynthSound(659.25, 'sine', 0.12, 0.06), 100); 
             setTimeout(() => playSynthSound(783.99, 'sine', 0.2, 0.06), 200); 
         }, 1200);
-    });
+    };
+
+    drawBtn.addEventListener('click', doDraw);
 }
 
 function initFortuneBox() {
     const content = document.getElementById('fortuneContent');
     if (content) {
-        content.innerHTML = `
-            <div class="fortune-idle">
+        window.smoothReplaceHTML(content, `
+            <div class="fortune-idle animate-fade-in">
                 <i class="fa-brands fa-pagelines" style="font-size: 2rem; color: var(--dendro-primary); margin-bottom: 0.5rem; filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4));"></i>
                 <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">连接须弥地脉，解析今日的智慧箴言与代码运势。</p>
                 <button id="drawFortuneBtn" class="btn btn-primary"><i class="fa-solid fa-link"></i> 抽取今日运势</button>
             </div>
-        `;
-        initFortune(); // Rebind event
+        `, 300, () => {
+            initFortune(); // Rebind event after HTML is in DOM
+        });
     }
 }
 
@@ -844,6 +938,7 @@ function initFortuneBox() {
 function initMusicPlayer() {
     const playBtn = document.getElementById('nativePlayBtn');
     const cdIcon = document.querySelector('.cd-cover i');
+    const musicCard = document.querySelector('.music-card');
     let isMusicPlaying = false;
     let bgmAudio = new Audio('https://music.163.com/song/media/outer/url?id=2014247586.mp3');
     bgmAudio.loop = true;
@@ -858,6 +953,7 @@ function initMusicPlayer() {
                     isMusicPlaying = true;
                     playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
                     cdIcon.classList.add('spin-anim');
+                    if (musicCard) musicCard.classList.add('playing-glow');
                 }).catch(err => {
                     console.error("Playback failed:", err);
                     alert("由于浏览器策略或网络问题，音频播放失败。");
@@ -868,6 +964,7 @@ function initMusicPlayer() {
                 isMusicPlaying = false;
                 playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
                 cdIcon.classList.remove('spin-anim');
+                if (musicCard) musicCard.classList.remove('playing-glow');
             }
         });
     }
@@ -920,4 +1017,311 @@ function startLoaderAnimation() {
 document.addEventListener('DOMContentLoaded', () => {
     initMusicPlayer();
     startLoaderAnimation();
+    
+    // Fetch custom PHP counter after 1 second so it never blocks the initial loader
+    setTimeout(() => {
+        fetch('counter.php')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const tTotal = document.getElementById('stat_total');
+                    const tToday = document.getElementById('stat_today');
+                    const tYest = document.getElementById('stat_yesterday');
+                    if(tTotal) tTotal.innerText = data.total;
+                    if(tToday) tToday.innerText = data.today;
+                    if(tYest) tYest.innerText = data.yesterday;
+                }
+            })
+            .catch(err => {
+                console.log('Local preview or missing PHP environment. Counter offline.');
+                const tTotal = document.getElementById('stat_total');
+                if (tTotal) {
+                    tTotal.innerText = "离线/本地预览环境";
+                    document.getElementById('stat_today').innerText = "N/A";
+                    document.getElementById('stat_yesterday').innerText = "N/A";
+                }
+            });
+    }, 1000);
+});
+
+/* ==========================================================================
+   IMMERSIVE EFFECTS & EASTER EGGS
+   ========================================================================== */
+
+function initParticleInteraction() {
+    const canvas = document.getElementById('interactionCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    });
+
+    const particles = [];
+
+    class Particle {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.size = Math.random() * 3 + 1;
+            this.speedX = (Math.random() - 0.5) * 2;
+            this.speedY = (Math.random() - 0.5) * 2 - 1; // Slight upward tendency
+            this.life = 1;
+            this.decay = Math.random() * 0.02 + 0.01;
+            
+            // Dendro green by default, Gold/Purple in dream mode
+            this.color = Math.random() > 0.5 ? '16, 185, 129' : '167, 243, 208'; 
+            if (document.body.classList.contains('dream-mode')) {
+                this.color = Math.random() > 0.5 ? '196, 181, 253' : '147, 197, 253';
+            }
+        }
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            this.life -= this.decay;
+        }
+        draw() {
+            ctx.fillStyle = `rgba(${this.color}, ${this.life})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function spawnParticles(x, y, count) {
+        for (let i = 0; i < count; i++) {
+            particles.push(new Particle(x, y));
+        }
+    }
+
+    let lastTime = 0;
+    window.addEventListener('mousemove', (e) => {
+        const now = Date.now();
+        if (now - lastTime > 40) { 
+            spawnParticles(e.clientX, e.clientY, 1);
+            lastTime = now;
+        }
+    });
+
+    window.addEventListener('click', (e) => {
+        spawnParticles(e.clientX, e.clientY, 12);
+    });
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.update();
+            if (p.life <= 0) {
+                particles.splice(i, 1);
+            } else {
+                p.draw();
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+}
+
+function initParallax() {
+    const hudGrid = document.querySelector('.hud-grid');
+    const leafContainer = document.getElementById('leafContainer');
+    
+    window.addEventListener('mousemove', (e) => {
+        const xAxis = (window.innerWidth / 2 - e.pageX) / 80;
+        const yAxis = (window.innerHeight / 2 - e.pageY) / 80;
+        
+        if (hudGrid) {
+            hudGrid.style.transform = `translate(${xAxis}px, ${yAxis}px)`;
+        }
+        if (leafContainer) {
+            leafContainer.style.transform = `translate(${xAxis * 1.5}px, ${yAxis * 1.5}px)`;
+        }
+    });
+}
+
+function initDreamMode() {
+    const hour = new Date().getHours();
+    // Enable dream mode if it's between 00:00 and 05:59
+    if (hour >= 0 && hour < 6) {
+        document.body.classList.add('dream-mode');
+        
+        const quoteText = document.getElementById('quoteText');
+        if (quoteText) {
+            quoteText.innerText = "“嘘…你也是梦里的访客吗？世界树正在安睡……”";
+        }
+    }
+}
+// ==========================================================================
+// 10. COMPANION PET (NAHIDA EMOJIS)
+// ==========================================================================
+function initCompanionPet() {
+    const petContainer = document.getElementById('companionPet');
+    const petImg = document.getElementById('companionImg');
+    const petSpeech = document.getElementById('companionSpeech');
+    if (!petContainer || !petImg) return;
+
+    const nahidaStickers = [
+        './assets/nahida_emoji_1.png',
+        './assets/nahida_emoji_2.png',
+        './assets/nahida_emoji_3.png',
+        './assets/nahida_emoji_4.png',
+        './assets/nahida_emoji_5.png'
+    ];
+    
+    // Select one random initial sticker
+    petImg.src = nahidaStickers[Math.floor(Math.random() * nahidaStickers.length)];
+
+    // Mouse Tracking (Tilt)
+    document.addEventListener('mousemove', (e) => {
+        const rect = petImg.getBoundingClientRect();
+        const petX = rect.left + rect.width / 2;
+        const petY = rect.top + rect.height / 2;
+        
+        const angle = Math.atan2(e.clientY - petY, e.clientX - petX);
+        const distance = Math.min(20, Math.hypot(e.clientX - petX, e.clientY - petY) / 20);
+        
+        const tiltX = Math.cos(angle) * distance;
+        const tiltY = Math.sin(angle) * distance;
+        
+        petImg.style.transform = `translate(${tiltX}px, ${tiltY}px) rotate(${tiltX * 0.5}deg)`;
+    });
+
+    // Interaction (Click)
+    let hideSpeechTimeout;
+    petContainer.addEventListener('click', () => {
+        // Change sticker
+        petImg.src = nahidaStickers[Math.floor(Math.random() * nahidaStickers.length)];
+        
+        // Jump animation
+        petImg.style.transition = 'transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        petImg.style.transform = `scale(1.2) translateY(-20px)`;
+        setTimeout(() => {
+            petImg.style.transition = 'transform 0.1s ease-out';
+        }, 150);
+        
+        // Random speech text
+        const quotes = ['你看这是什么？', '世界树的智慧。', '知识是宝贵的。', '需要我帮忙吗？', '我在听哦。'];
+        petSpeech.innerText = quotes[Math.floor(Math.random() * quotes.length)];
+        petSpeech.classList.add('show');
+        
+        clearTimeout(hideSpeechTimeout);
+        hideSpeechTimeout = setTimeout(() => {
+            petSpeech.classList.remove('show');
+        }, 3000);
+        
+        playSynthSound(600 + Math.random() * 200, 'triangle', 0.1, 0.2);
+    });
+}
+
+// ==========================================================================
+// 11. AKASHA QUIZ MODAL
+// ==========================================================================
+function initAkashaQuiz() {
+    const authBtn = document.getElementById('akashaAuthBtn');
+    const modal = document.getElementById('quizModal');
+    const closeBtn = document.getElementById('closeQuizBtn');
+    const questionEl = document.getElementById('quizQuestion');
+    const optionsEl = document.getElementById('quizOptions');
+    if (!authBtn || !modal) return;
+
+    const riddles = [
+        {
+            q: '在巨树繁茂的雨林里，那菈遇到蕈兽会怎么做？',
+            opts: ['用火元素攻击', '用雷元素激化', '直接逃跑', '给它们唱歌'],
+            ans: 1
+        },
+        {
+            q: '智慧的国度中，防沙壁阻挡的是什么？',
+            opts: ['沙漠里的镀金旅团', '狂暴的沙尘暴和魔物', '雨林的水汽', '世界树的枯萎'],
+            ans: 1
+        },
+        {
+            q: '能够连通世界树，让人们共享知识的装置是？',
+            opts: ['留斯克', '虚空终端', '神之眼', '地脉异常'],
+            ans: 1
+        }
+    ];
+
+    let currentRiddle = null;
+
+    authBtn.addEventListener('click', () => {
+        modal.classList.add('active');
+        currentRiddle = riddles[Math.floor(Math.random() * riddles.length)];
+        questionEl.innerText = currentRiddle.q;
+        optionsEl.innerHTML = '';
+        
+        currentRiddle.opts.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'quiz-option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => handleAnswer(btn, index);
+            optionsEl.appendChild(btn);
+        });
+    });
+
+    closeBtn.addEventListener('click', () => {
+        modal.classList.remove('active');
+    });
+
+    function handleAnswer(btn, index) {
+        const allBtns = optionsEl.querySelectorAll('.quiz-option-btn');
+        allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+        if (index === currentRiddle.ans) {
+            btn.classList.add('correct');
+            authBtn.innerHTML = '<i class="fa-solid fa-check-circle" style="color:var(--dendro-primary)"></i> <span>虚空认证已获取</span>';
+            authBtn.style.borderColor = 'var(--dendro-primary)';
+            authBtn.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.4)';
+            playSynthSound(800, 'sine', 0.2, 0.5); // Success tone
+            
+            setTimeout(() => {
+                modal.classList.remove('active');
+            }, 1500);
+        } else {
+            btn.classList.add('wrong');
+            allBtns[currentRiddle.ans].classList.add('correct');
+            playSynthSound(200, 'sawtooth', 0.2, 0.5); // Error tone
+            
+            setTimeout(() => {
+                modal.classList.remove('active');
+            }, 2000);
+        }
+    }
+}
+
+// ==========================================================================
+// 12. DUST PARTICLES
+// ==========================================================================
+function initDustParticles() {
+    const body = document.body;
+    for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+            spawnSingleDust(body);
+        }, i * 400);
+    }
+}
+
+function spawnSingleDust(container) {
+    const dust = document.createElement('div');
+    dust.classList.add('dust-particle');
+    const size = Math.random() * 4 + 2; // 2px to 6px
+    dust.style.width = `${size}px`;
+    dust.style.height = `${size}px`;
+    dust.style.left = `${Math.random() * 100}vw`;
+    dust.style.animationDuration = `${Math.random() * 15 + 15}s`; // 15s to 30s
+    
+    container.appendChild(dust);
+    
+    dust.addEventListener('animationend', () => {
+        dust.remove();
+        spawnSingleDust(container);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initDustParticles();
 });
