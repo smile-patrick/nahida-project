@@ -104,6 +104,42 @@ export default async function handler(req, res) {
                 uid = userInfo.aid || uid;
                 mid = userInfo.mid || mid;
 
+                if (stoken && !ltoken) {
+                    try {
+                        const ltokenRes = await fetch('https://api-takumi.mihoyo.com/auth/api/getLTokenBySToken', {
+                            method: 'GET',
+                            headers: {
+                                'Cookie': `stoken=${stoken}; stuid=${uid}; mid=${mid}`
+                            }
+                        });
+                        const ltokenData = await ltokenRes.json();
+                        dbg.ltokenData = ltokenData;
+                        if (ltokenData.retcode === 0 && ltokenData.data && ltokenData.data.ltoken) {
+                            ltoken = ltokenData.data.ltoken;
+                        }
+                    } catch (e) {
+                        dbg.ltokenError = e.message;
+                    }
+                }
+
+                if (stoken && (!cookieToken || cookieToken === stoken)) {
+                    try {
+                        const cookieTokenRes = await fetch(`https://api-takumi.mihoyo.com/auth/api/getCookieAccountInfoBySToken?uid=${uid}`, {
+                            method: 'GET',
+                            headers: {
+                                'Cookie': `stoken=${stoken}; stuid=${uid}; mid=${mid}`
+                            }
+                        });
+                        const cookieTokenData = await cookieTokenRes.json();
+                        dbg.cookieTokenData = cookieTokenData;
+                        if (cookieTokenData.retcode === 0 && cookieTokenData.data && cookieTokenData.data.cookie_token) {
+                            cookieToken = cookieTokenData.data.cookie_token;
+                        }
+                    } catch (e) {
+                        dbg.cookieTokenError = e.message;
+                    }
+                }
+
                 return res.status(200).json({ 
                     success: true, 
                     stat: status,
