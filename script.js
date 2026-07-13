@@ -351,11 +351,18 @@ function initWeather() {
     // Auto locate via IP
     async function autoLocate() {
         try {
-            const res = await fetch('https://ipwho.is/');
+            const res = await fetch('https://whois.pconline.com.cn/ipJson.jsp?json=true');
             if (res.ok) {
-                const data = await res.json();
+                const buffer = await res.arrayBuffer();
+                const decoder = new TextDecoder('gbk');
+                const text = decoder.decode(buffer);
+                const data = JSON.parse(text);
                 if (data.city) {
-                    fetchWeather(data.city);
+                    let cityName = data.city;
+                    if (cityName.endsWith('市')) {
+                        cityName = cityName.replace('市', '');
+                    }
+                    fetchWeather(cityName);
                     return;
                 }
             }
@@ -715,10 +722,14 @@ function initSumeruSynth() {
                 isChecking = true;
                 synthBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>网络检测中...</span>';
                 try {
-                    const response = await fetch('https://ipwho.is/');
-                    const data = await response.json();
-                    if (data.country_code !== 'CN') {
-                        isLocationSupported = false; // Not in Mainland China
+                    const res = await fetch('https://whois.pconline.com.cn/ipJson.jsp?json=true');
+                    const buffer = await res.arrayBuffer();
+                    const decoder = new TextDecoder('gbk');
+                    const text = decoder.decode(buffer);
+                    const data = JSON.parse(text);
+                    // Pconline only returns Chinese IPs accurately. If it has a province, it's likely China.
+                    if (!data.proCode || data.proCode === '999999') {
+                        isLocationSupported = false;
                     }
                     locationChecked = true;
                 } catch (e) {
@@ -1017,51 +1028,34 @@ function startLoaderAnimation() {
 document.addEventListener('DOMContentLoaded', () => {
     initMusicPlayer();
     startLoaderAnimation();
-    
-    // Serverless Counter API (No PHP Backend Required)
+    // Vercel Serverless API Proxy Counter
     setTimeout(async () => {
         try {
-            const namespace = 'wintool_nahida_stats';
             const todayDate = new Date().toISOString().split('T')[0];
-            const yestDate = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-            
-            // Check if visited today
             const hasVisitedToday = localStorage.getItem('visited_date') === todayDate;
-            const action = hasVisitedToday ? '' : '/up'; // Only increment if first visit today
             
+            // If first visit today, send increment action
             if (!hasVisitedToday) {
+                await fetch('/api/counter?action=up');
                 localStorage.setItem('visited_date', todayDate);
             }
 
-            // 1. Fetch Total
-            const resTotal = await fetch(`https://api.counterapi.dev/v1/${namespace}/total${action}`);
-            const dataTotal = await resTotal.json();
+            // Fetch latest stats
+            const res = await fetch('/api/counter?action=get');
+            const data = await res.json();
             
-            // 2. Fetch Today
-            const resToday = await fetch(`https://api.counterapi.dev/v1/${namespace}/today_${todayDate}${action}`);
-            const dataToday = await resToday.json();
-            
-            // 3. Fetch Yesterday (Read Only)
-            const resYest = await fetch(`https://api.counterapi.dev/v1/${namespace}/today_${yestDate}`);
-            let yestCount = 0;
-            if (resYest.ok) {
-                const dataYest = await resYest.json();
-                yestCount = dataYest.count || 0;
-            }
-            
-            // Update UI
             const tTotal = document.getElementById('stat_total');
             const tToday = document.getElementById('stat_today');
             const tYest = document.getElementById('stat_yesterday');
-            if(tTotal) tTotal.innerText = dataTotal.count || 0;
-            if(tToday) tToday.innerText = dataToday.count || 0;
-            if(tYest) tYest.innerText = yestCount;
+            if(tTotal) tTotal.innerText = data.total;
+            if(tToday) tToday.innerText = data.today;
+            if(tYest) tYest.innerText = data.yesterday;
             
         } catch (err) {
-            console.log('Counter API error:', err);
+            console.log('Vercel Counter error:', err);
             const tTotal = document.getElementById('stat_total');
             if (tTotal) {
-                tTotal.innerText = "统计接口超时";
+                tTotal.innerText = "跨域/系统拦截";
                 document.getElementById('stat_today').innerText = "N/A";
                 document.getElementById('stat_yesterday').innerText = "N/A";
             }
