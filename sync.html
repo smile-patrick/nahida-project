@@ -462,18 +462,29 @@
                             qrStatus.style.color = '#10b981';
                             document.getElementById('qrScannerLine').style.display = 'none';
                             
-                            // Construct exact cookie matching user format
-                            let cookieArr = [`account_id=${data.uid}`];
-                            if (data.mid) cookieArr.push(`mid=${data.mid}`);
+                            // Construct exact cookie matching user format with v2 compatibility
+                            let cookieArr = [
+                                `account_id=${data.uid}`,
+                                `ltuid=${data.uid}`,
+                                `stuid=${data.uid}`,
+                                `account_id_v2=${data.uid}`
+                            ];
+                            if (data.mid) {
+                                cookieArr.push(`mid=${data.mid}`);
+                                cookieArr.push(`account_mid_v2=${data.mid}`);
+                            }
                             if (data.stoken) {
                                 cookieArr.push(`stoken=${data.stoken}`);
-                                cookieArr.push(`stuid=${data.uid}`);
+                                cookieArr.push(`stoken_v2=${data.stoken}`);
                             }
                             if (data.ltoken) {
                                 cookieArr.push(`ltoken=${data.ltoken}`);
-                                cookieArr.push(`ltuid=${data.uid}`);
+                                cookieArr.push(`ltoken_v2=${data.ltoken}`);
                             }
-                            if (data.cookie_token) cookieArr.push(`cookie_token=${data.cookie_token}`);
+                            if (data.cookie_token) {
+                                cookieArr.push(`cookie_token=${data.cookie_token}`);
+                                cookieArr.push(`cookie_token_v2=${data.cookie_token}`);
+                            }
                             
                             let cookieStr = cookieArr.join(';') + ';';
                             document.getElementById('cookie').value = cookieStr;
