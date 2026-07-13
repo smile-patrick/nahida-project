@@ -351,7 +351,7 @@ function initWeather() {
     // Auto locate via IP
     async function autoLocate() {
         try {
-            const res = await fetch('https://get.geojs.io/v1/ip/geo.json');
+            const res = await fetch('https://ipwho.is/');
             if (res.ok) {
                 const data = await res.json();
                 if (data.city) {
@@ -715,9 +715,9 @@ function initSumeruSynth() {
                 isChecking = true;
                 synthBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>网络检测中...</span>';
                 try {
-                    const response = await fetch('https://get.geojs.io/v1/ip/country.json');
+                    const response = await fetch('https://ipwho.is/');
                     const data = await response.json();
-                    if (data.country !== 'CN') {
+                    if (data.country_code !== 'CN') {
                         isLocationSupported = false; // Not in Mainland China
                     }
                     locationChecked = true;
