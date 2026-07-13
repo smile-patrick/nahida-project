@@ -482,6 +482,8 @@
                             setTimeout(() => {
                                 qrModal.style.display = 'none';
                                 addLog('✅ 扫码登录成功，已自动填充 Cookie！');
+                                addLog(`[开发者调试] uid: ${data.uid}, mid: ${data.mid}`);
+                                addLog(`[开发者调试] 原生数据返回: ${JSON.stringify(data.raw?.tokens || [])}`);
                             }, 1000);
                         }
                     }
