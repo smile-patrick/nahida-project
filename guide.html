@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>虚空档案 - 角色攻略 | Akasha Archives</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&family=Noto+Serif+SC:wght@400;600;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.staticfile.net/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="guide-page">
+    
+    <!-- Background Elements -->
+    <div class="bg-wrapper">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+        <div class="glow-orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+    <div id="particles-js"></div>
+    
+    <div class="dashboard-container">
+        <!-- Top Navigation -->
+        <header class="guide-header">
+            <a href="index.html" class="btn btn-back glass"><i class="fa-solid fa-angle-left"></i> 返回虚空终端</a>
+            <div class="guide-title">
+                <h1><i class="fa-solid fa-book-journal-whills"></i> 虚空档案</h1>
+                <p>AKASHA ARCHIVES - STRATEGY DATABASE</p>
+            </div>
+            <div class="guide-header-right">
+                <span class="status-indicator">
+                    <span class="dot"></span>
+                    数据同步中
+                </span>
+            </div>
+        </header>
+
+        <!-- Main Guide Layout -->
+        <div class="guide-layout">
+            <!-- Left Sidebar: Character List -->
+            <aside class="character-sidebar glass">
+                <div class="sidebar-header">
+                    <h3><i class="fa-solid fa-users"></i> 目标对象</h3>
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="检索代号..." id="charSearch">
+                    </div>
+                    <div class="filter-box">
+                        <select id="nationFilter" class="filter-select">
+                            <option value="all">全部国度</option>
+                            <option value="蒙德">蒙德</option>
+                            <option value="璃月">璃月</option>
+                            <option value="稻妻">稻妻</option>
+                            <option value="须弥">须弥</option>
+                            <option value="枫丹">枫丹</option>
+                            <option value="纳塔">纳塔</option>
+                            <option value="挪德卡莱">挪德卡莱</option>
+                            <option value="其他">其他</option>
+                        </select>
+                        <select id="elementFilter" class="filter-select">
+                            <option value="all">全部元素</option>
+                            <option value="anemo">风元素</option>
+                            <option value="geo">岩元素</option>
+                            <option value="electro">雷元素</option>
+                            <option value="dendro">草元素</option>
+                            <option value="hydro">水元素</option>
+                            <option value="pyro">火元素</option>
+                            <option value="cryo">冰元素</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="character-list" id="characterList">
+                    <!-- Dynamic Character Buttons will be injected here -->
+                </div>
+            </aside>
+
+            <!-- Right Content: Strategy Panel -->
+            <main class="guide-content glass" id="guideContent">
+                <div class="empty-state">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i>
+                    <p>正在从世界树读取数据...</p>
+                </div>
+                <!-- Dynamic Content will be injected here -->
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- particles.js for dust effect -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="assets/data/characters.js"></script>
+    <script src="guide.js"></script>
+</body>
+</html>

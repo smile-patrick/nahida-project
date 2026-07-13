@@ -1969,3 +1969,501 @@ body {
     }
 }
 
+/* ==========================================================================
+   Character Guide Page Styles
+   ========================================================================== */
+.guide-page .dashboard-container {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    gap: 1.5rem;
+    height: 100vh;
+}
+
+.guide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.btn-back {
+    text-decoration: none;
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+.btn-back:hover {
+    color: var(--dendro-primary);
+    border-color: var(--dendro-primary);
+    box-shadow: 0 0 10px var(--dendro-bg-glow);
+}
+
+.guide-title {
+    text-align: center;
+}
+
+.guide-title h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--dendro-primary);
+    text-shadow: 0 0 10px var(--dendro-bg-glow);
+}
+
+.guide-title p {
+    margin: 0;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+}
+
+.guide-header-right {
+    width: 120px; /* balance out the back button */
+    text-align: right;
+}
+
+.guide-layout {
+    display: flex;
+    flex: 1;
+    gap: 1.5rem;
+    min-height: 0; /* Important for flex child scrolling */
+}
+
+/* Sidebar */
+.character-sidebar {
+    width: 260px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.sidebar-header h3 {
+    margin: 0 0 1rem 0;
+    color: var(--dendro-primary);
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--glass-border);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+}
+
+.search-box input {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    outline: none;
+    width: 100%;
+}
+
+.filter-box {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.filter-select {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    border-radius: 8px;
+    padding: 0.4rem;
+    font-size: 0.8rem;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-select:hover {
+    border-color: var(--dendro-primary);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.filter-select option {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+}
+
+.character-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+/* Custom Scrollbar for list */
+.character-list::-webkit-scrollbar {
+    width: 6px;
+}
+.character-list::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: 3px;
+}
+
+.char-btn {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 0.5rem;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid transparent;
+}
+
+.char-btn:hover {
+    background: rgba(255,255,255,0.05);
+    transform: translateX(5px);
+}
+
+.char-btn.active {
+    background: var(--dendro-bg-glow);
+    border-color: var(--dendro-primary);
+    box-shadow: 0 0 15px var(--dendro-bg-glow);
+}
+
+.char-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    margin-right: 1rem;
+    border: 2px solid var(--glass-border);
+}
+
+.char-btn.active .char-avatar {
+    border-color: var(--dendro-primary);
+}
+
+.char-info-mini h4 {
+    margin: 0 0 0.2rem 0;
+    font-size: 1rem;
+}
+
+.char-element {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(0,0,0,0.3);
+}
+.element-dendro { color: #10B981; }
+.element-electro { color: #A855F7; }
+.element-hydro { color: #3B82F6; }
+.element-pyro { color: #EF4444; }
+.element-cryo { color: #60A5FA; }
+.element-anemo { color: #10B981; } /* Temp */
+.element-geo { color: #F59E0B; }
+
+/* Guide Content Area */
+.guide-content {
+    flex: 1;
+    border-radius: 16px;
+    padding: 2rem;
+    overflow-y: auto;
+    transition: opacity 0.3s ease;
+}
+
+.guide-content::-webkit-scrollbar { width: 8px; }
+.guide-content::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.3); border-radius: 4px; }
+
+.guide-header-panel {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.guide-portrait {
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    background-size: cover;
+    background-position: center;
+    border: 3px solid var(--dendro-primary);
+    box-shadow: 0 0 20px var(--dendro-bg-glow);
+}
+
+.guide-basic-info h2 {
+    font-size: 2.5rem;
+    margin: 0 0 0.5rem 0;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+.char-tags {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.char-tags span {
+    background: rgba(0,0,0,0.3);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    border: 1px solid var(--glass-border);
+}
+
+.guide-overview {
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.guide-card {
+    padding: 1.5rem;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.2);
+}
+
+.guide-card h3 {
+    margin: 0 0 1.5rem 0;
+    color: var(--dendro-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.equipment-item, .team-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed var(--glass-border);
+}
+.equipment-item:last-child, .team-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.tier-badge {
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #fff;
+    min-width: 40px;
+    text-align: center;
+    white-space: nowrap;
+}
+.tier-t0 { background: linear-gradient(135deg, #EF4444, #B91C1C); box-shadow: 0 0 10px rgba(239,68,68,0.4); }
+.tier-t1 { background: linear-gradient(135deg, #F59E0B, #D97706); box-shadow: 0 0 10px rgba(245,158,11,0.4); }
+.tier-other { background: linear-gradient(135deg, #3B82F6, #1D4ED8); box-shadow: 0 0 10px rgba(59,130,246,0.4); }
+
+.equipment-detail strong, .team-item strong {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 0.3rem;
+}
+.equipment-detail p, .team-item p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.artifact-info p { margin: 0 0 1rem 0; line-height: 1.5;}
+.main-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+.stat-badge {
+    background: rgba(0,0,0,0.3);
+    padding: 0.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+.stat-badge span {
+    color: var(--dendro-primary);
+    margin-right: 0.5rem;
+    width: 60px;
+}
+
+.guide-note {
+    background: rgba(251, 191, 36, 0.1);
+    border-left: 3px solid var(--gold-accent);
+    padding: 0.8rem;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.85rem;
+    color: #FDE68A;
+}
+
+.talent-priority {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--dendro-accent);
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(16,185,129,0.1);
+    border-radius: 8px;
+    text-align: center;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .guide-page .dashboard-container {
+        padding: 1rem;
+        height: auto;
+    }
+    .guide-layout {
+        flex-direction: column;
+    }
+    .character-sidebar {
+        width: 100%;
+        max-height: 250px;
+    }
+    .guide-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    .guide-header-right {
+        text-align: center;
+    }
+    .guide-header-panel {
+        flex-direction: column;
+        text-align: center;
+    }
+    .char-tags {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}
+
+#particles-js {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   Guide Page UI Icons & Loading Animation
+   ========================================================================== */
+.guide-weapon-icon, .guide-talent-icon, .guide-relic-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--glass-border);
+    margin-right: 1rem;
+    object-fit: contain;
+}
+
+.guide-talent-icon {
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    border: 2px solid var(--dendro-bg-glow);
+}
+
+.guide-relic-icon {
+    width: 32px;
+    height: 32px;
+    margin-right: 0.5rem;
+    background: transparent;
+    border: none;
+}
+
+.talent-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    background: rgba(0,0,0,0.2);
+    padding: 1rem;
+    border-radius: 12px;
+}
+
+.talent-item-info strong {
+    display: block;
+    color: var(--dendro-primary);
+    margin-bottom: 0.2rem;
+}
+
+.talent-item-info p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+}
+
+/* Guide Loading Overlay */
+.guide-loader-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-darker);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.guide-loader-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.guide-loader-spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid var(--glass-border);
+    border-top-color: var(--dendro-primary);
+    border-radius: 50%;
+    animation: guideSpin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+.guide-loader-overlay p {
+    color: var(--dendro-primary);
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 2px;
+    animation: guidePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes guideSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes guidePulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
