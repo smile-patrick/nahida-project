@@ -14,7 +14,7 @@ export default async function handler(req, res) {
             return res.status(400).json({ success: false, message: 'Missing ticket or device' });
         }
 
-        const url = "https://passport-api.mihoyo.com/account/ma-cn-passport/app/queryQRLoginStatus";
+        const url = "https://passport-api.mihoyo.com/account/ma-cn-passport/web/queryQRLoginStatus";
         
         const response = await fetch(url, {
             method: 'POST',
@@ -46,19 +46,45 @@ export default async function handler(req, res) {
         if (data.retcode === 0 && data.data) {
             const status = data.data.status; // "Created", "Scanned", "Confirmed"
             if (status === 'Confirmed') {
-                const userInfo = data.data.user_info || {};
-                const uid = userInfo.aid || '';
-                const mid = userInfo.mid || '';
-                const tokens = data.data.tokens || [];
-                
+                let uid = '';
+                let mid = '';
                 let cookieToken = '';
                 let stoken = '';
                 let ltoken = '';
                 
+                // Fallback: If it returns tokens array directly
+                const tokens = data.data.tokens || [];
                 for (const t of tokens) {
                     if (t.token_type === 1) cookieToken = t.token;
                     if (t.token_type === 2) stoken = t.token;
                     if (t.token_type === 3) ltoken = t.token;
+                }
+
+                // If it returns payload (web login login_ticket)
+                if (data.data.payload && data.data.payload.raw) {
+                    try {
+                        const rawPayload = JSON.parse(data.data.payload.raw);
+                        uid = rawPayload.uid;
+                        const loginTicket = rawPayload.token; // This is the login_ticket
+                        
+                        // Exchange login_ticket for stoken and ltoken
+                        const multiTokenUrl = `https://api-takumi.mihoyo.com/auth/api/getMultiTokenByLoginTicket?login_ticket=${loginTicket}&token_types=3&uid=${uid}`;
+                        const multiRes = await fetch(multiTokenUrl);
+                        const multiData = await multiRes.json();
+                        
+                        if (multiData.retcode === 0 && multiData.data && multiData.data.list) {
+                            for (const item of multiData.data.list) {
+                                if (item.name === 'stoken') stoken = item.token;
+                                if (item.name === 'ltoken') ltoken = item.token;
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Exchange failed:', e);
+                    }
+                } else {
+                    const userInfo = data.data.user_info || {};
+                    uid = userInfo.aid || uid;
+                    mid = userInfo.mid || '';
                 }
 
                 return res.status(200).json({ 

@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 
     try {
         const device = req.body?.device || crypto.randomUUID();
-        const url = "https://passport-api.mihoyo.com/account/ma-cn-passport/app/createQRLogin";
+        const url = "https://passport-api.mihoyo.com/account/ma-cn-passport/web/createQRLogin";
         
         const response = await fetch(url, {
             method: 'POST',
