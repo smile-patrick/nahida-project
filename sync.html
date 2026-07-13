@@ -182,25 +182,31 @@
             padding: 0;
             display: block;
         }
-        .qr-scanner-line {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 4px;
-            background: linear-gradient(to right, transparent, var(--dendro-primary), transparent);
-            box-shadow: 0 0 15px var(--dendro-primary), 0 0 30px var(--dendro-primary);
-            animation: qrScan 2s linear infinite;
-            display: none;
-            z-index: 10;
+        .sync-progress {
+            margin-top: 15px;
+            width: 100%;
         }
-        .qr-wrapper::before, .qr-wrapper::after {
-            content: ''; position: absolute; width: 20px; height: 20px; border: 3px solid var(--dendro-primary); z-index: 5;
+        .sync-progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
         }
-        .qr-wrapper::before { top: 0; left: 0; border-right: none; border-bottom: none; border-radius: 10px 0 0 0; }
-        .qr-wrapper::after { bottom: 0; right: 0; border-left: none; border-top: none; border-radius: 0 0 10px 0; }
-        @keyframes qrScan {
-            0% { top: 0; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
+        .sync-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--dendro-primary), var(--dendro-accent));
+            box-shadow: 0 0 10px var(--dendro-primary);
+            transition: width 0.3s ease;
+        }
+        .sync-progress-text {
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--dendro-accent);
+            margin-top: 5px;
+            font-family: var(--font-cyber);
         }
         .qr-status {
             color: var(--dendro-primary);
@@ -265,6 +271,13 @@
         <div class="log-box" id="logBox">
             <p>> 准备连接世界树网络...</p>
         </div>
+        
+        <div class="sync-progress" id="syncProgressContainer" style="display:none;">
+            <div class="sync-progress-bar">
+                <div class="sync-progress-fill" id="syncProgressFill"></div>
+            </div>
+            <div class="sync-progress-text" id="syncProgressText">0%</div>
+        </div>
     </div>
     </div>
 
@@ -277,9 +290,8 @@
             <div class="qr-wrapper">
                 <div id="qrcode"></div>
                 <div class="qr-loading-spinner" id="qrLoadingSpinner" style="display: none; padding: 40px; font-size: 2.5rem; color: var(--dendro-primary); text-align: center;">
-                    <i class="fa-solid fa-satellite-dish fa-beat-fade"></i>
+                    <i class="fa-solid fa-spinner fa-spin"></i>
                 </div>
-                <div class="qr-scanner-line" id="qrScannerLine"></div>
             </div>
             <div class="qr-status" id="qrStatus">正在生成二维码...</div>
         </div>
@@ -393,7 +405,6 @@
         showQRBtn.addEventListener('click', async () => {
             qrModal.style.display = 'flex';
             qrcodeDiv.innerHTML = '';
-            document.getElementById('qrScannerLine').style.display = 'none';
             document.getElementById('qrLoadingSpinner').style.display = 'block';
             qrStatus.textContent = '正在连接世界树获取密钥...';
             qrStatus.style.color = 'var(--dendro-primary)';
@@ -423,7 +434,6 @@
                         correctLevel : QRCode.CorrectLevel.M
                     });
                     qrStatus.textContent = '请使用米游社 App 扫码';
-                    document.getElementById('qrScannerLine').style.display = 'block';
                     
                     pollQRStatus(data.ticket, data.device);
                 } else {
@@ -466,7 +476,6 @@
                             clearInterval(qrPollInterval);
                             qrStatus.textContent = '登录成功！正在提取凭证...';
                             qrStatus.style.color = '#10b981';
-                            document.getElementById('qrScannerLine').style.display = 'none';
                             
                             // Construct exact cookie matching user format with v2 compatibility
                             let cookieArr = [
@@ -576,13 +585,18 @@
                 }
 
                 addLog(`✅ 成功获取！共发现 ${characters.length} 名角色。`);
-                addLog(`⏳ 开始启动高并发深度读取 (并发数: 5)...`);
+                addLog(`⏳ 开始启动高并发深度读取 (并发数: 20)...`);
+                
+                document.getElementById('syncProgressContainer').style.display = 'block';
+                const syncProgressFill = document.getElementById('syncProgressFill');
+                const syncProgressText = document.getElementById('syncProgressText');
 
                 const fullData = {};
                 let successCount = 0;
+                let processedCount = 0;
                 
                 // Concurrency Pool Setup
-                const CONCURRENCY = 5;
+                const CONCURRENCY = 20;
                 let currentIndex = 0;
                 let activeRequests = 0;
                 let hasError = false;
@@ -598,7 +612,7 @@
                     
                     try {
                         // Short delay to stagger requests slightly
-                        await sleep(idx * 100); 
+                        await sleep(idx * 50); 
                         
                         const detailData = await fetchWithGeetest('/api/getDetail', { uid, server, cookie, character_id: char.id });
                         
@@ -614,6 +628,11 @@
                             hasError = true; // Stop pool if user cancelled captcha
                         }
                     } finally {
+                        processedCount++;
+                        const progress = Math.floor((processedCount / characters.length) * 100);
+                        syncProgressFill.style.width = `${progress}%`;
+                        syncProgressText.textContent = `${progress}% (${processedCount}/${characters.length})`;
+                        
                         activeRequests--;
                         if (activeRequests === 0 && currentIndex >= characters.length) {
                             finalizeSync(characters, fullData);
@@ -631,6 +650,7 @@
                 addLog(`❌ 连接失败：${error.message}`, true);
                 syncBtn.disabled = false;
                 syncBtn.innerHTML = '<i class="fa-solid fa-rotate"></i> 重新尝试同步';
+                document.getElementById('syncProgressContainer').style.display = 'none';
             }
         });
 
