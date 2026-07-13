@@ -585,7 +585,7 @@
                 }
 
                 addLog(`✅ 成功获取！共发现 ${characters.length} 名角色。`);
-                addLog(`⏳ 开始启动高并发深度读取 (并发数: 20)...`);
+                addLog(`⏳ 开始启动高并发深度读取 (并发数: 10)...`);
                 
                 document.getElementById('syncProgressContainer').style.display = 'block';
                 const syncProgressFill = document.getElementById('syncProgressFill');
@@ -596,7 +596,7 @@
                 let processedCount = 0;
                 
                 // Concurrency Pool Setup
-                const CONCURRENCY = 20;
+                const CONCURRENCY = 10;
                 let currentIndex = 0;
                 let activeRequests = 0;
                 let hasError = false;

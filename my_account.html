@@ -237,21 +237,59 @@
         .constellation-card.activated .constellation-effect { color: #cbd5e1; }
         
         @media (max-width: 768px) { 
-            .app-wrapper { height: auto; min-height: 100vh; padding: 12px; align-items: flex-start; }
-            .app { flex-direction: column; height: auto; overflow: visible; } 
-            .sidebar { width: 100%; height: 35vh; min-height: 300px; flex-shrink: 0; } 
-            .detail-panel { padding: 16px; overflow: visible;} 
+            body { overflow-y: auto; }
+            .app-wrapper { height: auto; padding: 0; align-items: flex-start; }
+            .app { flex-direction: column; height: 100vh; overflow: hidden; border-radius: 0; border: none; box-shadow: none;} 
+            
+            /* Horizontal character selector */
+            .sidebar { 
+                width: 100%; height: auto; flex-shrink: 0; 
+                border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1);
+                background: var(--bg-dark);
+            } 
+            .sidebar-header, .search-box { display: none; }
+            .character-list { 
+                display: flex; flex-direction: row; overflow-x: auto; overflow-y: hidden; 
+                padding: 10px 15px; gap: 10px;
+                /* Hide scrollbar for clean look */
+                -ms-overflow-style: none; scrollbar-width: none; 
+            }
+            .character-list::-webkit-scrollbar { display: none; }
+            .character-item { 
+                flex-direction: column; padding: 8px; margin: 0; width: 65px; 
+                background: transparent; border: 1px solid transparent; flex-shrink: 0;
+            }
+            .character-item:hover { transform: none; background: transparent; }
+            .character-item.active { 
+                background: rgba(var(--theme-primary-rgb), 0.15); 
+                border: 1px solid rgba(var(--theme-primary-rgb), 0.5);
+                border-radius: 12px;
+            }
+            .char-avatar { margin: 0 0 6px 0; width: 45px; height: 45px; border-width: 1px; }
+            .char-info { display: flex; flex-direction: column; align-items: center; width: 100%;}
+            .char-name { font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
+            .char-element, .char-level, .char-rarity { display: none; } 
+            
+            /* Detail panel */
+            .detail-panel { padding: 15px; overflow-y: auto; flex: 1;} 
             .hero-card { padding: 20px; margin-bottom: 20px; }
             .hero-inner { flex-direction: column; text-align: center; align-items: center; justify-content: center; gap: 16px; }
+            .hero-portrait { margin: 0 auto; width: 120px; height: 120px;}
             .hero-tags { justify-content: center; }
-            .weapon-card { justify-content: center; text-align: left; }
-            .relic-card { flex-direction: column; align-items: center; text-align: left; padding: 16px; } 
+            .weapon-card { justify-content: center; text-align: center; width: 100%;}
+            
+            .relic-card { flex-direction: column; align-items: center; text-align: left; padding: 15px; } 
+            .relic-icon-area { width: 70px; height: 70px; }
             .relic-info { width: 100%; }
-            .relic-header { flex-direction: column; gap: 8px; align-items: flex-start; }
+            .relic-header { flex-direction: column; gap: 4px; align-items: flex-start; }
+            .relic-main { padding: 8px 12px; }
+            .sub-row { padding: 6px 8px; }
+            
             .two-columns { flex-direction: column; gap: 20px; } 
             .stats-section { order: 1; } 
             .relics-section { order: 2; }
             .constellation-grid { grid-template-columns: 1fr; }
+            footer { margin-top: 20px; padding: 15px; }
         }
         footer { margin-top: 40px; padding: 20px; text-align: center; font-size: 0.75rem; color: #475569; border-top: 1px solid rgba(255,255,255,0.05); }
 
