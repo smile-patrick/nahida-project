@@ -50,9 +50,15 @@ export default async function handler(req, res) {
                 const uid = userInfo.aid || '';
                 const mid = userInfo.mid || '';
                 const tokens = data.data.tokens || [];
-                let token = tokens.length > 0 ? tokens[0].token : '';
+                
+                let cookieToken = '';
+                let stoken = '';
+                let ltoken = '';
+                
                 for (const t of tokens) {
-                    if (t.token_type === 1 || t.token_type === 2) token = t.token;
+                    if (t.token_type === 1) cookieToken = t.token;
+                    if (t.token_type === 2) stoken = t.token;
+                    if (t.token_type === 3) ltoken = t.token;
                 }
 
                 return res.status(200).json({ 
@@ -60,7 +66,9 @@ export default async function handler(req, res) {
                     stat: status,
                     uid: uid,
                     mid: mid,
-                    token: token,
+                    cookie_token: cookieToken,
+                    stoken: stoken,
+                    ltoken: ltoken,
                     raw: data.data
                 });
             } else {

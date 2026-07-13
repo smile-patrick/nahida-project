@@ -462,8 +462,20 @@
                             qrStatus.style.color = '#10b981';
                             document.getElementById('qrScannerLine').style.display = 'none';
                             
-                            // Construct Cookie v1 + v2
-                            let cookieStr = `account_id=${data.uid}; cookie_token=${data.token}; account_id_v2=${data.uid}; account_mid_v2=${data.mid || ''}; cookie_token_v2=${data.token};`;
+                            // Construct exact cookie matching user format
+                            let cookieArr = [`account_id=${data.uid}`];
+                            if (data.mid) cookieArr.push(`mid=${data.mid}`);
+                            if (data.stoken) {
+                                cookieArr.push(`stoken=${data.stoken}`);
+                                cookieArr.push(`stuid=${data.uid}`);
+                            }
+                            if (data.ltoken) {
+                                cookieArr.push(`ltoken=${data.ltoken}`);
+                                cookieArr.push(`ltuid=${data.uid}`);
+                            }
+                            if (data.cookie_token) cookieArr.push(`cookie_token=${data.cookie_token}`);
+                            
+                            let cookieStr = cookieArr.join(';') + ';';
                             document.getElementById('cookie').value = cookieStr;
                             localStorage.setItem('genshinCookie', cookieStr);
                             
