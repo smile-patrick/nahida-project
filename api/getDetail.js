@@ -15,7 +15,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ success: false, message: 'Method Not Allowed' });
     }
 
-    const { uid, server, cookie, character_id } = req.body;
+    const { uid, server, cookie, character_id, geetest_challenge, geetest_validate, geetest_seccode } = req.body;
 
     if (!uid || !cookie || !character_id) {
         return res.status(400).json({ success: false, message: '缺少 UID、Cookie 或 character_id' });
@@ -30,6 +30,11 @@ export default async function handler(req, res) {
         const ds = getDS(bodyStr, "");
         const headers = getHeaders(cookieStr, ds);
 
+        // Add Geetest headers if present
+        if (geetest_challenge) headers["x-rpc-challenge"] = geetest_challenge;
+        if (geetest_validate) headers["x-rpc-validate"] = geetest_validate;
+        if (geetest_seccode) headers["x-rpc-seccode"] = geetest_seccode;
+
         const response = await fetch(url, {
             method: 'POST',
             headers: headers,
@@ -37,6 +42,16 @@ export default async function handler(req, res) {
         });
 
         const data = await response.json();
+
+        // Handle risk control (Geetest)
+        if (data.retcode === -3101 || (data.data && data.data.risk_code === 315)) {
+            return res.status(200).json({
+                success: false,
+                is_risk: true,
+                gt: data.data?.gt || data.data?.risk_info?.gt,
+                challenge: data.data?.challenge || data.data?.risk_info?.challenge
+            });
+        }
 
         if (data.retcode === 0) {
             return res.status(200).json({ success: true, data: data.data });

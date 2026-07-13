@@ -3,156 +3,275 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>我的角色图鉴</title>
+    <title>我的角色图鉴 | Akasha Archives</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&family=Noto+Serif+SC:wght@400;600;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.staticfile.net/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif; min-height: 100vh; transition: background 0.5s ease; }
+        body { 
+            font-family: 'Outfit', 'PingFang SC', system-ui, sans-serif; 
+            min-height: 100vh; 
+            color: #e2e8f0;
+            background: #0f172a;
+            overflow: hidden;
+        }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--theme-primary, #5a8f3c); border-radius: 4px; transition: background 0.3s ease; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--theme-primary-dark, #3f6b2a); }
-        .app { display: flex; height: 100vh; overflow: hidden; }
-        .sidebar { width: 300px; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(10px); border-right: 1px solid rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; overflow: hidden; box-shadow: 4px 0 12px rgba(0, 0, 0, 0.05); z-index: 10; }
-        .sidebar-header { background: var(--theme-primary, #6b8c5c); padding: 24px 20px; color: white; transition: background 0.3s ease; border-bottom: 2px solid rgba(255, 255, 255, 0.3); }
-        .sidebar-header h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-        .sidebar-header p { font-size: 0.85rem; opacity: 0.9; }
-        .search-box { padding: 16px; border-bottom: 1px solid rgba(0, 0, 0, 0.08); }
-        .search-box input { width: 100%; padding: 10px 16px; border: 1px solid rgba(0, 0, 0, 0.15); border-radius: 30px; font-size: 14px; outline: none; transition: all 0.2s; background: #ffffff; }
-        .search-box input:focus { border-color: var(--theme-primary, #5a8f3c); box-shadow: 0 0 0 3px rgba(90, 143, 60, 0.1); }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--theme-primary, #10b981); border-radius: 4px; transition: background 0.3s ease; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--theme-primary-light, #34d399); }
+        
+        /* Akasha Dark Glassmorphism */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .app { display: flex; height: 100vh; overflow: hidden; position: relative; z-index: 10; }
+        
+        .sidebar { 
+            width: 320px; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+            z-index: 20; 
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(20px);
+        }
+        .sidebar-header { 
+            background: linear-gradient(180deg, rgba(var(--theme-primary-rgb), 0.2) 0%, transparent 100%);
+            padding: 24px 20px; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+        }
+        .sidebar-header h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; font-family: 'Share Tech Mono', 'PingFang SC'; text-shadow: 0 0 10px rgba(var(--theme-primary-rgb), 0.5); color: #fff;}
+        .sidebar-header p { font-size: 0.85rem; color: #94a3b8; }
+        .search-box { padding: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .search-box input { 
+            width: 100%; padding: 10px 16px; border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 30px; font-size: 14px; outline: none; transition: all 0.2s; 
+            background: rgba(0, 0, 0, 0.3); color: #fff;
+        }
+        .search-box input:focus { border-color: var(--theme-primary, #10b981); box-shadow: 0 0 10px rgba(var(--theme-primary-rgb), 0.3); }
+        
         .character-list { flex: 1; overflow-y: auto; padding: 12px; }
-        .character-item { display: flex; align-items: center; padding: 12px; margin-bottom: 8px; border-radius: 20px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: #ffffff; border: 1px solid rgba(0, 0, 0, 0.08); position: relative; overflow: hidden; }
-        .character-item::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, var(--theme-primary-light, #8bc34a), var(--theme-primary, #5a8f3c)); opacity: 0; transition: opacity 0.3s ease; z-index: 0; }
-        .character-item:hover { transform: translateX(4px); border-color: transparent; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
-        .character-item:hover::before { opacity: 0.05; }
-        .character-item.active { background: linear-gradient(135deg, rgba(var(--theme-primary-rgb, 90, 143, 60), 0.15), rgba(var(--theme-primary-rgb, 90, 143, 60), 0.08)); border-left: 4px solid var(--theme-primary, #5a8f3c); border-color: var(--theme-primary, #5a8f3c); transform: translateX(2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
-        .character-item.active::before { opacity: 0.08; background: linear-gradient(135deg, var(--theme-primary, #5a8f3c), var(--theme-primary-light, #8bc34a)); }
-        .char-avatar { width: 52px; height: 52px; border-radius: 50%; overflow: hidden; margin-right: 14px; background: #ffffff; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.1); z-index: 1; position: relative; }
+        .character-item { 
+            display: flex; align-items: center; padding: 12px; margin-bottom: 8px; 
+            border-radius: 16px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); 
+            position: relative; overflow: hidden; 
+        }
+        .character-item:hover { transform: translateX(4px); background: rgba(255, 255, 255, 0.08); }
+        .character-item.active { 
+            background: linear-gradient(90deg, rgba(var(--theme-primary-rgb), 0.2) 0%, rgba(var(--theme-primary-rgb), 0.05) 100%);
+            border-left: 4px solid var(--theme-primary, #10b981); 
+            border-color: rgba(var(--theme-primary-rgb), 0.5); 
+        }
+        .char-avatar { 
+            width: 52px; height: 52px; border-radius: 50%; overflow: hidden; margin-right: 14px; 
+            background: #000; flex-shrink: 0; box-shadow: 0 0 10px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.1);
+        }
+        .character-item.active .char-avatar { border-color: var(--theme-primary); box-shadow: 0 0 15px rgba(var(--theme-primary-rgb), 0.6); }
         .char-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .char-info { flex: 1; min-width: 0; z-index: 1; position: relative; }
-        .char-name { font-weight: 700; font-size: 1rem; color: #2c3a1f; transition: color 0.3s ease; }
-        .character-item.active .char-name { color: var(--theme-primary-dark, #3f6b2a); }
+        .char-info { flex: 1; min-width: 0; }
+        .char-name { font-weight: 700; font-size: 1rem; color: #f1f5f9; transition: color 0.3s ease; }
+        .character-item.active .char-name { color: var(--theme-primary-light); text-shadow: 0 0 8px rgba(var(--theme-primary-rgb), 0.4); }
         .char-element { font-size: 0.7rem; margin-top: 4px; font-weight: 500; }
-        .char-level { font-size: 0.7rem; color: #777777; margin-top: 2px; transition: color 0.3s ease; }
-        .character-item.active .char-level { color: var(--theme-primary, #5a8f3c); }
-        .char-rarity { font-size: 0.7rem; font-weight: 600; z-index: 1; position: relative; }
-        .rarity-5 { color: #f3b33d; } .rarity-4 { color: #b77bdd; }
-        .detail-panel { flex: 1; overflow-y: auto; padding: 24px 32px; transition: background 0.5s ease; }
-        .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #9bae85; text-align: center; }
-        .hero-card { border-radius: 32px; padding: 28px; margin-bottom: 28px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .hero-inner { display: flex; gap: 28px; flex-wrap: wrap; align-items: center; }
-        .hero-portrait { width: 150px; height: 150px; border-radius: 28px; overflow: hidden; background: rgba(255,255,255,0.3); box-shadow: 0 8px 20px rgba(0,0,0,0.15); border: 3px solid rgba(255,255,255,0.5); }
+        .char-level { font-size: 0.7rem; color: #64748b; margin-top: 2px; }
+        .char-rarity { font-size: 0.7rem; font-weight: 600; text-shadow: 0 0 5px currentColor;}
+        .rarity-5 { color: #f59e0b; } .rarity-4 { color: #a855f7; }
+        
+        .detail-panel { flex: 1; overflow-y: auto; padding: 24px 32px; transition: background 0.5s ease; position: relative;}
+        
+        .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #64748b; text-align: center; }
+        
+        /* Hero Card */
+        .hero-card { 
+            border-radius: 24px; padding: 28px; margin-bottom: 28px; 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); 
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative; overflow: hidden;
+        }
+        .hero-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(var(--theme-primary-rgb), 0.4) 0%, rgba(0,0,0,0.8) 100%);
+            z-index: 0;
+        }
+        .hero-inner { display: flex; gap: 28px; flex-wrap: wrap; align-items: center; position: relative; z-index: 1; }
+        .hero-portrait { 
+            width: 150px; height: 150px; border-radius: 24px; overflow: hidden; 
+            background: rgba(0,0,0,0.5); box-shadow: 0 0 20px rgba(var(--theme-primary-rgb), 0.5); 
+            border: 2px solid rgba(255,255,255,0.2); 
+        }
         .hero-portrait img { width: 100%; height: 100%; object-fit: cover; }
-        .hero-info { flex: 1; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-        .hero-name { font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; }
+        .hero-info { flex: 1; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .hero-name { font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; font-family: 'Noto Serif SC', serif; letter-spacing: 2px;}
         .hero-tags { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
-        .element-tag { padding: 6px 18px; border-radius: 40px; background: rgba(0,0,0,0.25); backdrop-filter: blur(4px); font-weight: 600; font-size: 0.85rem; }
-        .rarity-tag { padding: 6px 18px; border-radius: 40px; background: rgba(243, 179, 61, 0.9); color: white; font-weight: 600; }
-        .level-tag { padding: 6px 18px; border-radius: 40px; background: rgba(0,0,0,0.25); backdrop-filter: blur(4px); font-weight: 600; }
-        .weapon-card { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); border-radius: 24px; padding: 16px 20px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 8px; }
-        .weapon-icon { width: 56px; height: 56px; border-radius: 16px; background: rgba(255,255,255,0.3); padding: 6px; }
+        .element-tag { padding: 6px 18px; border-radius: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(var(--theme-primary-rgb), 0.5); font-weight: 600; font-size: 0.85rem; color: var(--theme-primary-light); box-shadow: 0 0 10px rgba(var(--theme-primary-rgb), 0.2) inset;}
+        .rarity-tag { padding: 6px 18px; border-radius: 8px; background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b; color: #fcd34d; font-weight: 600; }
+        .level-tag { padding: 6px 18px; border-radius: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); font-weight: 600; }
+        
+        .weapon-card { 
+            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px; padding: 16px 20px; display: flex; align-items: center; gap: 18px; 
+            flex-wrap: wrap; margin-top: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .weapon-icon { width: 56px; height: 56px; border-radius: 12px; background: rgba(255,255,255,0.1); padding: 4px; }
         .weapon-icon img { width: 100%; height: 100%; object-fit: contain; }
+        
         .two-columns { display: flex; gap: 28px; flex-wrap: wrap; flex-direction: row; }
         .relics-section { flex: 2; min-width: 320px; }
         .stats-section { flex: 1.2; min-width: 260px; }
-        .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 20px; padding-left: 16px; border-left: 5px solid var(--theme-primary, #5a8f3c); color: #2f4d21; transition: border-color 0.3s ease, color 0.3s ease; }
+        
+        .section-title { 
+            font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; padding-left: 12px; 
+            border-left: 4px solid var(--theme-primary); color: #f8fafc; 
+            font-family: 'Share Tech Mono', sans-serif;
+            text-shadow: 0 0 10px rgba(var(--theme-primary-rgb), 0.5);
+        }
+        
         .relics-list { display: flex; flex-direction: column; gap: 16px; }
-        .relic-card { background: rgba(255, 255, 255, 0.95); border-radius: 24px; display: flex; gap: 20px; padding: 20px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); border: 1px solid rgba(0, 0, 0, 0.08); }
-        .relic-card:hover { box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); transform: translateY(-2px); border-color: var(--theme-primary-light, #c0dc9e); }
+        .relic-card { 
+            background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(8px);
+            border-radius: 20px; display: flex; gap: 20px; padding: 20px; 
+            transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+        }
+        .relic-card:hover { border-color: rgba(var(--theme-primary-rgb), 0.5); box-shadow: 0 0 20px rgba(var(--theme-primary-rgb), 0.15); transform: translateY(-2px); }
         .relic-icon-area { width: 80px; height: 80px; flex-shrink: 0; }
-        .relic-icon { width: 100%; height: 100%; object-fit: cover; border-radius: 18px; background: #ffffff; border: 2px solid rgba(0, 0, 0, 0.1); transition: border-color 0.3s ease; }
+        .relic-icon { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255, 255, 255, 0.1); }
         .relic-info { flex: 1; min-width: 0; }
         .relic-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; margin-bottom: 12px; }
-        .relic-name { font-weight: 700; font-size: 1.1rem; color: #3a6326; transition: color 0.3s ease; }
-        .relic-pos { font-size: 0.75rem; padding: 2px 12px; border-radius: 30px; transition: background 0.3s ease, color 0.3s ease; }
-        .relic-main { padding: 8px 14px; border-radius: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: background 0.3s ease; }
-        .main-label { font-weight: 500; color: #7c9462; font-size: 0.8rem; transition: color 0.3s ease; }
-        .main-value { font-weight: 700; transition: color 0.3s ease; }
+        .relic-name { font-weight: 700; font-size: 1.1rem; color: #f1f5f9; }
+        .relic-pos { font-size: 0.75rem; padding: 4px 12px; border-radius: 8px; background: rgba(var(--theme-primary-rgb), 0.2); color: var(--theme-primary-light); border: 1px solid rgba(var(--theme-primary-rgb), 0.3); }
+        .relic-main { 
+            padding: 10px 14px; border-radius: 12px; margin-bottom: 12px; display: flex; 
+            justify-content: space-between; align-items: center; 
+            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);
+        }
+        .main-label { font-weight: 500; color: #94a3b8; font-size: 0.85rem; }
+        .main-value { font-weight: 700; color: var(--theme-primary-light); text-shadow: 0 0 8px rgba(var(--theme-primary-rgb), 0.4); }
         .relic-subs { display: flex; flex-direction: column; gap: 6px; }
-        .sub-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-radius: 12px; font-size: 0.85rem; transition: background 0.3s ease; }
-        .sub-left { display: flex; align-items: center; gap: 8px; }
-        .sub-name { color: #5c6e48; font-weight: 500; transition: color 0.3s ease; }
-        .sub-value { font-weight: 600; transition: color 0.3s ease; }
-        .sub-times { font-size: 0.7rem; font-weight: 600; padding: 2px 10px; border-radius: 20px; }
-        .sub-times-0 { background: #f0f0e8; color: #aaa; }
-        .sub-times-1 { background: #e8f5e9; color: #2e7d32; }
-        .sub-times-2 { background: #e3f2fd; color: #1976d2; }
-        .sub-times-3 { background: #f3e5f5; color: #7b1fa2; }
-        .sub-times-4 { background: #fff8e1; color: #ff8c00; }
-        .sub-times-5 { background: #fff3e0; color: #ff8c00; }
-        .stats-card { background: white; border-radius: 28px; padding: 24px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05); }
+        .sub-row { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; 
+            background: rgba(255,255,255,0.02);
+        }
+        .sub-row:hover { background: rgba(255,255,255,0.05); }
+        .sub-name { color: #cbd5e1; font-weight: 500; }
+        .sub-value { font-weight: 600; color: #f8fafc; }
+        .sub-times { font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 6px; }
+        .sub-times-0 { background: rgba(255,255,255,0.1); color: #94a3b8; }
+        .sub-times-1 { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .sub-times-2 { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .sub-times-3 { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+        .sub-times-4, .sub-times-5 { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        
+        .stats-card { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(8px); border-radius: 20px; padding: 24px; border: 1px solid rgba(255,255,255,0.05); }
         .stats-list { display: flex; flex-direction: column; gap: 12px; }
-        .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eff3e7; }
-        .stat-name { font-weight: 500; color: #6f8260; transition: color 0.3s ease; }
-        .stat-value { font-weight: 700; font-size: 1rem; color: #2d4920; transition: color 0.3s ease; }
-        .stat-highlight { font-size: 1.1rem; transition: color 0.3s ease; }
-        .set-effect-card { background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%); border-radius: 20px; padding: 16px; margin-top: 20px; border-left: 4px solid var(--theme-primary, #5a8f3c); transition: border-color 0.3s ease; }
-        .set-effect-title { font-weight: 700; color: #3a6326; margin-bottom: 8px; font-size: 0.9rem; transition: color 0.3s ease; }
-        .set-effect-desc { font-size: 0.75rem; color: #6a8260; line-height: 1.5; transition: color 0.3s ease; }
-        .skills-card { background: white; border-radius: 28px; padding: 20px; margin-top: 20px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05); }
-        .skills-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 12px; color: #3a6326; border-left: 3px solid var(--theme-primary, #5a8f3c); padding-left: 12px; transition: border-color 0.3s ease, color 0.3s ease; }
-        .skill-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eff3e7; }
-        .skill-name { font-weight: 600; color: #5c6e48; transition: color 0.3s ease; }
-        .skill-level { font-weight: 700; transition: color 0.3s ease; }
+        .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); }
+        .stat-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .stat-name { font-weight: 500; color: #cbd5e1; }
+        .stat-value { font-weight: 700; font-size: 1rem; color: #f8fafc; font-family: 'Share Tech Mono';}
+        .stat-highlight { font-size: 1.1rem; color: var(--theme-primary-light); text-shadow: 0 0 10px rgba(var(--theme-primary-rgb), 0.5); }
+        
+        .set-effect-card { 
+            background: rgba(0,0,0,0.3); border-radius: 16px; padding: 16px; 
+            margin-top: 20px; border-left: 4px solid var(--theme-primary); 
+            border-top: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .set-effect-title { font-weight: 700; color: var(--theme-primary-light); margin-bottom: 8px; font-size: 0.9rem; }
+        .set-effect-desc { font-size: 0.75rem; color: #94a3b8; line-height: 1.6; }
+        
+        .skills-card { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(8px); border-radius: 20px; padding: 20px; margin-top: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        .skills-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 12px; color: #f8fafc; border-left: 3px solid var(--theme-primary); padding-left: 12px; font-family: 'Share Tech Mono'; text-shadow: 0 0 10px rgba(var(--theme-primary-rgb), 0.5); }
+        .skill-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); }
+        .skill-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .skill-name { font-weight: 600; color: #cbd5e1; }
+        .skill-level { font-weight: 700; color: var(--theme-primary-light); background: rgba(var(--theme-primary-rgb), 0.2); padding: 2px 10px; border-radius: 6px; }
         
         /* 命座样式 */
-        .constellations-section { margin-top: 28px; }
+        .constellations-section { margin-top: 32px; }
         .constellation-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 16px; margin-top: 16px; }
-        .constellation-card { background: white; border-radius: 20px; padding: 16px; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); border: 1px solid rgba(0, 0, 0, 0.08); position: relative; overflow: hidden; }
-        .constellation-card.activated { background: linear-gradient(135deg, #ffffff 0%, rgba(var(--theme-primary-rgb, 90, 143, 60), 0.08) 100%); border-left: 4px solid var(--theme-primary, #5a8f3c); }
-        .constellation-card.inactive { opacity: 0.7; filter: grayscale(0.2); }
-        .constellation-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-        .constellation-icon { width: 48px; height: 48px; border-radius: 50%; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: all 0.3s ease; }
-        .constellation-card.activated .constellation-icon { background: var(--theme-primary, #5a8f3c); color: white; box-shadow: 0 2px 8px rgba(90, 143, 60, 0.3); }
-        .constellation-card.inactive .constellation-icon { background: #e0e0e0; color: #999; }
+        .constellation-card { 
+            background: rgba(30, 41, 59, 0.4); border-radius: 16px; padding: 20px; 
+            border: 1px solid rgba(255, 255, 255, 0.05); position: relative; overflow: hidden; 
+        }
+        .constellation-card.activated { 
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(var(--theme-primary-rgb), 0.15) 100%); 
+            border-left: 4px solid var(--theme-primary); 
+            border-color: rgba(var(--theme-primary-rgb), 0.3);
+            box-shadow: 0 4px 20px rgba(var(--theme-primary-rgb), 0.1);
+        }
+        .constellation-card.inactive { opacity: 0.5; filter: grayscale(0.5); }
+        .constellation-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+        .constellation-icon { 
+            width: 54px; height: 54px; border-radius: 12px; background: rgba(0,0,0,0.5); 
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem; 
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .constellation-card.activated .constellation-icon { 
+            background: rgba(var(--theme-primary-rgb), 0.2); color: var(--theme-primary-light); 
+            border-color: var(--theme-primary); box-shadow: 0 0 15px rgba(var(--theme-primary-rgb), 0.4) inset; 
+        }
+        .constellation-card.inactive .constellation-icon { color: #64748b; }
         .constellation-info { flex: 1; }
-        .constellation-name { font-weight: 700; font-size: 1rem; transition: color 0.3s ease; }
-        .constellation-card.activated .constellation-name { color: var(--theme-primary-dark, #3f6b2a); }
-        .constellation-card.inactive .constellation-name { color: #999; }
-        .constellation-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; background: #f0f0f0; display: inline-block; margin-top: 4px; transition: all 0.3s ease; }
-        .constellation-card.activated .constellation-badge { background: var(--theme-primary, #5a8f3c); color: white; }
-        .constellation-card.inactive .constellation-badge { background: #ddd; color: #666; }
-        .constellation-effect { font-size: 0.8rem; line-height: 1.5; margin-top: 12px; transition: color 0.3s ease; max-height: 100px; overflow-y: auto; }
-        .constellation-card.activated .constellation-effect { color: var(--theme-primary-dark, #2d4920); }
-        .constellation-card.inactive .constellation-effect { color: #b0b3b5; }
-        .constellation-effect::-webkit-scrollbar { width: 4px; }
-        .constellation-effect::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); border-radius: 2px; }
-        .constellation-effect::-webkit-scrollbar-thumb { background: var(--theme-primary, #5a8f3c); border-radius: 2px; transition: background 0.3s ease; }
+        .constellation-name { font-weight: 700; font-size: 1.05rem; color: #f8fafc; }
+        .constellation-card.activated .constellation-name { color: var(--theme-primary-light); text-shadow: 0 0 8px rgba(var(--theme-primary-rgb), 0.4);}
+        .constellation-card.inactive .constellation-name { color: #94a3b8; }
+        .constellation-badge { font-size: 0.7rem; padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,0.1); display: inline-block; margin-top: 6px; font-weight: bold;}
+        .constellation-card.activated .constellation-badge { background: var(--theme-primary); color: #fff; box-shadow: 0 0 10px rgba(var(--theme-primary-rgb), 0.5); }
+        .constellation-card.inactive .constellation-badge { background: rgba(0,0,0,0.3); color: #64748b; }
+        .constellation-effect { font-size: 0.8rem; line-height: 1.6; color: #94a3b8; max-height: 120px; overflow-y: auto; padding-right: 5px;}
+        .constellation-card.activated .constellation-effect { color: #cbd5e1; }
         
         @media (max-width: 768px) { 
-            .app { flex-direction: column; height: auto; } 
-            .sidebar { width: 100%; max-height: 300px; } 
-            .detail-panel { padding: 16px; } 
+            .app { flex-direction: column; height: auto; overflow: visible;} 
+            .sidebar { width: 100%; max-height: 350px; } 
+            .detail-panel { padding: 16px; overflow: visible;} 
             .relic-card { flex-direction: column; align-items: center; text-align: left; } 
             .two-columns { flex-direction: column; } 
             .stats-section { order: 1; } 
             .relics-section { order: 2; }
             .constellation-grid { grid-template-columns: 1fr; }
         }
-        footer { margin-top: 32px; padding: 20px; text-align: center; font-size: 0.75rem; color: #888888; border-top: 1px solid #e0eccf; }
+        footer { margin-top: 40px; padding: 20px; text-align: center; font-size: 0.75rem; color: #475569; border-top: 1px solid rgba(255,255,255,0.05); }
+
+        /* HUD Background from index */
+        .hud-grid {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 1; pointer-events: none;
+            background-image: linear-gradient(rgba(16, 185, 129, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(16, 185, 129, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-position: center center;
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
+    <div class="hud-grid"></div>
     <div class="app">
         <div class="sidebar">
             <div class="sidebar-header">
-                <h2>✨ 原神游戏角色面板</h2>
+                <h2><i class="fa-solid fa-address-card"></i> 虚空终端角色库</h2>
                 <p id="charCount">0 位角色</p>
-                <div style="margin-top: 10px;">
-                    <a href="sync.html" style="color: rgba(255,255,255,0.8); font-size: 0.8rem; text-decoration: none;">🔄 重新同步数据</a> | 
-                    <a href="index.html" style="color: rgba(255,255,255,0.8); font-size: 0.8rem; text-decoration: none;">🏠 返回首页</a>
+                <div style="margin-top: 12px;">
+                    <a href="sync.html" style="color: var(--text-secondary); font-size: 0.8rem; text-decoration: none; margin-right: 10px; background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-rotate"></i> 同步</a>
+                    <a href="index.html" style="color: var(--text-secondary); font-size: 0.8rem; text-decoration: none; background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-house"></i> 首页</a>
                 </div>
             </div>
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="🔍 搜索角色...">
+                <input type="text" id="searchInput" placeholder="检索角色档案 (Name)...">
             </div>
             <div class="character-list" id="characterList"></div>
         </div>
         <div class="detail-panel" id="detailPanel">
             <div class="empty-state">
-                <div style="font-size: 64px; margin-bottom: 16px;">🍃</div>
-                <div style="font-size: 18px; font-weight: 500;">数据加载中或未同步</div>
-                <div style="font-size: 14px; margin-top: 8px;"><a href="sync.html">点击去同步数据</a></div>
+                <div style="font-size: 48px; margin-bottom: 20px; color: var(--dendro-primary); text-shadow: 0 0 20px var(--dendro-bg-glow);"><i class="fa-solid fa-database"></i></div>
+                <div style="font-size: 18px; font-weight: 500; color: #f1f5f9;">数据加载中或未同步</div>
+                <div style="font-size: 14px; margin-top: 12px;"><a href="sync.html" style="color: var(--dendro-primary); text-decoration: none; border: 1px solid var(--dendro-primary); padding: 6px 15px; border-radius: 20px;">点击去同步数据</a></div>
             </div>
         </div>
     </div>
@@ -161,30 +280,26 @@
         const rawData = localStorage.getItem('genshinSyncData');
         const charactersData = rawData ? JSON.parse(rawData) : [];
         
-        document.getElementById('charCount').textContent = `${charactersData.length} 位角色`;
+        document.getElementById('charCount').textContent = `共收录 ${charactersData.length} 位角色档案`;
 
         const elementColors = {
-            "风": "#2ea87e", "火": "#e6492d", "水": "#1e5bc9",
-            "冰": "#4d8cbf", "雷": "#aa3eff", "岩": "#b86f2c", "草": "#2e6e1a"
+            "风": "#34d399", "火": "#f87171", "水": "#60a5fa",
+            "冰": "#93c5fd", "雷": "#c084fc", "岩": "#fbbf24", "草": "#10b981"
         };
-        const elementCardThemes = {
-            "风": {"start": "#6eb5c2", "end": "#c4a5b3", "accent": "#1f7a5a"},
-            "火": {"start": "#cc6f6f", "end": "#ca9e5c", "accent": "#b8320c"},
-            "水": {"start": "#4bc0d0", "end": "#2c6fc9", "accent": "#0a3f8a"},
-            "冰": {"start": "#7ea2bc", "end": "#6b8fa8", "accent": "#1b4d6e"},
-            "雷": {"start": "#a27fcc", "end": "#826bc9", "accent": "#7a1fcc"},
-            "岩": {"start": "#ccb699", "end": "#bfa07a", "accent": "#8b521a"},
-            "草": {"start": "#9bb579", "end": "#86aa4a", "accent": "#1f5412"}
+        const elementRgbColors = {
+            "风": "52, 211, 153", "火": "248, 113, 113", "水": "96, 165, 250",
+            "冰": "147, 197, 253", "雷": "192, 132, 252", "岩": "251, 191, 36", "草": "16, 185, 129"
         };
         const elementThemes = {
-            "风": { "primary": "#2ea87e", "primary_light": "#6ed4b5", "primary_dark": "#1f7a5a", "bg_gradient": "linear-gradient(135deg, #e8f5ef 0%, #d4e8df 100%)" },
-            "火": { "primary": "#e6492d", "primary_light": "#ff7a5e", "primary_dark": "#c43a1f", "bg_gradient": "linear-gradient(135deg, #fff0e8 0%, #ffe4d8 100%)" },
-            "水": { "primary": "#1e5bc9", "primary_light": "#4b85e8", "primary_dark": "#1244a0", "bg_gradient": "linear-gradient(135deg, #e8f0fe 0%, #d8e6fc 100%)" },
-            "冰": { "primary": "#4d8cbf", "primary_light": "#7aafd9", "primary_dark": "#3a6d99", "bg_gradient": "linear-gradient(135deg, #eef4fa 0%, #e2ecf5 100%)" },
-            "雷": { "primary": "#aa3eff", "primary_light": "#c26eff", "primary_dark": "#8a2acc", "bg_gradient": "linear-gradient(135deg, #f5ebff 0%, #ecd9ff 100%)" },
-            "岩": { "primary": "#b86f2c", "primary_light": "#da9854", "primary_dark": "#9a571e", "bg_gradient": "linear-gradient(135deg, #fef5e8 0%, #faead8 100%)" },
-            "草": { "primary": "#2e6e1a", "primary_light": "#4f9e33", "primary_dark": "#1e5010", "bg_gradient": "linear-gradient(135deg, #edf5e8 0%, #e0ecd5 100%)" }
+            "风": { "primary": "#10b981", "primary_light": "#34d399", "primary_dark": "#059669" }, // Anemo/Dendro share green in this terminal
+            "火": { "primary": "#ef4444", "primary_light": "#f87171", "primary_dark": "#b91c1c" },
+            "水": { "primary": "#3b82f6", "primary_light": "#60a5fa", "primary_dark": "#1d4ed8" },
+            "冰": { "primary": "#38bdf8", "primary_light": "#7dd3fc", "primary_dark": "#0284c7" },
+            "雷": { "primary": "#a855f7", "primary_light": "#c084fc", "primary_dark": "#7e22ce" },
+            "岩": { "primary": "#f59e0b", "primary_light": "#fbbf24", "primary_dark": "#b45309" },
+            "草": { "primary": "#10b981", "primary_light": "#34d399", "primary_dark": "#059669" }
         };
+
         const propertyMap = {
             2: "生命值", 3: "生命值%", 4: "基础攻击力", 5: "攻击力", 6: "攻击力%", 7: "基础防御力", 8: "防御力", 9: "防御力%",
             20: "暴击率", 22: "暴击伤害", 23: "元素充能效率", 26: "治疗加成", 28: "元素精通", 30: "物理伤害加成",
@@ -192,15 +307,9 @@
             45: "岩元素伤害加成", 46: "冰元素伤害加成", 2000: "生命值上限", 2001: "攻击力", 2002: "防御力"
         };
         
-        const elementRgbColors = {
-            "风": "46,168,126", "火": "230,73,45", "水": "30,91,201",
-            "冰": "77,140,191", "雷": "170,62,255", "岩": "184,111,44", "草": "46,110,26"
-        };
-        
-        function getElementColor(e) { return elementColors[e] || '#8bc34a'; }
-        function getElementCardTheme(e) { return elementCardThemes[e] || { start: '#d4e6c3', end: '#b8d9a2', accent: '#8bc34a' }; }
-        function getElementTheme(e) { return elementThemes[e] || { primary: '#5a8f3c', primary_light: '#8ab86a', primary_dark: '#3f6b2a', bg_gradient: 'linear-gradient(135deg, #f5f7f0 0%, #e8efdf 100%)' }; }
-        function getElementRgb(e) { return elementRgbColors[e] || '90,143,60'; }
+        function getElementColor(e) { return elementColors[e] || '#10b981'; }
+        function getElementTheme(e) { return elementThemes[e] || elementThemes["草"]; }
+        function getElementRgb(e) { return elementRgbColors[e] || '16, 185, 129'; }
         
         function setGlobalTheme(element) {
             const theme = getElementTheme(element);
@@ -209,56 +318,8 @@
             document.documentElement.style.setProperty('--theme-primary-light', theme.primary_light);
             document.documentElement.style.setProperty('--theme-primary-dark', theme.primary_dark);
             document.documentElement.style.setProperty('--theme-primary-rgb', rgb);
-            document.body.style.background = theme.bg_gradient;
-            const sidebarHeader = document.querySelector('.sidebar-header');
-            if (sidebarHeader) sidebarHeader.style.background = theme.primary;
             
-            document.querySelectorAll('.relic-pos').forEach(el => { el.style.background = theme.primary + '25'; el.style.color = theme.primary; });
-            document.querySelectorAll('.main-value').forEach(el => el.style.color = theme.primary);
-            document.querySelectorAll('.sub-value').forEach(el => el.style.color = theme.primary);
-            document.querySelectorAll('.relic-main').forEach(el => el.style.background = theme.primary + '14');
-            document.querySelectorAll('.sub-row').forEach(el => el.style.background = theme.primary + '08');
-            document.querySelectorAll('.relic-icon').forEach(el => el.style.borderColor = theme.primary + '40');
-            document.querySelectorAll('.relic-name').forEach(el => el.style.color = theme.primary_dark);
-            document.querySelectorAll('.skill-level').forEach(el => el.style.color = theme.primary);
-            document.querySelectorAll('.stat-highlight').forEach(el => el.style.color = theme.primary);
-            document.querySelectorAll('.set-effect-card').forEach(el => el.style.borderLeftColor = theme.primary);
-            document.querySelectorAll('.section-title, .skills-title').forEach(el => el.style.borderLeftColor = theme.primary);
-            document.querySelectorAll('.stat-name').forEach(el => el.style.color = theme.primary_light);
-            document.querySelectorAll('.skill-name').forEach(el => el.style.color = theme.primary_dark);
-            document.querySelectorAll('.main-label').forEach(el => el.style.color = theme.primary_light);
-            document.querySelectorAll('.sub-name').forEach(el => el.style.color = theme.primary_dark);
-            document.querySelectorAll('.set-effect-title').forEach(el => el.style.color = theme.primary_dark);
-            document.querySelectorAll('.set-effect-desc').forEach(el => el.style.color = theme.primary_light);
-            document.querySelectorAll('.section-title').forEach(el => el.style.color = theme.primary_dark);
-            document.querySelectorAll('.skills-title').forEach(el => el.style.color = theme.primary_dark);
-            
-            document.querySelectorAll('.constellation-card.activated .constellation-badge').forEach(el => {
-                el.style.background = theme.primary;
-                el.style.color = 'white';
-            });
-            document.querySelectorAll('.constellation-card.activated .constellation-effect').forEach(el => {
-                el.style.color = theme.primary_dark;
-            });
-            document.querySelectorAll('.constellation-card.activated .constellation-name').forEach(el => {
-                el.style.color = theme.primary_dark;
-            });
-            document.querySelectorAll('.constellation-card.activated .constellation-icon').forEach(el => {
-                el.style.background = theme.primary;
-                el.style.color = 'white';
-                el.style.boxShadow = `0 2px 8px ${theme.primary}4d`;
-            });
-            
-            const activeChar = document.querySelector('.character-item.active');
-            document.querySelectorAll('.character-item:not(.active) .char-name').forEach(el => el.style.color = '#2c3a1f');
-            document.querySelectorAll('.character-item:not(.active) .char-level').forEach(el => el.style.color = '#777777');
-            document.querySelectorAll('.stat-value:not(.stat-highlight)').forEach(el => el.style.color = theme.primary_dark);
-            if (activeChar) {
-                const cn = activeChar.querySelector('.char-name');
-                const cl = activeChar.querySelector('.char-level');
-                if (cn) cn.style.color = theme.primary_dark;
-                if (cl) cl.style.color = theme.primary;
-            }
+            // Note: The rest is handled by CSS variables seamlessly!
         }
         
         function getRarityClass(r) { return r === 5 ? 'rarity-5' : 'rarity-4'; }
@@ -295,7 +356,10 @@
         function selectCharacter(charId) {
             document.querySelectorAll('.character-item').forEach(el => el.classList.remove('active'));
             const selectedEl = document.querySelector(`.character-item[data-id="${charId}"]`);
-            if (selectedEl) selectedEl.classList.add('active');
+            if (selectedEl) {
+                selectedEl.classList.add('active');
+                selectedEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
             const char = charactersData.find(c => c.id === charId);
             if (char) {
                 setGlobalTheme(char.element);
@@ -310,7 +374,6 @@
         
         function renderDetailPanel(char) {
             const panel = document.getElementById('detailPanel');
-            const cardTheme = getElementCardTheme(char.element);
             const elementDamageName = getElementDamageName(char.element);
             
             let relicsHtml = '';
@@ -319,10 +382,10 @@
                     let subsHtml = '';
                     if (relic.processed_subs && relic.processed_subs.length > 0) {
                         for (const sub of relic.processed_subs) {
-                            subsHtml += `<div class="sub-row"><div class="sub-left"><span class="sub-name">${sub.prop_name}</span><span class="sub-value">+${sub.value}</span></div><div class="sub-times ${getTimesClass(sub.times)}">${sub.times > 0 ? '+' + sub.times : '+0'}</div></div>`;
+                            subsHtml += `<div class="sub-row"><div class="sub-left"><span class="sub-name">${sub.prop_name}</span></div><div style="display:flex; align-items:center; gap:8px;"><span class="sub-value">+${sub.value}</span><span class="sub-times ${getTimesClass(sub.times)}">${sub.times > 0 ? '+' + sub.times : '+0'}</span></div></div>`;
                         }
                     }
-                    if (subsHtml === '') subsHtml = '<div class="sub-row"><span style="color:#bbb;">暂无副词条</span></div>';
+                    if (subsHtml === '') subsHtml = '<div class="sub-row"><span style="color:#64748b;">暂无副词条</span></div>';
 
                     relicsHtml += `
                         <div class="relic-card">
@@ -333,7 +396,7 @@
                                 <div class="relic-header">
                                     <div>
                                         <span class="relic-name">${relic.name}</span>
-                                        <span class="relic-set" style="color: #999; margin-left: 5px;">${relic.set?.name || '散件'}</span>
+                                        <span style="color: #64748b; margin-left: 5px; font-size: 0.8rem;">${relic.set?.name || '散件'}</span>
                                     </div>
                                     <span class="relic-pos">${relic.pos_name_cn}</span>
                                 </div>
@@ -349,12 +412,12 @@
                     `;
                 }
             }
-            if (relicsHtml === '') relicsHtml = '<div style="text-align:center; padding:40px; color:#aaa;">暂无圣遗物数据</div>';
+            if (relicsHtml === '') relicsHtml = '<div style="text-align:center; padding:40px; color:#64748b;">暂无圣遗物数据</div>';
             
             let setEffectsHtml = '';
             if (char.active_set_effects && char.active_set_effects.length > 0) {
                 for (const effect of char.active_set_effects) {
-                    setEffectsHtml += `<div class="set-effect-card"><div class="set-effect-title">🎴 ${effect.name} · ${effect.activation}件套效果</div><div class="set-effect-desc">${effect.effect}</div></div>`;
+                    setEffectsHtml += `<div class="set-effect-card"><div class="set-effect-title"><i class="fa-solid fa-layer-group"></i> ${effect.name} · ${effect.activation}件套效果</div><div class="set-effect-desc">${effect.effect}</div></div>`;
                 }
             }
             
@@ -376,16 +439,16 @@
             
             let constellationsHtml = '';
             if (char.constellations && char.constellations.length > 0) {
-                constellationsHtml = '<div class="constellations-section"><div class="section-title">⭐ 命之座</div><div class="constellation-grid">';
+                constellationsHtml = '<div class="constellations-section"><div class="section-title"><i class="fa-solid fa-star"></i> 命之座网络</div><div class="constellation-grid">';
                 for (const cons of char.constellations) {
                     const activatedClass = cons.is_actived ? 'activated' : 'inactive';
-                    const statusText = cons.is_actived ? '✅ 已激活' : '🔒 未激活';
+                    const statusText = cons.is_actived ? '已激活' : '未解锁';
                     let effectText = cons.effect || '暂无描述';
                     effectText = effectText.replace(/<color[^>]*>/g, '').replace(/<\/?color>/g, '').replace(/\\n/g, '<br>');
                     constellationsHtml += `
                         <div class="constellation-card ${activatedClass}">
                             <div class="constellation-header">
-                                <div class="constellation-icon">⭐</div>
+                                <div class="constellation-icon"><i class="fa-solid fa-link"></i></div>
                                 <div class="constellation-info">
                                     <div class="constellation-name">第${cons.pos}命 · ${cons.name}</div>
                                     <div class="constellation-badge">${statusText}</div>
@@ -397,44 +460,43 @@
                 }
                 constellationsHtml += '</div></div>';
             } else {
-                constellationsHtml = '<div class="constellations-section"><div class="section-title">⭐ 命之座</div><div style="text-align:center; padding:40px; color:#aaa;">暂无命座数据</div></div>';
+                constellationsHtml = '<div class="constellations-section"><div class="section-title"><i class="fa-solid fa-star"></i> 命之座网络</div><div style="text-align:center; padding:40px; color:#64748b;">暂无命座数据</div></div>';
             }
             
             panel.innerHTML = `
-                <div class="hero-card" style="background: linear-gradient(135deg, ${cardTheme.start} 0%, ${cardTheme.end} 100%);">
+                <div class="hero-card">
                     <div class="hero-inner">
                         <div class="hero-portrait"><img src="${char.portrait}" onerror="this.src='${char.icon}'"></div>
                         <div class="hero-info">
                             <div class="hero-name">${char.name}</div>
                             <div class="hero-tags">
-                                <span class="element-tag">${char.element}</span>
+                                <span class="element-tag"><i class="fa-solid fa-atom"></i> ${char.element}</span>
                                 <span class="rarity-tag">${getRarityStars(char.rarity)}</span>
                                 <span class="level-tag">Lv.${char.level}</span>
-                                <span class="level-tag">✨ 命座 ${char.constellation}/6</span>
+                                <span class="level-tag">命座 ${char.constellation}/6</span>
                             </div>
                             <div class="weapon-card">
                                 <div class="weapon-icon"><img src="${char.weapon_icon}" onerror="this.style.display='none'"></div>
-                                <div><div style="font-weight:700; font-size:1.1rem;">${char.weapon_name}</div><div style="font-size:0.75rem; color:rgba(255,255,255,0.8);">Lv.${char.weapon_level} · 精炼 ${char.weapon_affix}</div></div>
+                                <div><div style="font-weight:700; font-size:1.1rem; color: #f8fafc;">${char.weapon_name}</div><div style="font-size:0.8rem; color:#94a3b8; margin-top: 4px;">Lv.${char.weapon_level} · 精炼 ${char.weapon_affix}</div></div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="two-columns">
                     <div class="stats-section">
-                        <div class="section-title">📊 面板属性</div>
-                        <div class="stats-card"><div class="stats-list">${statsHtml || '<div style="text-align:center; color:#aaa;">暂无数据</div>'}</div></div>
-                        ${skillsHtml ? `<div class="skills-card"><div class="skills-title">🎯 技能等级</div>${skillsHtml}</div>` : ''}
+                        <div class="section-title"><i class="fa-solid fa-chart-pie"></i> 面板属性</div>
+                        <div class="stats-card"><div class="stats-list">${statsHtml || '<div style="text-align:center; color:#64748b;">暂无数据</div>'}</div></div>
+                        ${skillsHtml ? `<div class="skills-card"><div class="skills-title"><i class="fa-solid fa-bolt"></i> 核心天赋</div>${skillsHtml}</div>` : ''}
                     </div>
                     <div class="relics-section">
-                        <div class="section-title">🎭 圣遗物详情</div>
+                        <div class="section-title"><i class="fa-solid fa-gem"></i> 圣遗物档案</div>
                         <div class="relics-list">${relicsHtml}</div>
                         ${setEffectsHtml}
                     </div>
                 </div>
                 ${constellationsHtml}
-                <footer>数据来源：米哈游官方接口 · 圣遗物副词条右侧 +N 表示强化次数（最大+5）<br>命座状态根据角色实际解锁情况显示，已激活命座会高亮显示并跟随元素主题色</footer>
+                <footer>Akasha Terminal Database | 数据来源：米哈游官方接口<br>System Version: 2.1 | UI Designed for Night Mode</footer>
             `;
-            setGlobalTheme(char.element);
         }
         
         document.getElementById('searchInput').addEventListener('input', function(e) {
