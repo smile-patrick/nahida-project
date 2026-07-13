@@ -1,3 +1,25 @@
+import crypto from 'crypto';
+
+function generateRandomString(length) {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+
+function generateDS(body) {
+    const salt = "yBh10ikxtLPoIhgwgPZSv5dmfaOTSJ6a";
+    const t = Math.floor(Date.now() / 1000).toString();
+    const r = generateRandomString(6);
+    const b = body ? JSON.stringify(body) : "";
+    const q = "";
+    const signStr = `salt=${salt}&t=${t}&r=${r}&b=${b}&q=${q}`;
+    const sign = crypto.createHash('md5').update(signStr).digest('hex');
+    return `${t},${r},${sign}`;
+}
+
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -13,23 +35,36 @@ export default async function handler(req, res) {
         if (!ticket || !device) {
             return res.status(400).json({ success: false, message: 'Missing ticket or device' });
         }
-
-        const url = "https://passport-api.mihoyo.com/account/ma-cn-passport/web/queryQRLoginStatus";
         
+        let parsedDevice;
+        try {
+            parsedDevice = JSON.parse(device);
+        } catch (e) {
+            return res.status(400).json({ success: false, message: 'Invalid device format' });
+        }
+
+        const url = "https://passport-api.mihoyo.com/account/ma-cn-passport/app/queryQRLoginStatus";
+        
+        const body = { ticket: ticket };
+        const ds = generateDS(body);
+        
+        const headers = {
+            'User-Agent': 'Mozilla/5.0 miHoYoBBS/2.102.1 Capture/1.0.0',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'x-rpc-device_id': parsedDevice.id,
+            'x-rpc-device_fp': parsedDevice.fp,
+            'x-rpc-app_id': 'ddxf5dufpuyo',
+            'x-rpc-client_type': '3',
+            'x-rpc-device_name': 'NahidaKit',
+            'x-rpc-device_model': 'pc',
+            'ds': ds,
+        };
+
         const response = await fetch(url, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-rpc-app_version': '2.40.1',
-                'x-rpc-client_type': '4',
-                'x-rpc-app_id': 'bll8iq97cem8',
-                'x-rpc-device_id': device
-            },
-            body: JSON.stringify({
-                app_id: "4",
-                device: device,
-                ticket: ticket
-            })
+            headers: headers,
+            body: JSON.stringify(body)
         });
 
         const data = await response.json();
@@ -52,43 +87,22 @@ export default async function handler(req, res) {
                 let stoken = '';
                 let ltoken = '';
                 
-                // Fallback: If it returns tokens array directly
                 const tokens = data.data.tokens || [];
                 for (const t of tokens) {
                     if (t.token_type === 1) cookieToken = t.token;
                     if (t.token_type === 2) stoken = t.token;
                     if (t.token_type === 3) ltoken = t.token;
                 }
+                
+                if (!stoken && tokens.length > 0) {
+                    stoken = tokens[0].token;
+                }
 
                 let dbg = { rawData: data.data };
-                // If it returns payload (web login login_ticket)
-                if (data.data.payload && data.data.payload.raw) {
-                    try {
-                        const rawPayload = JSON.parse(data.data.payload.raw);
-                        uid = rawPayload.uid || uid;
-                        const loginTicket = rawPayload.token; // This is the login_ticket
-                        
-                        // Exchange login_ticket for stoken and ltoken
-                        const multiTokenUrl = `https://api-takumi.mihoyo.com/auth/api/getMultiTokenByLoginTicket?login_ticket=${loginTicket}&token_types=3&uid=${uid}`;
-                        const multiRes = await fetch(multiTokenUrl);
-                        const multiData = await multiRes.json();
-                        dbg.multiData = multiData;
-                        
-                        if (multiData.retcode === 0 && multiData.data && multiData.data.list) {
-                            for (const item of multiData.data.list) {
-                                if (item.name === 'stoken') stoken = item.token;
-                                if (item.name === 'ltoken') ltoken = item.token;
-                            }
-                        }
-                    } catch (e) {
-                        console.error('Exchange failed:', e);
-                        dbg.error = e.message;
-                    }
-                } else {
-                    const userInfo = data.data.user_info || {};
-                    uid = userInfo.aid || uid;
-                    mid = userInfo.mid || mid;
-                }
+                
+                const userInfo = data.data.user_info || {};
+                uid = userInfo.aid || uid;
+                mid = userInfo.mid || mid;
 
                 return res.status(200).json({ 
                     success: true, 
