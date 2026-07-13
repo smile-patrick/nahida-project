@@ -26,7 +26,7 @@ export default async function handler(req, res) {
                 'x-rpc-device_id': device
             },
             body: JSON.stringify({
-                app_id: "4",
+                app_id: "8",
                 device: device,
                 ticket: ticket
             })
