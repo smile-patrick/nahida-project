@@ -184,17 +184,23 @@
         }
         .qr-scanner-line {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 3px;
-            background: var(--dendro-primary);
-            box-shadow: 0 0 10px var(--dendro-primary), 0 0 20px var(--dendro-primary);
-            animation: qrScan 2.5s ease-in-out infinite;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(to right, transparent, var(--dendro-primary), transparent);
+            box-shadow: 0 0 15px var(--dendro-primary), 0 0 30px var(--dendro-primary);
+            animation: qrScan 2s linear infinite;
             display: none;
+            z-index: 10;
         }
+        .qr-wrapper::before, .qr-wrapper::after {
+            content: ''; position: absolute; width: 20px; height: 20px; border: 3px solid var(--dendro-primary); z-index: 5;
+        }
+        .qr-wrapper::before { top: 0; left: 0; border-right: none; border-bottom: none; border-radius: 10px 0 0 0; }
+        .qr-wrapper::after { bottom: 0; right: 0; border-left: none; border-top: none; border-radius: 0 0 10px 0; }
         @keyframes qrScan {
-            0% { top: -5%; opacity: 0; }
+            0% { top: 0; opacity: 0; }
             10% { opacity: 1; }
             90% { opacity: 1; }
-            100% { top: 105%; opacity: 0; }
+            100% { top: 100%; opacity: 0; }
         }
         .qr-status {
             color: var(--dendro-primary);

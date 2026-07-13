@@ -31,7 +31,14 @@
             box-shadow: 0 8px 32px 0 rgba(var(--dendro-primary-rgb), 0.05);
         }
 
-        .app { display: flex; height: 100vh; overflow: hidden; position: relative; z-index: 10; }
+        .app-wrapper {
+            padding: 40px;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .app { display: flex; height: 100%; width: 100%; max-width: 1400px; overflow: hidden; position: relative; z-index: 10; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid var(--dendro-primary); }
         
         .sidebar { 
             width: 320px; 
@@ -254,9 +261,9 @@
 <body>
     <div class="hud-grid"></div>
     <div id="particles-js" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;"></div>
-    <div class="app-container" style="display:flex; justify-content:center; align-items:center; min-height:100vh; max-width: 1400px; margin: 0 auto; padding: 2rem 1.5rem; position:relative; z-index:2;">
-        <div class="app glass-panel" style="width: 100%; border-radius: 20px; overflow: hidden; height: calc(100vh - 4rem); box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
-            <div class="sidebar" style="border-radius: 20px 0 0 20px; border-right: 1px solid var(--glass-border);">
+    <div class="app-wrapper" style="position:relative; z-index:2;">
+        <div class="app glass-panel">
+            <div class="sidebar" style="border-right: 1px solid var(--glass-border);">
             <div class="sidebar-header">
                 <h2><i class="fa-solid fa-address-card"></i> 虚空终端角色库</h2>
                 <p id="charCount">0 位角色</p>
