@@ -26,7 +26,7 @@ export default async function handler(req, res) {
                 'x-rpc-device_id': device
             },
             body: JSON.stringify({
-                app_id: "8",
+                app_id: "4",
                 device: device,
                 ticket: ticket
             })
@@ -60,17 +60,19 @@ export default async function handler(req, res) {
                     if (t.token_type === 3) ltoken = t.token;
                 }
 
+                let dbg = { rawData: data.data };
                 // If it returns payload (web login login_ticket)
                 if (data.data.payload && data.data.payload.raw) {
                     try {
                         const rawPayload = JSON.parse(data.data.payload.raw);
-                        uid = rawPayload.uid;
+                        uid = rawPayload.uid || uid;
                         const loginTicket = rawPayload.token; // This is the login_ticket
                         
                         // Exchange login_ticket for stoken and ltoken
                         const multiTokenUrl = `https://api-takumi.mihoyo.com/auth/api/getMultiTokenByLoginTicket?login_ticket=${loginTicket}&token_types=3&uid=${uid}`;
                         const multiRes = await fetch(multiTokenUrl);
                         const multiData = await multiRes.json();
+                        dbg.multiData = multiData;
                         
                         if (multiData.retcode === 0 && multiData.data && multiData.data.list) {
                             for (const item of multiData.data.list) {
@@ -80,11 +82,12 @@ export default async function handler(req, res) {
                         }
                     } catch (e) {
                         console.error('Exchange failed:', e);
+                        dbg.error = e.message;
                     }
                 } else {
                     const userInfo = data.data.user_info || {};
                     uid = userInfo.aid || uid;
-                    mid = userInfo.mid || '';
+                    mid = userInfo.mid || mid;
                 }
 
                 return res.status(200).json({ 
@@ -95,7 +98,8 @@ export default async function handler(req, res) {
                     cookie_token: cookieToken,
                     stoken: stoken,
                     ltoken: ltoken,
-                    raw: data.data
+                    raw: data.data,
+                    dbg: dbg
                 });
             } else {
                 return res.status(200).json({ success: true, stat: status });
