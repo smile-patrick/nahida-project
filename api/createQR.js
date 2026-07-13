@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -9,16 +11,20 @@ export default async function handler(req, res) {
     }
 
     try {
-        const device = req.body?.device || Math.random().toString(36).substring(2, 15);
+        const device = req.body?.device || crypto.randomUUID();
         const url = "https://passport-api.mihoyo.com/account/ma-cn-passport/app/createQRLogin";
         
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'x-rpc-app_version': '2.40.1',
+                'x-rpc-client_type': '4',
+                'x-rpc-app_id': 'bll8iq97cem8',
+                'x-rpc-device_id': device
             },
             body: JSON.stringify({
-                app_id: 4,
+                app_id: "4",
                 device: device
             })
         });

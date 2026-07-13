@@ -45,7 +45,7 @@
             align-items: center;
         }
         .qr-btn {
-            background: rgba(16, 185, 129, 0.2);
+            background: rgba(var(--dendro-primary-rgb), 0.1);
             border: 1px solid var(--dendro-primary);
             color: var(--dendro-primary);
             padding: 4px 10px;
@@ -53,6 +53,7 @@
             font-size: 0.8rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
         }
         .qr-btn:hover {
             background: var(--dendro-primary);
@@ -60,26 +61,26 @@
             box-shadow: 0 0 10px var(--dendro-bg-glow);
         }
         .form-group input, .form-group textarea, .form-group select {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.4);
             border: 1px solid var(--glass-border);
             border-radius: 12px;
             padding: 15px;
             color: var(--text-primary);
-            font-family: 'Share Tech Mono', monospace;
+            font-family: var(--font-cyber);
             outline: none;
             transition: all 0.3s ease;
         }
         .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
             border-color: var(--dendro-primary);
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+            box-shadow: 0 0 15px rgba(var(--dendro-primary-rgb), 0.2);
         }
         .form-group textarea {
             resize: vertical;
             min-height: 100px;
         }
         .btn-sync {
-            background: linear-gradient(135deg, var(--dendro-primary) 0%, var(--dendro-dark) 100%);
-            border: none;
+            background: linear-gradient(135deg, var(--dendro-primary) 0%, rgba(var(--dendro-primary-rgb), 0.5) 100%);
+            border: 1px solid var(--dendro-light);
             padding: 16px;
             border-radius: 12px;
             color: white;
@@ -88,29 +89,32 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-top: 10px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(var(--dendro-primary-rgb), 0.3);
         }
         .btn-sync:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px var(--dendro-bg-glow);
+            box-shadow: 0 8px 25px rgba(var(--dendro-primary-rgb), 0.5);
         }
         .btn-sync:disabled {
             background: #555;
+            border-color: #777;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
         .log-box {
             margin-top: 20px;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.6);
             border: 1px solid var(--glass-border);
             border-radius: 12px;
             padding: 15px;
             height: 150px;
             overflow-y: auto;
             text-align: left;
-            font-family: 'Share Tech Mono', monospace;
+            font-family: var(--font-cyber);
             font-size: 0.85rem;
-            color: #a7f3d0;
+            color: var(--dendro-accent);
             display: none;
         }
         .log-box p {
@@ -126,6 +130,7 @@
             color: var(--text-secondary);
             font-weight: bold;
             transition: color 0.3s ease;
+            z-index: 10;
         }
         .header-back:hover {
             color: var(--text-primary);
@@ -135,15 +140,16 @@
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
         .modal-content {
-            background: rgba(15, 23, 42, 0.9);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
             border: 1px solid var(--dendro-primary);
             box-shadow: 0 0 30px var(--dendro-bg-glow);
             border-radius: 16px;
@@ -181,27 +187,23 @@
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 2000;
-            background: white;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
         }
     </style>
 </head>
-<body class="guide-page">
+<body>
     
-    <!-- Background Elements -->
-    <div class="bg-wrapper">
-        <div class="glow-orb orb-1"></div>
-        <div class="glow-orb orb-2"></div>
-        <div class="glow-orb orb-3"></div>
-        <div class="grid-overlay"></div>
-    </div>
-    <div id="particles-js"></div>
+    <div class="hud-grid"></div>
+    <div id="particles-js" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;"></div>
     
     <a href="index.html" class="header-back"><i class="fa-solid fa-angle-left"></i> 返回虚空终端</a>
 
-    <div class="sync-container glass">
+    <div class="sync-container card glass" style="margin: 100px auto; width: 100%; max-width: 600px; position:relative; z-index:2;">
         <h2><i class="fa-solid fa-satellite-dish"></i> 虚空终端数据同步</h2>
         <p style="color: var(--text-secondary); margin-top: 10px;">通过米游社 Cookie 直接连接世界树，同步您的真实角色数据。</p>
         
@@ -235,6 +237,7 @@
         <div class="log-box" id="logBox">
             <p>> 准备连接世界树网络...</p>
         </div>
+    </div>
     </div>
 
     <!-- QR Login Modal -->

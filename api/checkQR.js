@@ -19,10 +19,14 @@ export default async function handler(req, res) {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'x-rpc-app_version': '2.40.1',
+                'x-rpc-client_type': '4',
+                'x-rpc-app_id': 'bll8iq97cem8',
+                'x-rpc-device_id': device
             },
             body: JSON.stringify({
-                app_id: 4,
+                app_id: "4",
                 device: device,
                 ticket: ticket
             })
