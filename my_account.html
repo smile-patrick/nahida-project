@@ -253,8 +253,9 @@
 </head>
 <body>
     <div class="hud-grid"></div>
-    <div class="app">
-        <div class="sidebar">
+    <div class="app-container" style="display:flex; justify-content:center; align-items:center; min-height:100vh; max-width: 1400px; margin: 0 auto; padding: 2rem 1.5rem;">
+        <div class="app glass-panel" style="width: 100%; border-radius: 20px; overflow: hidden; height: calc(100vh - 4rem); box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+            <div class="sidebar" style="border-radius: 20px 0 0 20px; border-right: 1px solid var(--glass-border);">
             <div class="sidebar-header">
                 <h2><i class="fa-solid fa-address-card"></i> 虚空终端角色库</h2>
                 <p id="charCount">0 位角色</p>
@@ -275,6 +276,7 @@
                 <div style="font-size: 14px; margin-top: 12px;"><a href="sync.html" style="color: var(--dendro-primary); text-decoration: none; border: 1px solid var(--dendro-primary); padding: 6px 15px; border-radius: 20px;">点击去同步数据</a></div>
             </div>
         </div>
+    </div>
     </div>
     
     <script>

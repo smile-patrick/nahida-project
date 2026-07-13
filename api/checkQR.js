@@ -44,21 +44,25 @@ export default async function handler(req, res) {
         }
 
         if (data.retcode === 0 && data.data) {
-            const stat = data.data.stat; // "Init", "Scanned", "Confirmed"
-            if (stat === 'Confirmed' && data.data.payload) {
-                const payload = data.data.payload;
-                // Generate a generic API cookie from payload
-                // The actual payload returns raw unparsed data, but usually it contains a token structure or something similar
-                // We need to parse raw to cookie
+            const status = data.data.status; // "Created", "Scanned", "Confirmed"
+            if (status === 'Confirmed') {
+                const userInfo = data.data.user_info || {};
+                const uid = userInfo.aid || '';
+                const tokens = data.data.tokens || [];
+                let token = tokens.length > 0 ? tokens[0].token : '';
+                for (const t of tokens) {
+                    if (t.token_type === 1) token = t.token;
+                }
+
                 return res.status(200).json({ 
                     success: true, 
-                    stat: stat,
-                    raw: payload,
-                    uid: payload.uid,
-                    token: payload.token
+                    stat: status,
+                    uid: uid,
+                    token: token,
+                    raw: data.data
                 });
             } else {
-                return res.status(200).json({ success: true, stat: stat });
+                return res.status(200).json({ success: true, stat: status });
             }
         } else {
             return res.status(400).json({ success: false, message: data.message || `API错误: ${data.retcode}` });
