@@ -4,6 +4,8 @@
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
+error_reporting(0); // Suppress any warnings (like permission denied) to ensure valid JSON output
+ini_set('display_errors', 0);
 
 $dataFile = 'counter.json';
 $ipFile = 'ip_records.json';
