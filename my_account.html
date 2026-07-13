@@ -237,11 +237,18 @@
         .constellation-card.activated .constellation-effect { color: #cbd5e1; }
         
         @media (max-width: 768px) { 
-            .app { flex-direction: column; height: auto; overflow: visible;} 
-            .sidebar { width: 100%; max-height: 350px; } 
+            .app-wrapper { height: auto; min-height: 100vh; padding: 12px; align-items: flex-start; }
+            .app { flex-direction: column; height: auto; overflow: visible; } 
+            .sidebar { width: 100%; height: 35vh; min-height: 300px; flex-shrink: 0; } 
             .detail-panel { padding: 16px; overflow: visible;} 
-            .relic-card { flex-direction: column; align-items: center; text-align: left; } 
-            .two-columns { flex-direction: column; } 
+            .hero-card { padding: 20px; margin-bottom: 20px; }
+            .hero-inner { flex-direction: column; text-align: center; align-items: center; justify-content: center; gap: 16px; }
+            .hero-tags { justify-content: center; }
+            .weapon-card { justify-content: center; text-align: left; }
+            .relic-card { flex-direction: column; align-items: center; text-align: left; padding: 16px; } 
+            .relic-info { width: 100%; }
+            .relic-header { flex-direction: column; gap: 8px; align-items: flex-start; }
+            .two-columns { flex-direction: column; gap: 20px; } 
             .stats-section { order: 1; } 
             .relics-section { order: 2; }
             .constellation-grid { grid-template-columns: 1fr; }
