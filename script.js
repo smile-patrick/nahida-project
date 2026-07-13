@@ -1018,29 +1018,54 @@ document.addEventListener('DOMContentLoaded', () => {
     initMusicPlayer();
     startLoaderAnimation();
     
-    // Fetch custom PHP counter after 1 second so it never blocks the initial loader
-    setTimeout(() => {
-        fetch('counter.php')
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    const tTotal = document.getElementById('stat_total');
-                    const tToday = document.getElementById('stat_today');
-                    const tYest = document.getElementById('stat_yesterday');
-                    if(tTotal) tTotal.innerText = data.total;
-                    if(tToday) tToday.innerText = data.today;
-                    if(tYest) tYest.innerText = data.yesterday;
-                }
-            })
-            .catch(err => {
-                console.log('Local preview or missing PHP environment. Counter offline.');
-                const tTotal = document.getElementById('stat_total');
-                if (tTotal) {
-                    tTotal.innerText = "离线/本地预览环境";
-                    document.getElementById('stat_today').innerText = "N/A";
-                    document.getElementById('stat_yesterday').innerText = "N/A";
-                }
-            });
+    // Serverless Counter API (No PHP Backend Required)
+    setTimeout(async () => {
+        try {
+            const namespace = 'wintool_nahida_stats';
+            const todayDate = new Date().toISOString().split('T')[0];
+            const yestDate = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+            
+            // Check if visited today
+            const hasVisitedToday = localStorage.getItem('visited_date') === todayDate;
+            const action = hasVisitedToday ? '' : '/up'; // Only increment if first visit today
+            
+            if (!hasVisitedToday) {
+                localStorage.setItem('visited_date', todayDate);
+            }
+
+            // 1. Fetch Total
+            const resTotal = await fetch(`https://api.counterapi.dev/v1/${namespace}/total${action}`);
+            const dataTotal = await resTotal.json();
+            
+            // 2. Fetch Today
+            const resToday = await fetch(`https://api.counterapi.dev/v1/${namespace}/today_${todayDate}${action}`);
+            const dataToday = await resToday.json();
+            
+            // 3. Fetch Yesterday (Read Only)
+            const resYest = await fetch(`https://api.counterapi.dev/v1/${namespace}/today_${yestDate}`);
+            let yestCount = 0;
+            if (resYest.ok) {
+                const dataYest = await resYest.json();
+                yestCount = dataYest.count || 0;
+            }
+            
+            // Update UI
+            const tTotal = document.getElementById('stat_total');
+            const tToday = document.getElementById('stat_today');
+            const tYest = document.getElementById('stat_yesterday');
+            if(tTotal) tTotal.innerText = dataTotal.count || 0;
+            if(tToday) tToday.innerText = dataToday.count || 0;
+            if(tYest) tYest.innerText = yestCount;
+            
+        } catch (err) {
+            console.log('Counter API error:', err);
+            const tTotal = document.getElementById('stat_total');
+            if (tTotal) {
+                tTotal.innerText = "统计接口超时";
+                document.getElementById('stat_today').innerText = "N/A";
+                document.getElementById('stat_yesterday').innerText = "N/A";
+            }
+        }
     }, 1000);
 });
 
