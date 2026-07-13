@@ -253,7 +253,8 @@
 </head>
 <body>
     <div class="hud-grid"></div>
-    <div class="app-container" style="display:flex; justify-content:center; align-items:center; min-height:100vh; max-width: 1400px; margin: 0 auto; padding: 2rem 1.5rem;">
+    <div id="particles-js" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;"></div>
+    <div class="app-container" style="display:flex; justify-content:center; align-items:center; min-height:100vh; max-width: 1400px; margin: 0 auto; padding: 2rem 1.5rem; position:relative; z-index:2;">
         <div class="app glass-panel" style="width: 100%; border-radius: 20px; overflow: hidden; height: calc(100vh - 4rem); box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
             <div class="sidebar" style="border-radius: 20px 0 0 20px; border-right: 1px solid var(--glass-border);">
             <div class="sidebar-header">
@@ -279,7 +280,22 @@
     </div>
     </div>
     
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
+        particlesJS('particles-js', {
+            "particles": {
+                "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#10b981" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.4, "random": true, "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false } },
+                "size": { "value": 4, "random": true, "anim": { "enable": true, "speed": 2, "size_min": 0.1, "sync": false } },
+                "line_linked": { "enable": false },
+                "move": { "enable": true, "speed": 1.5, "direction": "top", "random": true, "straight": false, "out_mode": "out", "bounce": false }
+            },
+            "interactivity": { "detect_on": "canvas", "events": { "onhover": { "enable": false }, "onclick": { "enable": false }, "resize": true } },
+            "retina_detect": true
+        });
+
         const rawData = localStorage.getItem('genshinSyncData');
         const charactersData = rawData ? JSON.parse(rawData) : [];
         

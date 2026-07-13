@@ -48,16 +48,18 @@ export default async function handler(req, res) {
             if (status === 'Confirmed') {
                 const userInfo = data.data.user_info || {};
                 const uid = userInfo.aid || '';
+                const mid = userInfo.mid || '';
                 const tokens = data.data.tokens || [];
                 let token = tokens.length > 0 ? tokens[0].token : '';
                 for (const t of tokens) {
-                    if (t.token_type === 1) token = t.token;
+                    if (t.token_type === 1 || t.token_type === 2) token = t.token;
                 }
 
                 return res.status(200).json({ 
                     success: true, 
                     stat: status,
                     uid: uid,
+                    mid: mid,
                     token: token,
                     raw: data.data
                 });
