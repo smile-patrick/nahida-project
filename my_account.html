@@ -107,13 +107,19 @@
         }
         .character-item.active .char-avatar { border-color: var(--theme-primary); box-shadow: 0 0 15px rgba(var(--theme-primary-rgb), 0.6); }
         .char-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .char-info { flex: 1; min-width: 0; }
+        .char-info { flex: 1; min-width: 0; position: relative; z-index: 1; }
         .char-name { font-weight: 700; font-size: 1rem; color: #f1f5f9; transition: color 0.3s ease; }
         .character-item.active .char-name { color: var(--theme-primary-light); text-shadow: 0 0 8px rgba(var(--theme-primary-rgb), 0.4); }
         .char-element { font-size: 0.7rem; margin-top: 4px; font-weight: 500; }
         .char-level { font-size: 0.7rem; color: #64748b; margin-top: 2px; }
-        .char-rarity { font-size: 0.7rem; font-weight: 600; text-shadow: 0 0 5px currentColor;}
+        .char-rarity { position: relative; z-index: 1; font-size: 0.7rem; font-weight: 600; text-shadow: 0 0 5px currentColor;}
         .rarity-5 { color: #f59e0b; } .rarity-4 { color: #a855f7; }
+        
+        .char-element-bg {
+            position: absolute; right: -15px; top: 50%; transform: translateY(-50%) scale(0.9); height: 120%; max-height: 80px; opacity: 0.15; filter: grayscale(100%); pointer-events: none; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 0;
+        }
+        .character-item:hover .char-element-bg { opacity: 0.4; filter: none; transform: translateY(-50%) scale(1.1); right: -10px; }
+        .character-item.active .char-element-bg { opacity: 0.7; filter: drop-shadow(0 0 10px rgba(var(--theme-primary-rgb), 0.8)); transform: translateY(-50%) scale(1.2); right: -5px; }
         
         .detail-panel { flex: 1; overflow-y: auto; padding: 24px 32px; transition: background 0.5s ease; position: relative;}
         
@@ -500,7 +506,11 @@
                 const matchRarity = currentFilterRarity === 'all' || char.rarity.toString() === currentFilterRarity;
                 return matchSearch && matchElement && matchRarity;
             });
-            container.innerHTML = filtered.map((char, index) => `
+            container.innerHTML = filtered.map((char, index) => {
+                const enkaElementMap = { '风': 'Wind', '火': 'Fire', '水': 'Water', '冰': 'Ice', '雷': 'Electric', '岩': 'Rock', '草': 'Grass' };
+                const enkaName = enkaElementMap[char.element];
+                const elementIconUrl = enkaName ? `https://enka.network/ui/UI_Buff_Element_${enkaName}.png` : '';
+                return `
                 <div class="character-item" data-id="${char.id}" style="animation-delay: ${index * 0.05}s">
                     <div class="char-avatar"><img src="${char.icon}" onerror="this.style.display='none'"></div>
                     <div class="char-info">
@@ -508,9 +518,10 @@
                         <div class="char-element" style="color: ${getElementColor(char.element)}">${char.element}</div>
                         <div class="char-level">Lv.${char.level} · 好感${char.fetter} · 命座${char.constellation}/6</div>
                     </div>
+                    ${elementIconUrl ? `<img src="${elementIconUrl}" class="char-element-bg" alt="">` : ''}
                     <div class="char-rarity ${getRarityClass(char.rarity)}">${getRarityStars(char.rarity)}</div>
                 </div>
-            `).join('');
+            `}).join('');
             
             document.querySelectorAll('.character-item').forEach(el => {
                 el.addEventListener('click', () => selectCharacter(parseInt(el.dataset.id)));
@@ -701,11 +712,6 @@
 
         document.getElementById('searchInput').addEventListener('input', applyFilters);
         
-        if (charactersData.length > 0) {
-            applyFilters();
-            selectCharacter(charactersData[0].id);
-        }
-        
         document.getElementById('filterToggleBtn').addEventListener('click', function() {
             document.getElementById('filterWrapper').classList.toggle('show');
             if(this.innerHTML.includes('展开')) {
@@ -721,15 +727,9 @@
         
         detailPanel.addEventListener('scroll', function() {
             let st = this.scrollTop;
+            if (st > 300) backToTopBtn.classList.add('visible');
+            else backToTopBtn.classList.remove('visible');
             
-            // Back to top button visibility
-            if (st > 300) {
-                backToTopBtn.classList.add('visible');
-            } else {
-                backToTopBtn.classList.remove('visible');
-            }
-            
-            // Auto-collapse filter when scrolling down
             if (st > lastScrollTop && st > 50) {
                 const filterWrapper = document.getElementById('filterWrapper');
                 if (filterWrapper.classList.contains('show')) {
@@ -750,6 +750,10 @@
                 if (loader) {
                     loader.classList.add('hidden');
                     setTimeout(() => loader.style.display = 'none', 300);
+                }
+                if (charactersData.length > 0) {
+                    applyFilters();
+                    selectCharacter(charactersData[0].id);
                 }
             }, 300);
         });
