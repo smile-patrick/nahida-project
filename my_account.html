@@ -50,17 +50,24 @@
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
         }
-                    .sidebar-header { 
-                display: flex; 
-                flex-direction: column; 
-                align-items: flex-start;
-                padding: 15px 20px; 
-                background: transparent;
-            }
-            .sidebar-header h2 { font-size: 1.2rem; margin: 0; }
-            .sidebar-header p { display: none; }
-            
-            .apple-style-card { display: contents; }
+        .sidebar-header { 
+            background: linear-gradient(180deg, rgba(var(--theme-primary-rgb), 0.2) 0%, transparent 100%);
+            padding: 24px 20px; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+            text-align: center;
+        }
+        .sidebar-header h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; font-family: 'Share Tech Mono', 'PingFang SC'; text-shadow: 0 0 10px rgba(var(--theme-primary-rgb), 0.5); color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px;}
+        .sidebar-header p { font-size: 0.85rem; color: #94a3b8; }
+        
+        .search-box { padding: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .search-box input { 
+            width: 100%; padding: 10px 16px; border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 30px; font-size: 14px; outline: none; transition: all 0.2s; 
+            background: rgba(0, 0, 0, 0.3); color: #fff;
+        }
+        .search-box input:focus { border-color: var(--theme-primary, #10b981); box-shadow: 0 0 10px rgba(var(--theme-primary-rgb), 0.3); }
+        
+        .apple-style-card { display: contents; }
         .character-item { 
             display: flex; align-items: center; padding: 12px; margin-bottom: 8px; 
             border-radius: 16px; cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
@@ -430,17 +437,17 @@
     <div class="hud-grid"></div>
     <div id="particles-js" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;"></div>
     <div class="app-wrapper" style="position:relative; z-index:2;">
-                        <div class="app glass-panel">
+        <div class="app glass-panel">
             <div class="sidebar" style="border-right: 1px solid var(--glass-border);">
-                <div class="sidebar-header">
-                    <h2><i class="fa-solid fa-address-card" style="color: var(--theme-primary);"></i> 虚空终端角色库</h2>
+                <div class="sidebar-header" style="text-align: center;">
+                    <h2 style="display: flex; justify-content: center; align-items: center; gap: 8px;"><i class="fa-solid fa-address-card" style="color: var(--theme-primary);"></i> 虚空终端角色库</h2>
                     <p id="charCount" style="font-size: 0.85rem; color: #94a3b8; margin-top: 5px;">0 位角色档案</p>
-                    <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
-                        <a href="sync.html" class="nav-btn-music">
-                            <i class="fa-solid fa-rotate"></i> 数据同步
+                    <div style="margin-top: 15px; display: flex; gap: 10px; width: 100%;">
+                        <a href="sync.html" class="nav-btn-music" style="flex: 1; justify-content: center;">
+                            <i class="fa-solid fa-rotate"></i> 重新同步
                         </a>
-                        <a href="index.html" class="nav-btn-status">
-                            <span class="status-dot"></span> 首页控制台
+                        <a href="index.html" class="nav-btn-status" style="flex: 1; justify-content: center;">
+                            <i class="fa-solid fa-house"></i> 回到主页
                         </a>
                     </div>
                 </div>
