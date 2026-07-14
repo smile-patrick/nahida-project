@@ -397,9 +397,9 @@
         });
         
         async function fetchProfileInfo(cookie, uid) {
-            if(!uid) return;
             document.getElementById('profileCard').style.display = 'flex';
-            document.getElementById('profileUid').textContent = 'UID: ' + uid;
+            if (uid) document.getElementById('profileUid').textContent = 'UID: ' + uid;
+            else document.getElementById('profileUid').textContent = 'UID: 获取中...';
             
             try {
                 const res = await fetch('/api/getUserInfo', {
@@ -412,6 +412,10 @@
                     document.getElementById('profileName').textContent = result.data.nickname;
                     if(result.data.avatar_url) {
                         document.getElementById('profileAvatar').src = result.data.avatar_url;
+                    }
+                    if(result.data.uid) {
+                        document.getElementById('profileUid').textContent = 'UID: ' + result.data.uid;
+                        localStorage.setItem('genshinSyncUid', result.data.uid);
                     }
                 } else {
                     document.getElementById('profileName').textContent = '未实名旅行者';
@@ -635,7 +639,10 @@
                                 addLog(`[开发者调试] 获取到 SToken: ${data.stoken ? '✅ 是' : '❌ 否'}`);
                                 addLog(`[开发者调试] 获取到 LToken: ${data.ltoken ? '✅ 是' : '❌ 否'}`);
                                 addLog(`[开发者调试] 完整 Cookie 长度: ${cookieStr.length}`);
-                                if (data.dbg) addLog(`[开发者调试] 兑换日志: ${JSON.stringify(data.dbg)}`);`n                                // Auto start sync`n                                syncBtn.click();`n                            }, 1000);
+                                if (data.dbg) addLog(`[调试] 额外日志: ${JSON.stringify(data.dbg)}`);
+                                // Auto start sync
+                                syncBtn.click();
+                            }, 1000);
                         }
                     }
                 } catch (e) {
