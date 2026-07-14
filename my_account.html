@@ -651,17 +651,16 @@
             } else {
                 constellationsHtml = '<div class="constellations-section"><div class="section-title"><i class="fa-solid fa-star"></i> 命之座网络</div><div style="text-align:center; padding:40px; color:#64748b;">暂无命座数据</div></div>';
             }
-            const fandomElementMap = {
-                '风': '1/10/Element_Anemo.svg',
-                '火': '2/2c/Element_Pyro.svg',
-                '水': '8/80/Element_Hydro.svg',
-                '冰': '7/72/Element_Cryo.svg',
-                '雷': 'f/ff/Element_Electro.svg',
-                '岩': '9/9b/Element_Geo.svg',
-                '草': '7/73/Element_Dendro.svg'
+            const customElementMap = {
+                '风': './assets/elements/Anemo.png',
+                '火': './assets/elements/Pyro.png',
+                '水': './assets/elements/Hydro.png',
+                '雷': './assets/elements/Electro.png',
+                '草': './assets/elements/Dendro.png',
+                '冰': './assets/elements/Cryo.png',
+                '岩': './assets/elements/Geo.png'
             };
-            const fandomPath = fandomElementMap[char.element];
-            const bgIconUrl = fandomPath ? `https://static.wikia.nocookie.net/genshin-impact/images/${fandomPath}` : '';
+            const bgIconUrl = customElementMap[char.element] || '';
             
             panel.innerHTML = `
                 <div class="hero-card">
