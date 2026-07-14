@@ -133,10 +133,11 @@
             position: relative; overflow: hidden;
         }
         .hero-element-bg {
-            position: absolute; right: 30px; top: 100px; 
+            position: absolute; right: 12px; top: 127px; transform: translateY(-50%);
             height: 250px; opacity: 0.25; z-index: 0; pointer-events: none;
             filter: drop-shadow(0 0 30px rgba(var(--theme-primary-rgb), 0.8));
             mix-blend-mode: plus-lighter;
+            transition: filter 0.3s ease; /* Only animate the glow color changing */
         }
         .hero-card::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
@@ -540,34 +541,15 @@
                 selectedEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
             
-            const updateDOM = () => {
-                const char = charactersData.find(c => c.id === charId);
-                if (char) {
-                    setGlobalTheme(char.element);
-                    const panel = document.getElementById('detailContent');
-                    panel.style.opacity = '1';
-                    panel.style.transform = 'translateY(0)';
-                    panel.style.transition = 'none';
-                    renderDetailPanel(char);
-                    
-                    // Pre-decode large image to reduce pop-in
-                    const img = panel.querySelector('.hero-portrait img:last-child');
-                    if(img) img.decoding = 'async';
-                }
-            };
-
-            if (document.startViewTransition) {
-                document.startViewTransition(updateDOM);
-            } else {
-                updateDOM();
-                // Fallback for older browsers
+            const char = charactersData.find(c => c.id === charId);
+            if (char) {
+                setGlobalTheme(char.element);
+                renderDetailPanel(char);
+                
+                // Pre-decode large image to reduce pop-in
                 const panel = document.getElementById('detailContent');
-                const heroCard = panel.querySelector('.hero-card');
-                if (heroCard) {
-                    heroCard.style.animation = 'none';
-                    void heroCard.offsetWidth;
-                    heroCard.style.animation = 'contentSwap 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards';
-                }
+                const img = panel.querySelector('.hero-portrait img:last-child');
+                if (img) img.decoding = 'async';
             }
         }
         
