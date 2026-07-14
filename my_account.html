@@ -311,7 +311,17 @@
                 border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1);
                 background: var(--bg-dark);
             } 
-            .sidebar-header { display: none; }
+            .sidebar-header { 
+                display: flex; 
+                flex-direction: column; 
+                align-items: center; 
+                text-align: center;
+                padding: 15px; 
+                gap: 8px;
+            }
+            .sidebar-header h2 { font-size: 1.2rem; margin: 0; }
+            .sidebar-header p { margin: 0; }
+            .sidebar-header > div { display: flex; gap: 10px; justify-content: center; }
 
             .search-box { padding: 10px 15px 5px; border-bottom: none; }
             .filter-box { padding: 0 15px 10px; border-bottom: none; }
