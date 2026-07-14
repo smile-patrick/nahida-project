@@ -536,30 +536,34 @@
                 selectedEl.classList.add('active');
                 selectedEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
-            const char = charactersData.find(c => c.id === charId);
-            if (char) {
-                setGlobalTheme(char.element);
+            
+            const updateDOM = () => {
+                const char = charactersData.find(c => c.id === charId);
+                if (char) {
+                    setGlobalTheme(char.element);
+                    const panel = document.getElementById('detailPanel');
+                    panel.style.opacity = '1';
+                    panel.style.transform = 'translateY(0)';
+                    panel.style.transition = 'none';
+                    renderDetailPanel(char);
+                    
+                    // Pre-decode large image to reduce pop-in
+                    const img = panel.querySelector('.hero-portrait img');
+                    if(img) img.decoding = 'async';
+                }
+            };
+
+            if (document.startViewTransition) {
+                document.startViewTransition(updateDOM);
+            } else {
+                updateDOM();
+                // Fallback for older browsers
                 const panel = document.getElementById('detailPanel');
-                
-                // Reset panel opacity in case it was stuck
-                panel.style.opacity = '1';
-                panel.style.transform = 'translateY(0)';
-                panel.style.transition = 'none';
-                
-                renderDetailPanel(char);
-                
                 const heroCard = panel.querySelector('.hero-card');
-                const twoCols = panel.querySelector('.two-columns');
-                
                 if (heroCard) {
                     heroCard.style.animation = 'none';
-                    void heroCard.offsetWidth; // Force reflow
+                    void heroCard.offsetWidth;
                     heroCard.style.animation = 'contentSwap 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards';
-                }
-                if (twoCols) {
-                    twoCols.style.animation = 'none';
-                    void twoCols.offsetWidth; // Force reflow
-                    twoCols.style.animation = 'contentSwap 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards';
                 }
             }
         }
