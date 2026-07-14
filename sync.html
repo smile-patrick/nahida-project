@@ -164,10 +164,13 @@
                     <p class="profile-uid" id="profileUid">UID: --------</p>
                 </div>
                 <div class="profile-actions" style="display: flex; gap: 8px;">
-                    <button type="button" class="btn-profile-action" id="btnDirectEntry" title="直接进入控制台"><i class="fa-solid fa-arrow-right-to-bracket"></i></button>
                     <button type="button" class="btn-profile-action" id="btnLogout" title="退出登录 (清除 Cookie)"><i class="fa-solid fa-right-from-bracket"></i></button>
                 </div>
             </div>
+            
+            <button type="button" class="btn-sync-main" id="btnEnterConsole" style="display: none; margin-bottom: 20px; background: linear-gradient(135deg, var(--dendro-primary) 0%, #059669 100%); box-shadow: 0 0 15px var(--dendro-bg-glow);">
+                <i class="fa-solid fa-link"></i> 连接世界树网络
+            </button>
 
             <form id="syncForm">
                 
@@ -403,10 +406,24 @@
         window.addEventListener('DOMContentLoaded', () => {
             const savedCookie = localStorage.getItem('genshinCookie');
             const savedUid = localStorage.getItem('genshinSyncUid');
+            const savedData = localStorage.getItem('genshinSyncData');
+
             if (savedCookie) {
                 document.getElementById('cookie').value = savedCookie;
                 // Fetch profile if logged in
                 fetchProfileInfo(savedCookie, savedUid);
+                
+                // Check if data is already synced successfully
+                if (savedData) {
+                    try {
+                        const parsed = JSON.parse(savedData);
+                        if (parsed && parsed.length > 0) {
+                            // Fully logged in and data exists
+                            document.getElementById('syncForm').style.display = 'none';
+                            document.getElementById('btnEnterConsole').style.display = 'block';
+                        }
+                    } catch(e) {}
+                }
             }
             if (savedUid) {
                 document.getElementById('uid').value = savedUid;
@@ -444,14 +461,21 @@
         }
         
         // Profile Action Buttons
-        document.getElementById('btnDirectEntry').addEventListener('click', () => {
+        document.getElementById('btnEnterConsole').addEventListener('click', () => {
             window.location.href = 'my_account.html';
         });
         document.getElementById('btnLogout').addEventListener('click', () => {
             if(confirm('确定要清除已保存的登录凭据吗？')) {
                 localStorage.removeItem('genshinCookie');
                 localStorage.removeItem('genshinSyncUid');
-                window.location.reload();
+                localStorage.removeItem('genshinSyncData');
+                
+                // Reset UI
+                document.getElementById('profileCard').style.display = 'none';
+                document.getElementById('btnEnterConsole').style.display = 'none';
+                document.getElementById('syncForm').style.display = 'block';
+                document.getElementById('cookie').value = '';
+                document.getElementById('uid').value = '';
             }
         });
 
