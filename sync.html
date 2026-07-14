@@ -430,6 +430,11 @@
                     if(result.data.avatar_url) {
                         document.getElementById('profileAvatar').src = result.data.avatar_url;
                     }
+                    if(result.data.game_uid && (!document.getElementById('uid').value || document.getElementById('uid').value === '')) {
+                        document.getElementById('uid').value = result.data.game_uid;
+                        document.getElementById('profileUid').textContent = 'UID: ' + result.data.game_uid;
+                        localStorage.setItem('genshinSyncUid', result.data.game_uid);
+                    }
                 } else {
                     document.getElementById('profileName').textContent = '未实名旅行者';
                 }
@@ -647,19 +652,36 @@
                             
                             let cookieStr = cookieArr.join(';') + ';';
                             document.getElementById('cookie').value = cookieStr;
-                            document.getElementById('uid').value = data.uid;
                             localStorage.setItem('genshinCookie', cookieStr);
                             
-                            setTimeout(() => {
-                                qrModal.style.display = 'none';
-                                addLog('✅ 扫码授权成功，正在自动启动神经元同步...');
-                                
-                                // Auto-trigger the sync process
-                                setTimeout(() => {
-                                    document.getElementById('syncBtn').click();
-                                }, 800);
-
-                            }, 1000);
+                            qrModal.style.display = 'none';
+                            addLog('✅ 扫码授权成功，正在自动提取您的游戏角色信息...');
+                            
+                            // Auto fetch profile & game UID before submitting
+                            setTimeout(async () => {
+                                try {
+                                    const res = await fetch('/api/getUserInfo', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ cookie: cookieStr })
+                                    });
+                                    const result = await res.json();
+                                    if(result.success && result.data && result.data.game_uid) {
+                                        document.getElementById('uid').value = result.data.game_uid;
+                                        localStorage.setItem('genshinSyncUid', result.data.game_uid);
+                                        addLog(`✅ 成功获取原神游戏 UID: ${result.data.game_uid}`);
+                                        
+                                        // Auto-trigger the sync process now that we have the Game UID
+                                        setTimeout(() => {
+                                            document.getElementById('syncBtn').click();
+                                        }, 800);
+                                    } else {
+                                        addLog(`❌ 无法自动获取原神游戏 UID，请确保该通行证已绑定原神角色，并手动输入 UID！`, true);
+                                    }
+                                } catch(e) {
+                                    addLog(`❌ 自动获取游戏 UID 失败，请手动输入。`, true);
+                                }
+                            }, 500);
                         }
                     }
                 } catch (e) {

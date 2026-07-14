@@ -22,32 +22,39 @@ export default async function handler(req, res) {
 
     try {
         const url = "https://bbs-api.miyoushe.com/user/wapi/getUserFullInfo?gids=2";
+        const roleUrl = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn";
         
-        // Pass the raw cookie string since buildApiCookie usually filters it, but for Miyoushe BBS API,
-        // we might need cookie_token, account_id, etc. Let's just use the raw cookie if possible, or parsed.
-        // Actually, bbs-api requires standard cookies. We'll use the provided cookie directly.
         const cookieStr = typeof cookie === 'string' ? cookie : '';
+        const headers = {
+            'Cookie': cookieStr,
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
+            'Referer': 'https://bbs.miyoushe.com/'
+        };
 
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Cookie': cookieStr,
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-                'Referer': 'https://bbs.miyoushe.com/'
-            }
-        });
+        const [response, roleResponse] = await Promise.all([
+            fetch(url, { method: 'GET', headers }),
+            fetch(roleUrl, { method: 'GET', headers })
+        ]);
 
         const data = await response.json();
+        let roleData = {};
+        try { roleData = await roleResponse.json(); } catch(e) {}
 
         if (data.retcode === 0) {
             const userInfo = data.data?.user_info;
+            let gameUid = null;
+            if (roleData.retcode === 0 && roleData.data?.list?.length > 0) {
+                gameUid = roleData.data.list[0].game_uid;
+            }
+
             if (userInfo) {
                 return res.status(200).json({
                     success: true,
                     data: {
                         nickname: userInfo.nickname,
                         avatar_url: userInfo.avatar_url,
-                        uid: userInfo.uid,
+                        uid: userInfo.uid, // Miyoushe UID
+                        game_uid: gameUid, // Genshin Impact UID
                         introduce: userInfo.introduce
                     }
                 });
