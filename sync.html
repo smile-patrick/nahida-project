@@ -647,6 +647,7 @@
                             
                             let cookieStr = cookieArr.join(';') + ';';
                             document.getElementById('cookie').value = cookieStr;
+                            document.getElementById('uid').value = data.uid;
                             localStorage.setItem('genshinCookie', cookieStr);
                             
                             setTimeout(() => {
