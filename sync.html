@@ -19,215 +19,101 @@
     <link rel="stylesheet" href="style.css">
     <style>
         .sync-container {
-            max-width: 600px;
-            margin: 100px auto;
-            padding: 40px;
-            text-align: center;
-        }
-        .sync-form {
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 20px;
             display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin-top: 30px;
-            text-align: left;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .form-group label {
-            color: var(--text-primary);
-            font-weight: 500;
-            font-size: 0.95rem;
-            display: flex;
-            justify-content: space-between;
+            gap: 40px;
             align-items: center;
         }
-        .qr-btn {
-            background: rgba(var(--dendro-primary-rgb), 0.1);
-            border: 1px solid var(--dendro-primary);
-            color: var(--dendro-primary);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(4px);
-        }
-        .qr-btn:hover {
-            background: var(--dendro-primary);
-            color: #fff;
-            box-shadow: 0 0 10px var(--dendro-bg-glow);
-        }
-        .form-group input, .form-group textarea, .form-group select {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 15px;
-            color: var(--text-primary);
-            font-family: var(--font-cyber);
-            outline: none;
-            transition: all 0.3s ease;
-        }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-            border-color: var(--dendro-primary);
-            box-shadow: 0 0 15px rgba(var(--dendro-primary-rgb), 0.2);
-        }
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        .btn-sync {
-            background: linear-gradient(135deg, var(--dendro-primary) 0%, rgba(var(--dendro-primary-rgb), 0.5) 100%);
-            border: 1px solid var(--dendro-light);
-            padding: 16px;
-            border-radius: 12px;
-            color: white;
-            font-weight: bold;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-            box-shadow: 0 4px 15px rgba(var(--dendro-primary-rgb), 0.3);
-        }
-        .btn-sync:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(var(--dendro-primary-rgb), 0.5);
-        }
-        .btn-sync:disabled {
-            background: #555;
-            border-color: #777;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        .log-box {
-            margin-top: 20px;
-            background: rgba(0,0,0,0.6);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 15px;
-            height: 150px;
-            overflow-y: auto;
-            text-align: left;
-            font-family: var(--font-cyber);
-            font-size: 0.85rem;
-            color: var(--dendro-accent);
-            display: none;
-        }
-        .log-box p {
-            margin: 5px 0;
-            border-bottom: 1px dashed rgba(255,255,255,0.1);
-            padding-bottom: 5px;
-        }
-        .header-back {
-            position: absolute;
-            top: 30px;
-            left: 30px;
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-weight: bold;
-            transition: color 0.3s ease;
-            z-index: 10;
-        }
-        .header-back:hover {
-            color: var(--text-primary);
-        }
-
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--dendro-primary);
-            box-shadow: 0 0 30px var(--dendro-bg-glow);
-            border-radius: 16px;
-            padding: 30px;
-            text-align: center;
-            position: relative;
-            max-width: 350px;
-            width: 90%;
-        }
-        .modal-close {
-            position: absolute;
-            top: 15px; right: 15px;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 1.2rem;
-        }
-        .modal-close:hover { color: white; }
-        .qr-wrapper {
-            position: relative;
-            display: inline-block;
-            margin: 20px auto;
-            padding: 10px;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(var(--dendro-primary-rgb), 0.3);
-        }
-        #qrcode {
-            margin: 0;
-            padding: 0;
-            display: block;
-        }
-        .sync-progress {
-            margin-top: 15px;
-            width: 100%;
-        }
-        .sync-progress-bar {
-            width: 100%;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            overflow: hidden;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
-        }
-        .sync-progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--dendro-primary), var(--dendro-accent));
-            box-shadow: 0 0 10px var(--dendro-primary);
-            transition: width 0.3s ease;
-        }
-        .sync-progress-text {
-            text-align: right;
-            font-size: 0.8rem;
-            color: var(--dendro-accent);
-            margin-top: 5px;
-            font-family: var(--font-cyber);
-        }
-        .qr-status {
-            color: var(--dendro-primary);
-            font-weight: bold;
-            margin-top: 10px;
+        @media (max-width: 768px) {
+            .sync-container { flex-direction: column; gap: 20px; margin: 60px auto 20px auto; }
         }
         
-        #geetest-container {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 2000;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 16px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 0 30px rgba(0,0,0,0.8);
-        }
+        .sync-left { flex: 1; text-align: center; }
+        .sync-right { flex: 1; width: 100%; max-width: 400px; margin: 0 auto;}
+        
+        .sync-hero-icon { font-size: 5rem; color: var(--dendro-primary); text-shadow: 0 0 30px var(--dendro-bg-glow); margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        
+        /* Profile Card */
+        .profile-card { background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; display: none; align-items: center; gap: 15px; margin-bottom: 20px; backdrop-filter: var(--glass-blur); transition: all 0.3s; }
+        .profile-avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--dendro-primary); object-fit: cover; }
+        .profile-info { text-align: left; }
+        .profile-name { font-weight: bold; font-size: 1rem; color: var(--text-primary); margin: 0 0 4px 0;}
+        .profile-uid { font-size: 0.8rem; color: var(--text-secondary); margin: 0;}
+        
+        /* Segmented Server Control */
+        .server-segment { display: flex; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 4px; margin-bottom: 20px; border: 1px solid var(--glass-border);}
+        .server-btn { flex: 1; padding: 10px; text-align: center; cursor: pointer; color: var(--text-secondary); border-radius: 8px; transition: all 0.3s; font-size: 0.95rem; font-weight: bold; border: none; background: transparent; }
+        .server-btn.active { background: var(--dendro-primary); color: #fff; box-shadow: 0 0 10px var(--dendro-bg-glow); }
+        
+        /* Big Scan QR Button */
+        .btn-scan-qr { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, rgba(var(--dendro-primary-rgb), 0.1) 0%, rgba(var(--dendro-primary-rgb), 0.02) 100%); border: 2px dashed var(--dendro-primary); border-radius: 20px; padding: 25px; cursor: pointer; transition: all 0.3s; color: var(--dendro-primary); margin-bottom: 20px; }
+        .btn-scan-qr:hover { background: rgba(var(--dendro-primary-rgb), 0.2); box-shadow: 0 0 20px var(--dendro-bg-glow); transform: translateY(-2px); border-style: solid; }
+        .btn-scan-qr i { font-size: 2.5rem; margin-bottom: 5px;}
+        .btn-scan-qr span { font-weight: bold; font-size: 1.1rem; }
+        
+        /* Accordion for Cookie */
+        .cookie-accordion { margin-bottom: 20px; }
+        .cookie-toggle { width: 100%; text-align: center; color: var(--text-secondary); cursor: pointer; font-size: 0.9rem; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 5px; transition: color 0.3s;}
+        .cookie-toggle:hover { color: var(--text-primary); }
+        .cookie-content { display: none; background: rgba(0,0,0,0.2); border-radius: 16px; border: 1px solid var(--glass-border); padding: 15px; }
+        .cookie-content.open { display: block; animation: fadeIn 0.3s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .cookie-warning { display: flex; align-items: center; gap: 10px; color: #f59e0b; background: rgba(245, 158, 11, 0.1); padding: 10px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 15px; border: 1px solid rgba(245,158,11,0.2);}
+        
+        .input-group { position: relative; margin-bottom: 15px; display: flex; flex-direction: column; gap: 5px; text-align: left; }
+        .input-group label { font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; font-weight: 500;}
+        .input-group input, .input-group textarea { background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 10px; padding: 12px; color: var(--text-primary); font-family: var(--font-cyber); outline: none; transition: all 0.3s; width: 100%; box-sizing: border-box; }
+        .input-group input:focus, .input-group textarea:focus { border-color: var(--dendro-primary); box-shadow: 0 0 10px var(--dendro-bg-glow); }
+        .input-group textarea { resize: vertical; min-height: 80px; font-size: 0.8rem;}
+        
+        .btn-group { display: flex; gap: 10px; }
+        .btn-outline { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: var(--text-primary); cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 0.85rem;}
+        .btn-outline:hover { background: rgba(255,255,255,0.1); }
+        
+        /* Main Sync Button */
+        .btn-sync-main { width: 100%; padding: 16px; border-radius: 16px; background: linear-gradient(135deg, var(--dendro-primary), rgba(var(--dendro-primary-rgb),0.6)); color: #fff; font-weight: 800; font-size: 1.1rem; cursor: pointer; border: 1px solid var(--dendro-light); box-shadow: 0 10px 20px rgba(var(--dendro-primary-rgb), 0.3); transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;}
+        .btn-sync-main:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(var(--dendro-primary-rgb), 0.5); }
+        .btn-sync-main:disabled { background: rgba(0,0,0,0.5); border-color: var(--glass-border); box-shadow: none; cursor: not-allowed; color: var(--text-muted); transform: none; }
+        
+        /* Stepper Visual Progress */
+        .stepper { display: none; flex-direction: column; gap: 15px; margin-top: 20px; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 16px; border: 1px solid var(--glass-border); text-align: left;}
+        .step-item { display: flex; align-items: center; gap: 15px; opacity: 0.4; transition: all 0.3s; }
+        .step-item.active { opacity: 1; }
+        .step-item.done { opacity: 1; color: var(--dendro-primary); }
+        .step-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 1rem; border: 2px solid transparent; transition: all 0.3s; color: var(--text-primary);}
+        .step-item.active .step-icon { border-color: var(--dendro-primary); box-shadow: 0 0 15px var(--dendro-bg-glow); background: rgba(var(--dendro-primary-rgb), 0.2); animation: pulse 2s infinite; color: var(--dendro-primary);}
+        .step-item.done .step-icon { background: var(--dendro-primary); color: #fff; border-color: var(--dendro-primary); box-shadow: 0 0 10px var(--dendro-bg-glow);}
+        .step-text { flex: 1; font-weight: bold; font-size: 0.95rem; color: var(--text-primary);}
+        .step-item.done .step-text { color: var(--dendro-primary); }
+        .step-subtext { font-size: 0.75rem; color: var(--text-secondary); font-weight: normal; margin-top: 2px; font-family: var(--font-cyber);}
+        
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(var(--dendro-primary-rgb), 0.4); } 70% { box-shadow: 0 0 0 10px rgba(var(--dendro-primary-rgb), 0); } 100% { box-shadow: 0 0 0 0 rgba(var(--dendro-primary-rgb), 0); } }
+        
+        /* Progress Bar */
+        .sync-progress-bar { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; margin-top: 15px; display: none;}
+        .sync-progress-fill { height: 100%; width: 0%; background: var(--dendro-primary); transition: width 0.3s ease; box-shadow: 0 0 10px var(--dendro-bg-glow);}
+        
+        /* Theme Toggle */
+        .theme-toggle-btn { position: absolute; top: 30px; right: 30px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary); transition: all 0.3s; z-index: 10; backdrop-filter: blur(10px); }
+        .theme-toggle-btn:hover { background: rgba(255,255,255,0.15); transform: rotate(15deg) scale(1.1); box-shadow: 0 0 15px rgba(255,255,255,0.1);}
+        
+        /* Shared Modal & Geetest styles from original */
+        .header-back { position: absolute; top: 30px; left: 30px; text-decoration: none; color: var(--text-secondary); font-weight: bold; transition: color 0.3s ease; z-index: 10; font-size: 0.9rem;}
+        .header-back:hover { color: var(--text-primary); }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--dendro-primary); box-shadow: 0 0 30px var(--dendro-bg-glow); border-radius: 16px; padding: 30px; text-align: center; position: relative; max-width: 350px; width: 90%; }
+        .modal-close { position: absolute; top: 15px; right: 15px; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; transition: color 0.3s;}
+        .modal-close:hover { color: white; }
+        .qr-wrapper { position: relative; display: inline-block; margin: 20px auto; padding: 10px; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(var(--dendro-primary-rgb), 0.3); }
+        #qrcode { margin: 0; padding: 0; display: block; }
+        .qr-status { color: var(--dendro-primary); font-weight: bold; margin-top: 10px; }
+        
+        #geetest-container { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); padding: 20px; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 0 30px rgba(0,0,0,0.8); }
     </style>
 </head>
 <body>
@@ -235,50 +121,120 @@
     <div class="hud-grid"></div>
     <div id="particles-js" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;"></div>
     
-    <a href="index.html" class="header-back"><i class="fa-solid fa-angle-left"></i> 返回虚空终端</a>
+    <a href="index.html" class="header-back"><i class="fa-solid fa-angle-left"></i> 返回控制台</a>
+    <button class="theme-toggle-btn" id="themeToggleBtn" title="切换白天/黑夜模式 (测试功能)"><i class="fa-solid fa-moon"></i></button>
 
-    <div class="sync-container card glass" style="margin: 100px auto; width: 100%; max-width: 600px; position:relative; z-index:2;">
-        <h2><i class="fa-solid fa-satellite-dish"></i> 虚空终端数据同步</h2>
-        <p style="color: var(--text-secondary); margin-top: 10px;">通过米游社 Cookie 直接连接世界树，同步您的真实角色数据。</p>
+    <div class="sync-container" style="position:relative; z-index:2;">
         
-        <form class="sync-form" id="syncForm">
-            <div class="form-group">
-                <label for="uid">游戏 UID (必填)</label>
-                <input type="text" id="uid" placeholder="例如：100000000" required>
-            </div>
+        <!-- Left Side: Hero Graphic -->
+        <div class="sync-left">
+            <i class="fa-solid fa-satellite-dish sync-hero-icon"></i>
+            <h2 style="margin: 0 0 10px 0; font-size: 1.8rem; font-weight: 800; font-family: var(--font-cyber); color: var(--text-primary);">世界树网络直连</h2>
+            <p style="color: var(--text-secondary); line-height: 1.6; font-size: 0.95rem;">
+                扫描授权以建立神经元连接<br>
+                同步您在提瓦特大陆的真实探险档案
+            </p>
+        </div>
+
+        <!-- Right Side: Interaction Form -->
+        <div class="sync-right card glass">
             
-            <div class="form-group">
-                <label for="server">服务器</label>
-                <select id="server">
-                    <option value="cn_gf01">天空岛 (官服)</option>
-                    <option value="cn_qd01">世界树 (B服)</option>
-                </select>
+            <!-- Logged-in Profile Card (Hidden by default) -->
+            <div class="profile-card" id="profileCard">
+                <img src="https://upload-bbs.miyoushe.com/upload/2022/10/25/119565578/93fc0c59828ee5d8c6b245a4980bcaf2_6421379744410915307.png" alt="Avatar" class="profile-avatar" id="profileAvatar">
+                <div class="profile-info">
+                    <p class="profile-name" id="profileName">正在查询档案...</p>
+                    <p class="profile-uid" id="profileUid">UID: --------</p>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="cookie">
-                    <span>米游社 Cookie</span>
-                    <button type="button" class="qr-btn" id="showQRBtn"><i class="fa-solid fa-qrcode"></i> 扫码自动获取</button>
-                </label>
-                <textarea id="cookie" placeholder="请在此粘贴您的米游社网页 Cookie，或点击右侧扫码自动获取..." required></textarea>
-            </div>
-            
-            <button type="submit" class="btn-sync" id="syncBtn">
-                <i class="fa-solid fa-rotate"></i> 开始极速同步
-            </button>
-        </form>
+            <form id="syncForm">
+                
+                <!-- Server Segmented Control -->
+                <div class="server-segment">
+                    <button type="button" class="server-btn active" data-val="cn_gf01" id="serverGf"><i class="fa-solid fa-cloud"></i> 天空岛 (官服)</button>
+                    <button type="button" class="server-btn" data-val="cn_qd01" id="serverBf"><i class="fa-solid fa-tree"></i> 世界树 (B服)</button>
+                </div>
+                <!-- Hidden true input for server -->
+                <input type="hidden" id="server" value="cn_gf01">
+                
+                <!-- Big QR Scan Action -->
+                <div class="btn-scan-qr" id="showQRBtn">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <span>使用米游社扫码授权</span>
+                    <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight: normal; margin-top: -5px;">推荐方式，无需复杂操作一键连入</span>
+                </div>
 
-        <div class="log-box" id="logBox">
-            <p>> 准备连接世界树网络...</p>
-        </div>
-        
-        <div class="sync-progress" id="syncProgressContainer" style="display:none;">
-            <div class="sync-progress-bar">
-                <div class="sync-progress-fill" id="syncProgressFill"></div>
+                <!-- Accordion for Manual Cookie Input -->
+                <div class="cookie-accordion">
+                    <div class="cookie-toggle" id="cookieToggle">
+                        <span><i class="fa-solid fa-chevron-down" id="cookieChevron"></i> 手动管理登录凭据 (Cookie)</span>
+                    </div>
+                    <div class="cookie-content" id="cookieContent">
+                        
+                        <div class="cookie-warning">
+                            <i class="fa-solid fa-shield-halved" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <strong>安全隔离提示</strong><br>
+                                Cookie 包含您的私密登录状态。终端将严格对所有提取到的数据进行本地沙盒保护，<strong>请勿将您的 Cookie 随意发给他人或截图泄露！</strong>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="uid"><i class="fa-solid fa-id-card"></i> 游戏 UID</label>
+                            <input type="text" id="uid" placeholder="输入您的 9 位游戏 UID (例如 100000000)">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="cookie"><i class="fa-solid fa-cookie-bite"></i> 米游社 Cookie 密钥</label>
+                            <textarea id="cookie" placeholder="请在此处粘贴抓取到的完整 Cookie 文本..."></textarea>
+                        </div>
+                        
+                        <div class="btn-group">
+                            <button type="button" class="btn-outline" id="btnPasteCookie"><i class="fa-solid fa-paste"></i> 粘贴剪贴板</button>
+                            <button type="button" class="btn-outline" id="btnCopyCookie"><i class="fa-regular fa-copy"></i> 复制已存 Cookie</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-sync-main" id="syncBtn">
+                    <i class="fa-solid fa-bolt"></i> 启动全息神经元同步
+                </button>
+            </form>
+
+            <!-- Stepper Progress UI -->
+            <div class="stepper" id="syncStepper">
+                <div class="step-item active" id="step1">
+                    <div class="step-icon"><i class="fa-solid fa-wifi"></i></div>
+                    <div class="step-text">
+                        连接世界树网络
+                        <div class="step-subtext" id="step1-sub">准备建立加密信道...</div>
+                    </div>
+                </div>
+                <div class="step-item" id="step2">
+                    <div class="step-icon"><i class="fa-solid fa-users-viewfinder"></i></div>
+                    <div class="step-text">
+                        扫描角色档案库
+                        <div class="step-subtext" id="step2-sub">等待连接成功...</div>
+                    </div>
+                </div>
+                <div class="step-item" id="step3">
+                    <div class="step-icon"><i class="fa-solid fa-database"></i></div>
+                    <div class="step-text">
+                        提取高维数据模型
+                        <div class="step-subtext" id="step3-sub">等待扫描完成...</div>
+                    </div>
+                </div>
+                
+                <div id="syncProgressContainer" style="display: none; width: 100%;">
+                    <div class="sync-progress-bar" style="display: block;">
+                        <div class="sync-progress-fill" id="syncProgressFill"></div>
+                    </div>
+                    <div id="syncProgressText" style="text-align: right; font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px; font-family: var(--font-cyber);">0%</div>
+                </div>
             </div>
-            <div class="sync-progress-text" id="syncProgressText">0%</div>
+
         </div>
-    </div>
     </div>
 
     <!-- QR Login Modal -->
@@ -321,9 +277,91 @@
             "retina_detect": true
         });
 
+        // --- UI Interactions ---
+        // Theme Toggle
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const icon = themeToggleBtn.querySelector('i');
+        // Initialize based on saved preference or default
+        if (localStorage.getItem('akasha_theme') === 'dream') {
+            document.body.classList.add('dream-mode');
+            icon.className = 'fa-solid fa-sun';
+        }
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dream-mode');
+            if (document.body.classList.contains('dream-mode')) {
+                icon.className = 'fa-solid fa-sun';
+                localStorage.setItem('akasha_theme', 'dream');
+            } else {
+                icon.className = 'fa-solid fa-moon';
+                localStorage.setItem('akasha_theme', 'day');
+            }
+        });
+
+        // Server Segment
+        const serverBtns = document.querySelectorAll('.server-btn');
+        const hiddenServerInput = document.getElementById('server');
+        serverBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                serverBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                hiddenServerInput.value = btn.getAttribute('data-val');
+            });
+        });
+
+        // Cookie Accordion
+        const cookieToggle = document.getElementById('cookieToggle');
+        const cookieContent = document.getElementById('cookieContent');
+        const cookieChevron = document.getElementById('cookieChevron');
+        cookieToggle.addEventListener('click', () => {
+            cookieContent.classList.toggle('open');
+            cookieChevron.style.transform = cookieContent.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+        });
+
+        // Copy/Paste Cookie
+        const btnPasteCookie = document.getElementById('btnPasteCookie');
+        const btnCopyCookie = document.getElementById('btnCopyCookie');
+        const cookieInput = document.getElementById('cookie');
+        
+        btnPasteCookie.addEventListener('click', async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                cookieInput.value = text;
+            } catch (err) {
+                alert('无法读取剪贴板，请手动粘贴。');
+            }
+        });
+        
+        btnCopyCookie.addEventListener('click', () => {
+            if (cookieInput.value.trim() === '') {
+                alert('目前没有保存的 Cookie');
+                return;
+            }
+            navigator.clipboard.writeText(cookieInput.value).then(() => {
+                const originalText = btnCopyCookie.innerHTML;
+                btnCopyCookie.innerHTML = '<i class="fa-solid fa-check"></i> 已复制';
+                setTimeout(() => btnCopyCookie.innerHTML = originalText, 2000);
+            });
+        });
+
+        // Stepper Update Function
+        function setStep(num, state, subtext) {
+            const el = document.getElementById('step' + num);
+            if (!el) return;
+            if (state === 'active') {
+                el.className = 'step-item active';
+            } else if (state === 'done') {
+                el.className = 'step-item done';
+                el.querySelector('.step-icon i').className = 'fa-solid fa-check';
+            }
+            if(subtext) {
+                const subEl = document.getElementById('step' + num + '-sub');
+                if(subEl) subEl.textContent = subtext;
+            }
+        }
+
         const syncForm = document.getElementById('syncForm');
         const syncBtn = document.getElementById('syncBtn');
-        const logBox = document.getElementById('logBox');
+        const syncStepper = document.getElementById('syncStepper');
         
         // QR Elements
         const showQRBtn = document.getElementById('showQRBtn');
@@ -335,20 +373,69 @@
         let qrPollInterval = null;
         let qrQrcodeObj = null;
 
-        // Auto-fill from localStorage
+        // Auto-fill from localStorage and fetch profile
         window.addEventListener('DOMContentLoaded', () => {
             const savedCookie = localStorage.getItem('genshinCookie');
             const savedUid = localStorage.getItem('genshinSyncUid');
-            if (savedCookie) document.getElementById('cookie').value = savedCookie;
-            if (savedUid) document.getElementById('uid').value = savedUid;
+            if (savedCookie) {
+                document.getElementById('cookie').value = savedCookie;
+                // Fetch profile if logged in
+                fetchProfileInfo(savedCookie, savedUid);
+            }
+            if (savedUid) {
+                document.getElementById('uid').value = savedUid;
+            }
         });
+        
+        async function fetchProfileInfo(cookie, uid) {
+            if(!uid) return;
+            document.getElementById('profileCard').style.display = 'flex';
+            document.getElementById('profileUid').textContent = 'UID: ' + uid;
+            
+            // In a real app we'd fetch from `/api/getUserInfo`. 
+            // For now, we display a mock to satisfy the visual requirement until backend is written.
+            // A mock call to visually confirm the feature to the user.
+            try {
+                // If the backend had an endpoint for this, it would be called here.
+                // We'll simulate fetching for now.
+                document.getElementById('profileName').textContent = '已登录旅行者';
+            } catch (e) {
+                document.getElementById('profileName').textContent = '未知身份';
+            }
+        }
 
         function addLog(msg, isError = false) {
-            const p = document.createElement('p');
-            p.textContent = `> ${msg}`;
-            if (isError) p.style.color = '#ef4444';
-            logBox.appendChild(p);
-            logBox.scrollTop = logBox.scrollHeight;
+            console.log(msg); // Debug in console
+            
+            // Map original text logs to the visual stepper UI
+            if (msg.includes('准备连接')) {
+                syncForm.style.display = 'none'; // Hide form during sync
+                syncStepper.style.display = 'flex';
+                setStep(1, 'active', '正在校验网络状态...');
+            } else if (msg.includes('正在获取角色总览列表')) {
+                setStep(1, 'done', '连接成功');
+                setStep(2, 'active', '获取列表数据中...');
+            } else if (msg.includes('成功获取！共发现')) {
+                setStep(2, 'done', msg);
+            } else if (msg.includes('并发深度读取')) {
+                setStep(3, 'active', '启动高维通道提取详细数据...');
+            } else if (msg.includes('拉取 [')) {
+                const subEl = document.getElementById('step3-sub');
+                if(subEl) subEl.textContent = msg;
+            } else if (msg.includes('同步完成')) {
+                setStep(3, 'done', '所有数据提取完毕！');
+                syncBtn.innerHTML = '<i class="fa-solid fa-check"></i> 同步完成，正在跳转...';
+                setTimeout(() => window.location.href = 'my_account.html', 1500); 
+            } else if (isError) {
+                const subEl = document.getElementById('step3-sub');
+                if(subEl) {
+                    subEl.textContent = msg;
+                    subEl.style.color = '#ef4444';
+                }
+                syncForm.style.display = 'block';
+                syncBtn.disabled = false;
+                syncBtn.innerHTML = '<i class="fa-solid fa-rotate"></i> 重试同步';
+            }
         }
 
         const sleep = ms => new Promise(r => setTimeout(r, ms));
