@@ -84,6 +84,10 @@
             0% { opacity: 0; transform: translateY(15px); }
             100% { opacity: 1; transform: translateY(0); }
         }
+        @keyframes contentSwap {
+            0% { opacity: 0.3; filter: blur(4px); transform: translateY(5px) scale(0.99); }
+            100% { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+        }
         .glass-panel {
             background: rgba(30, 41, 59, 0.4);
             backdrop-filter: blur(16px);
@@ -537,21 +541,25 @@
                 setGlobalTheme(char.element);
                 const panel = document.getElementById('detailPanel');
                 
-                // Only animate if it's already populated
-                if (panel.innerHTML.includes('relic-card') || panel.innerHTML.includes('hero-card')) {
-                    panel.style.opacity = '0';
-                    panel.style.transform = 'translateY(10px)';
-                    panel.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
-                    
-                    setTimeout(() => {
-                        renderDetailPanel(char);
-                        void panel.offsetWidth; // Force reflow
-                        panel.style.opacity = '1';
-                        panel.style.transform = 'translateY(0)';
-                    }, 200);
-                } else {
-                    renderDetailPanel(char);
-                    panel.firstElementChild.classList.add('animate-fade-in');
+                // Reset panel opacity in case it was stuck
+                panel.style.opacity = '1';
+                panel.style.transform = 'translateY(0)';
+                panel.style.transition = 'none';
+                
+                renderDetailPanel(char);
+                
+                const heroCard = panel.querySelector('.hero-card');
+                const twoCols = panel.querySelector('.two-columns');
+                
+                if (heroCard) {
+                    heroCard.style.animation = 'none';
+                    void heroCard.offsetWidth; // Force reflow
+                    heroCard.style.animation = 'contentSwap 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+                }
+                if (twoCols) {
+                    twoCols.style.animation = 'none';
+                    void twoCols.offsetWidth; // Force reflow
+                    twoCols.style.animation = 'contentSwap 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards';
                 }
             }
         }
