@@ -242,7 +242,11 @@
         .filter-btn { white-space: nowrap; padding: 4px 12px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; user-select: none;}
         .filter-btn:hover { background: rgba(255,255,255,0.1); }
         .filter-btn.active { background: rgba(var(--theme-primary-rgb), 0.2); border-color: var(--theme-primary); color: var(--theme-primary-light); }
-        .mobile-filter-btn { display: none; width: calc(100% - 30px); margin: 10px auto 0; padding: 6px; background: rgba(var(--theme-primary-rgb), 0.15); border: 1px solid rgba(var(--theme-primary-rgb), 0.4); color: var(--theme-primary-light); border-radius: 8px; font-size: 0.8rem; cursor: pointer; text-align: center; }
+        .filter-toggle-btn { display: block; width: calc(100% - 30px); margin: 10px auto 10px; padding: 8px; background: rgba(var(--theme-primary-rgb), 0.15); border: 1px solid rgba(var(--theme-primary-rgb), 0.4); color: var(--theme-primary-light); border-radius: 8px; font-size: 0.8rem; cursor: pointer; text-align: center; transition: all 0.2s; }
+        .filter-toggle-btn:hover { background: rgba(var(--theme-primary-rgb), 0.25); }
+        .filter-container-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease; opacity: 0; }
+        .filter-container-wrapper.show { grid-template-rows: 1fr; opacity: 1; }
+        .filter-container { overflow: hidden; }
         
         /* Global Loader Animation */
         .app-loader {
@@ -267,9 +271,7 @@
                 background: var(--bg-dark);
             } 
             .sidebar-header { display: none; }
-            .mobile-filter-btn { display: block; }
-            .filter-container { display: none; }
-            .filter-container.show { display: block; }
+
             .search-box { padding: 10px 15px 5px; border-bottom: none; }
             .filter-box { padding: 0 15px 10px; border-bottom: none; }
             .character-list { 
@@ -345,37 +347,39 @@
                     <a href="index.html" style="color: var(--text-secondary); font-size: 0.8rem; text-decoration: none; background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-house"></i> 首页</a>
                 </div>
             </div>
-            <button id="mobileFilterToggle" class="mobile-filter-btn"><i class="fa-solid fa-filter"></i> 展开筛选与检索</button>
-            <div id="filterContainer" class="filter-container">
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="检索角色档案 (Name)...">
-                </div>
-                <div class="filter-box">
-                    <div class="filter-row" id="elementFilters">
-                        <div class="filter-btn active" data-element="all">全部</div>
-                        <div class="filter-btn" data-element="风">风</div>
-                        <div class="filter-btn" data-element="火">火</div>
-                        <div class="filter-btn" data-element="水">水</div>
-                        <div class="filter-btn" data-element="冰">冰</div>
-                        <div class="filter-btn" data-element="雷">雷</div>
-                        <div class="filter-btn" data-element="岩">岩</div>
-                        <div class="filter-btn" data-element="草">草</div>
+            <button id="filterToggleBtn" class="filter-toggle-btn"><i class="fa-solid fa-filter"></i> 展开筛选与检索</button>
+            <div id="filterWrapper" class="filter-container-wrapper">
+                <div class="filter-container">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="检索角色档案 (Name)...">
                     </div>
-                    <div class="filter-row" id="regionFilters">
-                        <div class="filter-btn active" data-region="all">全部</div>
-                        <div class="filter-btn" data-region="蒙德">蒙德</div>
-                        <div class="filter-btn" data-region="璃月">璃月</div>
-                        <div class="filter-btn" data-region="稻妻">稻妻</div>
-                        <div class="filter-btn" data-region="须弥">须弥</div>
-                        <div class="filter-btn" data-region="枫丹">枫丹</div>
-                        <div class="filter-btn" data-region="纳塔">纳塔</div>
-                        <div class="filter-btn" data-region="至冬">至冬</div>
-                        <div class="filter-btn" data-region="其他">其他</div>
-                    </div>
-                    <div class="filter-row" id="rarityFilters">
-                        <div class="filter-btn active" data-rarity="all">全部</div>
-                        <div class="filter-btn" data-rarity="5">5星</div>
-                        <div class="filter-btn" data-rarity="4">4星</div>
+                    <div class="filter-box">
+                        <div class="filter-row" id="elementFilters">
+                            <div class="filter-btn active" data-element="all">全部</div>
+                            <div class="filter-btn" data-element="风">风</div>
+                            <div class="filter-btn" data-element="火">火</div>
+                            <div class="filter-btn" data-element="水">水</div>
+                            <div class="filter-btn" data-element="冰">冰</div>
+                            <div class="filter-btn" data-element="雷">雷</div>
+                            <div class="filter-btn" data-element="岩">岩</div>
+                            <div class="filter-btn" data-element="草">草</div>
+                        </div>
+                        <div class="filter-row" id="regionFilters">
+                            <div class="filter-btn active" data-region="all">全部</div>
+                            <div class="filter-btn" data-region="蒙德">蒙德</div>
+                            <div class="filter-btn" data-region="璃月">璃月</div>
+                            <div class="filter-btn" data-region="稻妻">稻妻</div>
+                            <div class="filter-btn" data-region="须弥">须弥</div>
+                            <div class="filter-btn" data-region="枫丹">枫丹</div>
+                            <div class="filter-btn" data-region="纳塔">纳塔</div>
+                            <div class="filter-btn" data-region="至冬">至冬</div>
+                            <div class="filter-btn" data-region="其他">其他</div>
+                        </div>
+                        <div class="filter-row" id="rarityFilters">
+                            <div class="filter-btn active" data-rarity="all">全部</div>
+                            <div class="filter-btn" data-rarity="5">5星</div>
+                            <div class="filter-btn" data-rarity="4">4星</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -689,8 +693,8 @@
             selectCharacter(charactersData[0].id);
         }
         
-        document.getElementById('mobileFilterToggle').addEventListener('click', function() {
-            document.getElementById('filterContainer').classList.toggle('show');
+        document.getElementById('filterToggleBtn').addEventListener('click', function() {
+            document.getElementById('filterWrapper').classList.toggle('show');
             if(this.innerHTML.includes('展开')) {
                 this.innerHTML = '<i class="fa-solid fa-filter"></i> 收起筛选与检索';
             } else {
