@@ -47,16 +47,15 @@
         .btn-scan-qr span { font-weight: bold; font-size: 1.1rem; }
         
         /* Accordion for Cookie */
-        .cookie-accordion { margin-bottom: 20px; width: 100%; box-sizing: border-box; }
+        .cookie-accordion { margin-bottom: 20px; }
         .cookie-toggle { width: 100%; text-align: center; color: var(--text-secondary); cursor: pointer; font-size: 0.9rem; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 5px; transition: color 0.3s;}
         .cookie-toggle:hover { color: var(--text-primary); }
-        .cookie-content { display: none; background: rgba(0,0,0,0.2); border-radius: 16px; border: 1px solid var(--glass-border); padding: 15px; width: 100%; box-sizing: border-box; }
+        .cookie-content { display: none; background: rgba(0,0,0,0.2); border-radius: 16px; border: 1px solid var(--glass-border); padding: 15px; }
         .cookie-content.open { display: block; animation: fadeIn 0.3s ease; }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
         
-        .cookie-warning { display: flex; align-items: flex-start; gap: 10px; color: #f59e0b; background: rgba(245, 158, 11, 0.1); padding: 12px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 15px; border: 1px solid rgba(245,158,11,0.2); width: 100%; box-sizing: border-box;}
-        .cookie-warning > div { flex: 1; word-wrap: break-word; }
+        .cookie-warning { display: flex; align-items: center; gap: 10px; color: #f59e0b; background: rgba(245, 158, 11, 0.1); padding: 10px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 15px; border: 1px solid rgba(245,158,11,0.2);}
         
         .input-group { position: relative; margin-bottom: 15px; display: flex; flex-direction: column; gap: 5px; text-align: left; }
         .input-group label { font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; font-weight: 500;}
@@ -233,10 +232,6 @@
                     <div id="syncProgressText" style="text-align: right; font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px; font-family: var(--font-cyber);">0%</div>
                 </div>
                 
-                <button type="button" class="btn-outline" id="stepperRetryBtn" style="display: none; margin-top: 10px; border-color: #ef4444; color: #ef4444; width: 100%;">
-                    <i class="fa-solid fa-rotate"></i> 获取失败，点击重试
-                </button>
-                
                 <details class="log-details" id="logDetails" style="display: none;">
                     <summary><i class="fa-solid fa-terminal"></i> 查看终端详细日志</summary>
                     <div class="log-box-content" id="logBox"></div>
@@ -397,9 +392,9 @@
         });
         
         async function fetchProfileInfo(cookie, uid) {
+            if(!uid) return;
             document.getElementById('profileCard').style.display = 'flex';
-            if (uid) document.getElementById('profileUid').textContent = 'UID: ' + uid;
-            else document.getElementById('profileUid').textContent = 'UID: 获取中...';
+            document.getElementById('profileUid').textContent = 'UID: ' + uid;
             
             try {
                 const res = await fetch('/api/getUserInfo', {
@@ -412,10 +407,6 @@
                     document.getElementById('profileName').textContent = result.data.nickname;
                     if(result.data.avatar_url) {
                         document.getElementById('profileAvatar').src = result.data.avatar_url;
-                    }
-                    if(result.data.uid) {
-                        document.getElementById('profileUid').textContent = 'UID: ' + result.data.uid;
-                        localStorage.setItem('genshinSyncUid', result.data.uid);
                     }
                 } else {
                     document.getElementById('profileName').textContent = '未实名旅行者';
@@ -443,7 +434,6 @@
             if (msg.includes('准备连接')) {
                 syncForm.style.display = 'none'; // Hide form during sync
                 syncStepper.style.display = 'flex';
-                document.getElementById('stepperRetryBtn').style.display = 'none';
                 setStep(1, 'active', '正在校验网络状态...');
             } else if (msg.includes('正在获取角色总览列表')) {
                 setStep(1, 'done', '连接成功');
@@ -457,23 +447,19 @@
                 if(subEl) subEl.textContent = msg;
             } else if (msg.includes('同步完成')) {
                 setStep(3, 'done', '所有数据提取完毕！');
-                document.getElementById('stepperRetryBtn').style.display = 'none';
                 syncBtn.innerHTML = '<i class="fa-solid fa-check"></i> 同步完成，正在跳转...';
                 setTimeout(() => window.location.href = 'my_account.html', 1500); 
             } else if (isError) {
-                // Find the active step and mark it error
-                const subEl = document.getElementById('step3-sub') || document.getElementById('step2-sub');
+                const subEl = document.getElementById('step3-sub');
                 if(subEl) {
                     subEl.textContent = msg;
                     subEl.style.color = '#ef4444';
                 }
-                document.getElementById('stepperRetryBtn').style.display = 'flex';
+                syncForm.style.display = 'block';
+                syncBtn.disabled = false;
+                syncBtn.innerHTML = '<i class="fa-solid fa-rotate"></i> 重试同步';
             }
         }
-        
-        document.getElementById('stepperRetryBtn').addEventListener('click', () => {
-            syncBtn.click();
-        });
 
         const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -627,9 +613,6 @@
                             
                             let cookieStr = cookieArr.join(';') + ';';
                             document.getElementById('cookie').value = cookieStr;
-                            if (data.uid) {
-                                document.getElementById('uid').value = data.uid;
-                            }
                             localStorage.setItem('genshinCookie', cookieStr);
                             
                             setTimeout(() => {
@@ -639,9 +622,7 @@
                                 addLog(`[开发者调试] 获取到 SToken: ${data.stoken ? '✅ 是' : '❌ 否'}`);
                                 addLog(`[开发者调试] 获取到 LToken: ${data.ltoken ? '✅ 是' : '❌ 否'}`);
                                 addLog(`[开发者调试] 完整 Cookie 长度: ${cookieStr.length}`);
-                                if (data.dbg) addLog(`[调试] 额外日志: ${JSON.stringify(data.dbg)}`);
-                                // Auto start sync
-                                syncBtn.click();
+                                if (data.dbg) addLog(`[开发者调试] 兑换日志: ${JSON.stringify(data.dbg)}`);
                             }, 1000);
                         }
                     }
