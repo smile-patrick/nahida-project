@@ -366,6 +366,11 @@
                     <div class="filter-btn" data-region="至冬">至冬</div>
                     <div class="filter-btn" data-region="其他">其他</div>
                 </div>
+                <div class="filter-row" id="rarityFilters">
+                    <div class="filter-btn active" data-rarity="all">全部</div>
+                    <div class="filter-btn" data-rarity="5">5星</div>
+                    <div class="filter-btn" data-rarity="4">4星</div>
+                </div>
             </div>
             <div class="character-list" id="characterList"></div>
         </div>
@@ -468,6 +473,7 @@
 
         let currentFilterElement = 'all';
         let currentFilterRegion = 'all';
+        let currentFilterRarity = 'all';
         
         function applyFilters() {
             const searchText = document.getElementById('searchInput').value.trim();
@@ -476,7 +482,8 @@
                 const matchSearch = char.name.includes(searchText);
                 const matchElement = currentFilterElement === 'all' || char.element === currentFilterElement;
                 const matchRegion = currentFilterRegion === 'all' || getRegion(char.name) === currentFilterRegion;
-                return matchSearch && matchElement && matchRegion;
+                const matchRarity = currentFilterRarity === 'all' || char.rarity.toString() === currentFilterRarity;
+                return matchSearch && matchElement && matchRegion && matchRarity;
             });
             container.innerHTML = filtered.map(char => `
                 <div class="character-item" data-id="${char.id}">
@@ -655,6 +662,15 @@
                 document.querySelectorAll('#regionFilters .filter-btn').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
                 currentFilterRegion = e.target.dataset.region;
+                applyFilters();
+            });
+        });
+
+        document.querySelectorAll('#rarityFilters .filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('#rarityFilters .filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilterRarity = e.target.dataset.rarity;
                 applyFilters();
             });
         });
