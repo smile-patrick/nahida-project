@@ -19,21 +19,13 @@
     <link rel="stylesheet" href="style.css">
     <style>
         .sync-container {
-            max-width: 800px;
+            max-width: 600px;
             margin: 80px auto;
-            padding: 20px;
-            display: flex;
-            gap: 40px;
-            align-items: center;
-        }
-        @media (max-width: 768px) {
-            .sync-container { flex-direction: column; gap: 20px; margin: 60px auto 20px auto; }
+            padding: 30px;
+            text-align: center;
         }
         
-        .sync-left { flex: 1; text-align: center; }
-        .sync-right { flex: 1; width: 100%; max-width: 400px; margin: 0 auto;}
-        
-        .sync-hero-icon { font-size: 5rem; color: var(--dendro-primary); text-shadow: 0 0 30px var(--dendro-bg-glow); margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
+        .sync-hero-icon { font-size: 5rem; color: var(--dendro-primary); text-shadow: 0 0 30px var(--dendro-bg-glow); margin-bottom: 15px; animation: float 3s ease-in-out infinite; }
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
         
         /* Profile Card */
@@ -95,8 +87,18 @@
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(var(--dendro-primary-rgb), 0.4); } 70% { box-shadow: 0 0 0 10px rgba(var(--dendro-primary-rgb), 0); } 100% { box-shadow: 0 0 0 0 rgba(var(--dendro-primary-rgb), 0); } }
         
         /* Progress Bar */
-        .sync-progress-bar { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; margin-top: 15px; display: none;}
+        .sync-progress-bar { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; margin-top: 15px;}
         .sync-progress-fill { height: 100%; width: 0%; background: var(--dendro-primary); transition: width 0.3s ease; box-shadow: 0 0 10px var(--dendro-bg-glow);}
+        
+        /* Foldable Logs */
+        .log-details { margin-top: 15px; text-align: left; background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid var(--glass-border); overflow: hidden; }
+        .log-details summary { padding: 12px 15px; font-size: 0.85rem; color: var(--text-secondary); cursor: pointer; outline: none; list-style: none; display: flex; align-items: center; justify-content: space-between; transition: background 0.3s;}
+        .log-details summary::-webkit-details-marker { display: none; }
+        .log-details summary:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+        .log-details summary::after { content: '\f078'; font-family: "Font Awesome 6 Free"; font-weight: 900; transition: transform 0.3s; }
+        .log-details[open] summary::after { transform: rotate(180deg); }
+        .log-box-content { padding: 15px; max-height: 200px; overflow-y: auto; font-family: var(--font-cyber); font-size: 0.8rem; color: var(--text-muted); border-top: 1px dashed rgba(255,255,255,0.1); }
+        .log-box-content p { margin: 4px 0; }
         
         /* Theme Toggle */
         .theme-toggle-btn { position: absolute; top: 30px; right: 30px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary); transition: all 0.3s; z-index: 10; backdrop-filter: blur(10px); }
@@ -124,20 +126,17 @@
     <a href="index.html" class="header-back"><i class="fa-solid fa-angle-left"></i> 返回控制台</a>
     <button class="theme-toggle-btn" id="themeToggleBtn" title="切换白天/黑夜模式 (测试功能)"><i class="fa-solid fa-moon"></i></button>
 
-    <div class="sync-container" style="position:relative; z-index:2;">
+    <div class="sync-container card glass" style="position:relative; z-index:2;">
         
-        <!-- Left Side: Hero Graphic -->
-        <div class="sync-left">
-            <i class="fa-solid fa-satellite-dish sync-hero-icon"></i>
-            <h2 style="margin: 0 0 10px 0; font-size: 1.8rem; font-weight: 800; font-family: var(--font-cyber); color: var(--text-primary);">世界树网络直连</h2>
-            <p style="color: var(--text-secondary); line-height: 1.6; font-size: 0.95rem;">
-                扫描授权以建立神经元连接<br>
-                同步您在提瓦特大陆的真实探险档案
-            </p>
-        </div>
+        <!-- Hero Graphic -->
+        <i class="fa-solid fa-satellite-dish sync-hero-icon"></i>
+        <h2 style="margin: 0 0 10px 0; font-size: 1.8rem; font-weight: 800; font-family: var(--font-cyber); color: var(--text-primary);">世界树网络直连</h2>
+        <p style="color: var(--text-secondary); line-height: 1.6; font-size: 0.95rem; margin-bottom: 30px;">
+            扫描授权以建立神经元连接，同步您的真实探险档案。
+        </p>
 
-        <!-- Right Side: Interaction Form -->
-        <div class="sync-right card glass">
+        <!-- Interaction Form -->
+        <div style="width: 100%; max-width: 450px; margin: 0 auto; text-align: left;">
             
             <!-- Logged-in Profile Card (Hidden by default) -->
             <div class="profile-card" id="profileCard">
@@ -227,11 +226,16 @@
                 </div>
                 
                 <div id="syncProgressContainer" style="display: none; width: 100%;">
-                    <div class="sync-progress-bar" style="display: block;">
+                    <div class="sync-progress-bar">
                         <div class="sync-progress-fill" id="syncProgressFill"></div>
                     </div>
                     <div id="syncProgressText" style="text-align: right; font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px; font-family: var(--font-cyber);">0%</div>
                 </div>
+                
+                <details class="log-details" id="logDetails" style="display: none;">
+                    <summary><i class="fa-solid fa-terminal"></i> 查看终端详细日志</summary>
+                    <div class="log-box-content" id="logBox"></div>
+                </details>
             </div>
 
         </div>
@@ -392,20 +396,39 @@
             document.getElementById('profileCard').style.display = 'flex';
             document.getElementById('profileUid').textContent = 'UID: ' + uid;
             
-            // In a real app we'd fetch from `/api/getUserInfo`. 
-            // For now, we display a mock to satisfy the visual requirement until backend is written.
-            // A mock call to visually confirm the feature to the user.
             try {
-                // If the backend had an endpoint for this, it would be called here.
-                // We'll simulate fetching for now.
-                document.getElementById('profileName').textContent = '已登录旅行者';
+                const res = await fetch('/api/getUserInfo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cookie })
+                });
+                const result = await res.json();
+                if (result.success && result.data) {
+                    document.getElementById('profileName').textContent = result.data.nickname;
+                    if(result.data.avatar_url) {
+                        document.getElementById('profileAvatar').src = result.data.avatar_url;
+                    }
+                } else {
+                    document.getElementById('profileName').textContent = '未实名旅行者';
+                }
             } catch (e) {
-                document.getElementById('profileName').textContent = '未知身份';
+                document.getElementById('profileName').textContent = '信息获取失败';
             }
         }
 
+        const logDetails = document.getElementById('logDetails');
+        const logBox = document.getElementById('logBox');
+
         function addLog(msg, isError = false) {
             console.log(msg); // Debug in console
+            
+            // Append to text logs
+            logDetails.style.display = 'block';
+            const p = document.createElement('p');
+            p.textContent = `> ${msg}`;
+            if (isError) p.style.color = '#ef4444';
+            logBox.appendChild(p);
+            logBox.scrollTop = logBox.scrollHeight;
             
             // Map original text logs to the visual stepper UI
             if (msg.includes('准备连接')) {
