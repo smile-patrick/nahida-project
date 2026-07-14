@@ -147,20 +147,16 @@
         <div style="width: 100%; max-width: 450px; margin: 0 auto; text-align: left;">
             
             <!-- Logged-in Profile Card (Hidden by default) -->
-            <div class="profile-card" style="flex-direction: column; gap: 20px;" id="profileCard">
-                <div style="display: flex; align-items: center; gap: 15px; width: 100%;">
-                    <img src="https://upload-bbs.miyoushe.com/upload/2022/10/25/119565578/93fc0c59828ee5d8c6b245a4980bcaf2_6421379744410915307.png" alt="Avatar" class="profile-avatar" id="profileAvatar">
-                    <div class="profile-info">
-                        <p class="profile-name" id="profileName">正在查询档案...</p>
-                        <p class="profile-uid" id="profileUid">UID: --------</p>
-                    </div>
-                    <div style="margin-left: auto;">
-                        <button type="button" class="btn-outline" id="btnLogout" style="padding: 6px 12px; font-size: 0.85rem; border-color: rgba(239, 68, 68, 0.5); color: #ef4444;">退出登录</button>
-                    </div>
+            <div class="profile-card" id="profileCard">
+                <img src="https://upload-bbs.miyoushe.com/upload/2022/10/25/119565578/93fc0c59828ee5d8c6b245a4980bcaf2_6421379744410915307.png" alt="Avatar" class="profile-avatar" id="profileAvatar">
+                <div class="profile-info">
+                    <p class="profile-name" id="profileName">正在查询档案...</p>
+                    <p class="profile-uid" id="profileUid">UID: --------</p>
                 </div>
-                <button type="button" class="btn-sync-main" id="btnDirectEnter" style="width: 100%;">
-                    <i class="fa-solid fa-bolt"></i> 连接世界树
-                </button>
+                <div style="margin-left: auto; display: flex; gap: 10px;">
+                    <a href="my_account.html" class="btn-outline" style="padding: 6px 12px; font-size: 0.85rem; border-color: var(--dendro-primary); color: var(--dendro-primary); text-decoration: none;">直接进入</a>
+                    <button type="button" class="btn-outline" id="btnLogout" style="padding: 6px 12px; font-size: 0.85rem; border-color: rgba(239, 68, 68, 0.5); color: #ef4444;">退出登录</button>
+                </div>
             </div>
 
             <form id="syncForm">
@@ -408,40 +404,14 @@
         // Auto-fill from localStorage and fetch profile
         window.addEventListener('DOMContentLoaded', () => {
             const savedCookie = localStorage.getItem('genshinCookie');
-            let savedUid = localStorage.getItem('genshinSyncUid');
-            
-            // Fix corrupted BBS UID (Genshin UID must be 9 digits)
-            if (savedUid && !/^[1-9]\d{8}$/.test(savedUid)) {
-                localStorage.removeItem('genshinSyncUid');
-                savedUid = null;
-            }
-
+            const savedUid = localStorage.getItem('genshinSyncUid');
             if (savedCookie) {
                 document.getElementById('cookie').value = savedCookie;
-                document.getElementById('syncForm').style.display = 'none';
-                document.getElementById('profileCard').style.display = 'flex';
                 // Fetch profile if logged in
                 fetchProfileInfo(savedCookie, savedUid);
             }
             if (savedUid) {
                 document.getElementById('uid').value = savedUid;
-            }
-        });
-        
-        document.getElementById('btnDirectEnter').addEventListener('click', () => {
-            const hasData = localStorage.getItem('genshinSyncData');
-            let isValid = false;
-            try {
-                const parsed = JSON.parse(hasData);
-                if (Array.isArray(parsed) && parsed.length > 0) isValid = true;
-            } catch (e) {}
-
-            if (isValid) {
-                window.location.href = 'my_account.html';
-            } else {
-                document.getElementById('btnDirectEnter').disabled = true;
-                document.getElementById('btnDirectEnter').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> 正在连接世界树...';
-                document.getElementById('syncBtn').click();
             }
         });
         
@@ -462,10 +432,9 @@
                     if(result.data.avatar_url) {
                         document.getElementById('profileAvatar').src = result.data.avatar_url;
                     }
-                    if(result.data.game_uid) {
-                        document.getElementById('profileUid').textContent = 'UID: ' + result.data.game_uid;
-                        localStorage.setItem('genshinSyncUid', result.data.game_uid);
-                        document.getElementById('uid').value = result.data.game_uid;
+                    if(result.data.uid) {
+                        document.getElementById('profileUid').textContent = 'UID: ' + result.data.uid;
+                        localStorage.setItem('genshinSyncUid', result.data.uid);
                     }
                 } else {
                     document.getElementById('profileName').textContent = '未实名旅行者';
