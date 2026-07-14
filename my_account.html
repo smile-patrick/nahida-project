@@ -133,7 +133,7 @@
             position: relative; overflow: hidden;
         }
         .hero-element-bg {
-            position: absolute; right: -20px; top: 50%; transform: translateY(-50%); 
+            position: absolute; right: 30px; top: 100px; 
             height: 250px; opacity: 0.25; z-index: 0; pointer-events: none;
             filter: drop-shadow(0 0 30px rgba(var(--theme-primary-rgb), 0.8));
             mix-blend-mode: plus-lighter;
@@ -416,10 +416,13 @@
             <div class="character-list" id="characterList"></div>
         </div>
         <div class="detail-panel" id="detailPanel">
-            <div class="empty-state">
-                <div style="font-size: 48px; margin-bottom: 20px; color: var(--dendro-primary); text-shadow: 0 0 20px var(--dendro-bg-glow);"><i class="fa-solid fa-database"></i></div>
-                <div style="font-size: 18px; font-weight: 500; color: #f1f5f9;">数据加载中或未同步</div>
-                <div style="font-size: 14px; margin-top: 12px;"><a href="sync.html" style="color: var(--dendro-primary); text-decoration: none; border: 1px solid var(--dendro-primary); padding: 6px 15px; border-radius: 20px;">点击去同步数据</a></div>
+            <img id="persistentElementBg" class="hero-element-bg" src="" style="display: none;" alt="">
+            <div id="detailContent">
+                <div class="empty-state">
+                    <div style="font-size: 48px; margin-bottom: 20px; color: var(--dendro-primary); text-shadow: 0 0 20px var(--dendro-bg-glow);"><i class="fa-solid fa-database"></i></div>
+                    <div style="font-size: 18px; font-weight: 500; color: #f1f5f9;">数据加载中或未同步</div>
+                    <div style="font-size: 14px; margin-top: 12px;"><a href="sync.html" style="color: var(--dendro-primary); text-decoration: none; border: 1px solid var(--dendro-primary); padding: 6px 15px; border-radius: 20px;">点击去同步数据</a></div>
+                </div>
             </div>
         </div>
     </div>
@@ -541,14 +544,14 @@
                 const char = charactersData.find(c => c.id === charId);
                 if (char) {
                     setGlobalTheme(char.element);
-                    const panel = document.getElementById('detailPanel');
+                    const panel = document.getElementById('detailContent');
                     panel.style.opacity = '1';
                     panel.style.transform = 'translateY(0)';
                     panel.style.transition = 'none';
                     renderDetailPanel(char);
                     
                     // Pre-decode large image to reduce pop-in
-                    const img = panel.querySelector('.hero-portrait img');
+                    const img = panel.querySelector('.hero-portrait img:last-child');
                     if(img) img.decoding = 'async';
                 }
             };
@@ -558,7 +561,7 @@
             } else {
                 updateDOM();
                 // Fallback for older browsers
-                const panel = document.getElementById('detailPanel');
+                const panel = document.getElementById('detailContent');
                 const heroCard = panel.querySelector('.hero-card');
                 if (heroCard) {
                     heroCard.style.animation = 'none';
@@ -574,8 +577,26 @@
         }
         
         function renderDetailPanel(char) {
-            const panel = document.getElementById('detailPanel');
+            const panel = document.getElementById('detailContent');
             const elementDamageName = getElementDamageName(char.element);
+            
+            const customElementMap = {
+                '风': './assets/elements/Anemo.png',
+                '火': './assets/elements/Pyro.png',
+                '水': './assets/elements/Hydro.png',
+                '雷': './assets/elements/Electro.png',
+                '草': './assets/elements/Dendro.png',
+                '冰': './assets/elements/Cryo.png',
+                '岩': './assets/elements/Geo.png'
+            };
+            const bgIconUrl = customElementMap[char.element] || '';
+            const persistentBg = document.getElementById('persistentElementBg');
+            if (bgIconUrl) {
+                persistentBg.src = bgIconUrl;
+                persistentBg.style.display = 'block';
+            } else {
+                persistentBg.style.display = 'none';
+            }
             
             let relicsHtml = '';
             if (char.relics && char.relics.length > 0) {
@@ -663,20 +684,9 @@
             } else {
                 constellationsHtml = '<div class="constellations-section"><div class="section-title"><i class="fa-solid fa-star"></i> 命之座网络</div><div style="text-align:center; padding:40px; color:#64748b;">暂无命座数据</div></div>';
             }
-            const customElementMap = {
-                '风': './assets/elements/Anemo.png',
-                '火': './assets/elements/Pyro.png',
-                '水': './assets/elements/Hydro.png',
-                '雷': './assets/elements/Electro.png',
-                '草': './assets/elements/Dendro.png',
-                '冰': './assets/elements/Cryo.png',
-                '岩': './assets/elements/Geo.png'
-            };
-            const bgIconUrl = customElementMap[char.element] || '';
-            
+            // customElementMap already defined above
             panel.innerHTML = `
                 <div class="hero-card">
-                    ${bgIconUrl ? `<img src="${bgIconUrl}" class="hero-element-bg" alt="">` : ''}
                     <div class="hero-inner">
                         <div class="hero-portrait" style="position: relative;">
                             <img src="${char.icon}" alt="placeholder" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(8px) brightness(0.7); transform: scale(1.1);">
