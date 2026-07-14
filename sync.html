@@ -140,9 +140,11 @@
     <div class="hud-grid"></div>
     <div id="particles-js" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;"></div>
     
-    <a href="index.html" class="header-back"><i class="fa-solid fa-angle-left"></i> 返回主页</a>
-
     <div class="sync-container card glass" style="z-index:2;">
+        
+        <div style="text-align: left; margin-bottom: 20px;">
+            <a href="index.html" class="header-back" style="position: static; font-size: 1rem;"><i class="fa-solid fa-angle-left"></i> 返回主页</a>
+        </div>
         
         <!-- Hero Graphic -->
         <i class="fa-solid fa-satellite-dish sync-hero-icon"></i>
@@ -441,9 +443,10 @@
         });
         
         async function fetchProfileInfo(cookie, uid) {
-            if(!uid) return;
             document.getElementById('profileCard').style.display = 'flex';
-            document.getElementById('profileUid').textContent = 'UID: ' + uid;
+            if (uid) {
+                document.getElementById('profileUid').textContent = 'UID: ' + uid;
+            }
             
             try {
                 const res = await fetch('/api/getUserInfo', {
@@ -725,7 +728,7 @@
                             document.getElementById('syncForm').style.display = 'none';
                             document.getElementById('profileCard').style.display = 'none';
                             const syncStepper = document.getElementById('syncStepper');
-                            syncStepper.style.display = 'block';
+                            syncStepper.style.display = 'flex';
                             document.getElementById('logDetails').style.display = 'block';
                             document.getElementById('logBox').innerHTML = '';
                             
