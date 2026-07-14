@@ -408,7 +408,14 @@
         // Auto-fill from localStorage and fetch profile
         window.addEventListener('DOMContentLoaded', () => {
             const savedCookie = localStorage.getItem('genshinCookie');
-            const savedUid = localStorage.getItem('genshinSyncUid');
+            let savedUid = localStorage.getItem('genshinSyncUid');
+            
+            // Fix corrupted BBS UID (Genshin UID must be 9 digits)
+            if (savedUid && !/^[1-9]\d{8}$/.test(savedUid)) {
+                localStorage.removeItem('genshinSyncUid');
+                savedUid = null;
+            }
+
             if (savedCookie) {
                 document.getElementById('cookie').value = savedCookie;
                 document.getElementById('syncForm').style.display = 'none';
@@ -455,9 +462,10 @@
                     if(result.data.avatar_url) {
                         document.getElementById('profileAvatar').src = result.data.avatar_url;
                     }
-                    if(result.data.uid) {
-                        document.getElementById('profileUid').textContent = 'UID: ' + result.data.uid;
-                        localStorage.setItem('genshinSyncUid', result.data.uid);
+                    if(result.data.game_uid) {
+                        document.getElementById('profileUid').textContent = 'UID: ' + result.data.game_uid;
+                        localStorage.setItem('genshinSyncUid', result.data.game_uid);
+                        document.getElementById('uid').value = result.data.game_uid;
                     }
                 } else {
                     document.getElementById('profileName').textContent = '未实名旅行者';

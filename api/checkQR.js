@@ -136,14 +136,29 @@ export default async function handler(req, res) {
                             cookieToken = cookieTokenData.data.cookie_token;
                         }
                     } catch (e) {
-                        dbg.cookieTokenError = e.message;
+                        console.error('Fetch cookie_token error', e);
                     }
+                }
+
+                // FETCH REAL GAME UID
+                let gameUid = '';
+                try {
+                    const rolesUrl = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn";
+                    const rolesRes = await fetch(rolesUrl, {
+                        headers: { 'Cookie': `stoken=${stoken}; stuid=${uid}; mid=${mid}; cookie_token=${cookieToken}; account_id=${uid}` }
+                    });
+                    const rolesData = await rolesRes.json();
+                    if (rolesData.retcode === 0 && rolesData.data && rolesData.data.list && rolesData.data.list.length > 0) {
+                        gameUid = rolesData.data.list[0].game_uid;
+                    }
+                } catch (e) {
+                    console.error('Fetch game uid error', e);
                 }
 
                 return res.status(200).json({ 
                     success: true, 
                     stat: status,
-                    uid: uid,
+                    uid: gameUid || uid,
                     mid: mid,
                     cookie_token: cookieToken,
                     stoken: stoken,

@@ -41,6 +41,23 @@ export default async function handler(req, res) {
 
         if (data.retcode === 0) {
             const userInfo = data.data?.user_info;
+            
+            // Fetch real Game UID
+            let gameUid = '';
+            try {
+                const rolesUrl = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn";
+                const rolesRes = await fetch(rolesUrl, {
+                    method: 'GET',
+                    headers: { 'Cookie': cookieStr }
+                });
+                const rolesData = await rolesRes.json();
+                if (rolesData.retcode === 0 && rolesData.data && rolesData.data.list && rolesData.data.list.length > 0) {
+                    gameUid = rolesData.data.list[0].game_uid;
+                }
+            } catch (e) {
+                console.error('Fetch game uid error in getUserInfo', e);
+            }
+
             if (userInfo) {
                 return res.status(200).json({
                     success: true,
@@ -48,6 +65,7 @@ export default async function handler(req, res) {
                         nickname: userInfo.nickname,
                         avatar_url: userInfo.avatar_url,
                         uid: userInfo.uid,
+                        game_uid: gameUid,
                         introduce: userInfo.introduce
                     }
                 });
