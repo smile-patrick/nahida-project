@@ -518,7 +518,7 @@
             });
             container.innerHTML = filtered.map((char, index) => `
                 <div class="character-item" data-id="${char.id}" style="animation-delay: ${index * 0.05}s">
-                    <div class="char-avatar"><img src="${char.icon}" onerror="this.style.display='none'"></div>
+                    <div class="char-avatar"><img src="${char.icon}" decoding="async" onerror="this.style.display='none'"></div>
                     <div class="char-info">
                         <div class="char-name">${char.name}</div>
                         <div class="char-element" style="color: ${getElementColor(char.element)}">${char.element}</div>
@@ -538,18 +538,13 @@
             const selectedEl = document.querySelector(`.character-item[data-id="${charId}"]`);
             if (selectedEl) {
                 selectedEl.classList.add('active');
-                selectedEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                selectedEl.scrollIntoView({ behavior: 'auto', block: 'nearest' });
             }
             
             const char = charactersData.find(c => c.id === charId);
             if (char) {
                 setGlobalTheme(char.element);
                 renderDetailPanel(char);
-                
-                // Pre-decode large image to reduce pop-in
-                const panel = document.getElementById('detailContent');
-                const img = panel.querySelector('.hero-portrait img:last-child');
-                if (img) img.decoding = 'async';
             }
         }
         
@@ -594,7 +589,7 @@
                     relicsHtml += `
                         <div class="relic-card">
                             <div class="relic-icon-area">
-                                <img class="relic-icon" src="${relic.icon}" onerror="this.src='https://act-webstatic.mihoyo.com/hk4e/e20200928calculate/item_icon/67c7f6c8/placeholder.png'">
+                                <img class="relic-icon" src="${relic.icon}" decoding="async" onerror="this.src='https://act-webstatic.mihoyo.com/hk4e/e20200928calculate/item_icon/67c7f6c8/placeholder.png'">
                             </div>
                             <div class="relic-info">
                                 <div class="relic-header">
@@ -671,8 +666,8 @@
                 <div class="hero-card">
                     <div class="hero-inner">
                         <div class="hero-portrait" style="position: relative;">
-                            <img src="${char.icon}" alt="placeholder" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(8px) brightness(0.7); transform: scale(1.1);">
-                            <img src="${char.portrait}" onload="this.style.opacity=1" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s ease; z-index: 2;" onerror="this.src='${char.icon}'; this.style.opacity=1;" alt="portrait">
+                            <img src="${char.icon}" alt="placeholder" decoding="async" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(8px) brightness(0.7); transform: scale(1.1);">
+                            <img src="${char.portrait}" decoding="async" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2;" onerror="this.src='${char.icon}';" alt="portrait">
                         </div>
                         <div class="hero-info">
                             <div class="hero-name">${char.name}</div>
@@ -683,7 +678,7 @@
                                 <span class="level-tag">命座 ${char.constellation}/6</span>
                             </div>
                             <div class="weapon-card">
-                                <div class="weapon-icon"><img src="${char.weapon_icon}" onerror="this.style.display='none'"></div>
+                                <div class="weapon-icon"><img src="${char.weapon_icon}" decoding="async" onerror="this.style.display='none'"></div>
                                 <div><div style="font-weight:700; font-size:1.1rem; color: #f8fafc;">${char.weapon_name}</div><div style="font-size:0.8rem; color:#94a3b8; margin-top: 4px;">Lv.${char.weapon_level} · 精炼 ${char.weapon_affix}</div></div>
                             </div>
                         </div>
