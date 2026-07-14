@@ -137,14 +137,16 @@
     </style>
 </head>
 <body>
-    
     <div class="hud-grid"></div>
     <div id="particles-js" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;"></div>
     
-    <a href="index.html" class="header-back"><i class="fa-solid fa-angle-left"></i> 返回主页</a>
-    <button class="theme-toggle-btn" id="themeToggleBtn" title="切换白天/黑夜模式 (测试功能)"><i class="fa-solid fa-moon"></i></button>
-
     <div class="sync-container card glass" style="z-index:2;">
+        
+        <!-- Header Actions inside the container -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <a href="index.html" class="header-back" style="position: static; font-size: 1rem;"><i class="fa-solid fa-angle-left"></i> 返回主页</a>
+            <button class="theme-toggle-btn" id="themeToggleBtn" title="切换白天/黑夜模式" style="position: static; width: 36px; height: 36px;"><i class="fa-solid fa-moon"></i></button>
+        </div>
         
         <!-- Hero Graphic -->
         <i class="fa-solid fa-satellite-dish sync-hero-icon"></i>
@@ -164,6 +166,7 @@
                     <p class="profile-uid" id="profileUid">UID: --------</p>
                 </div>
                 <div class="profile-actions" style="display: flex; gap: 8px;">
+                    <button type="button" class="btn-profile-action" id="btnViewCookie" title="查看本地凭据 (Cookie)"><i class="fa-solid fa-key"></i></button>
                     <button type="button" class="btn-profile-action" id="btnLogout" title="退出登录 (清除 Cookie)"><i class="fa-solid fa-right-from-bracket"></i></button>
                 </div>
             </div>
@@ -266,6 +269,20 @@
         </div>
     </div>
 
+    <!-- Cookie Viewer Modal -->
+    <div class="modal-overlay" id="cookieViewModal">
+        <div class="modal-content" style="max-width: 450px;">
+            <i class="fa-solid fa-xmark modal-close" id="closeCookieViewBtn"></i>
+            <h3 style="color: white; margin-top: 0; margin-bottom: 20px;">您的本地登录凭据</h3>
+            <div style="text-align: left;">
+                <label for="viewCookieText" style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px; display: block;">米游社 Cookie (只读)</label>
+                <textarea id="viewCookieText" readonly style="width: 100%; height: 100px; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: var(--dendro-primary); border-radius: 8px; font-family: var(--font-cyber); font-size: 0.8rem; resize: none; margin-bottom: 15px;"></textarea>
+                
+                <button type="button" class="btn-outline" id="btnCopyViewCookie" style="width: 100%;"><i class="fa-regular fa-copy"></i> 复制到剪贴板</button>
+            </div>
+        </div>
+    </div>
+
     <!-- QR Login Modal -->
     <div class="modal-overlay" id="qrModal">
         <div class="modal-content">
@@ -306,26 +323,37 @@
             "retina_detect": true
         });
 
-        // --- UI Interactions ---
-        // Theme Toggle
+        // --- Theme Logic ---
         const themeToggleBtn = document.getElementById('themeToggleBtn');
-        const icon = themeToggleBtn.querySelector('i');
-        // Initialize based on saved preference or default
+        const themeIcon = themeToggleBtn.querySelector('i');
+        
         if (localStorage.getItem('akasha_theme') === 'dream') {
             document.body.classList.add('dream-mode');
-            icon.className = 'fa-solid fa-sun';
+            themeIcon.className = 'fa-solid fa-sun';
+        } else if (localStorage.getItem('akasha_theme') === 'day') {
+            document.body.classList.remove('dream-mode');
+            themeIcon.className = 'fa-solid fa-moon';
+        } else {
+            // Auto Time-based
+            const currentHour = new Date().getHours();
+            if (currentHour >= 18 || currentHour < 6) {
+                document.body.classList.add('dream-mode');
+                themeIcon.className = 'fa-solid fa-sun';
+            }
         }
+
         themeToggleBtn.addEventListener('click', () => {
             document.body.classList.toggle('dream-mode');
             if (document.body.classList.contains('dream-mode')) {
-                icon.className = 'fa-solid fa-sun';
+                themeIcon.className = 'fa-solid fa-sun';
                 localStorage.setItem('akasha_theme', 'dream');
             } else {
-                icon.className = 'fa-solid fa-moon';
+                themeIcon.className = 'fa-solid fa-moon';
                 localStorage.setItem('akasha_theme', 'day');
             }
         });
 
+        // --- UI Interactions ---
         // Server Segment
         const serverBtns = document.querySelectorAll('.server-btn');
         const hiddenServerInput = document.getElementById('server');
@@ -481,6 +509,34 @@
                 document.getElementById('profileAvatar').src = 'https://upload-bbs.miyoushe.com/upload/2022/10/25/119565578/93fc0c59828ee5d8c6b245a4980bcaf2_6421379744410915307.png';
             }
         });
+        
+        // Cookie Viewer JS
+        const btnViewCookie = document.getElementById('btnViewCookie');
+        const cookieViewModal = document.getElementById('cookieViewModal');
+        const closeCookieViewBtn = document.getElementById('closeCookieViewBtn');
+        const btnCopyViewCookie = document.getElementById('btnCopyViewCookie');
+        const viewCookieText = document.getElementById('viewCookieText');
+
+        if(btnViewCookie) {
+            btnViewCookie.addEventListener('click', () => {
+                viewCookieText.value = localStorage.getItem('genshinCookie') || '';
+                cookieViewModal.style.display = 'flex';
+            });
+        }
+        if(closeCookieViewBtn) {
+            closeCookieViewBtn.addEventListener('click', () => {
+                cookieViewModal.style.display = 'none';
+            });
+        }
+        if(btnCopyViewCookie) {
+            btnCopyViewCookie.addEventListener('click', () => {
+                viewCookieText.select();
+                document.execCommand('copy');
+                const origHtml = btnCopyViewCookie.innerHTML;
+                btnCopyViewCookie.innerHTML = '<i class="fa-solid fa-check"></i> 已复制';
+                setTimeout(() => { btnCopyViewCookie.innerHTML = origHtml; }, 2000);
+            });
+        }
 
         const logDetails = document.getElementById('logDetails');
         const logBox = document.getElementById('logBox');
