@@ -311,15 +311,26 @@
             .sidebar-header { 
                 display: flex; 
                 flex-direction: row; 
-                flex-wrap: wrap;
                 justify-content: space-between;
                 align-items: center; 
-                padding: 12px 15px; 
+                padding: 10px 15px; 
                 background: var(--bg-dark);
             }
-            .sidebar-header h2 { font-size: 1.1rem; margin: 0; width: 100%; text-align: left; margin-bottom: 5px;}
-            .sidebar-header p { margin: 0; font-size: 0.8rem; }
+            .sidebar-header h2 { font-size: 1.1rem; margin: 0; width: auto; text-align: left; flex: 1;}
+            .sidebar-header p { display: none; }
             .sidebar-header > div { display: flex; gap: 10px; margin-top: 0 !important; }
+            
+            /* Turn nav buttons into circular icons on mobile */
+            .sidebar-header > div a { 
+                padding: 0 !important; 
+                border-radius: 50% !important; 
+                width: 36px; height: 36px; 
+                display: flex; align-items: center; justify-content: center;
+                background: rgba(255,255,255,0.05) !important;
+                border: 1px solid rgba(255,255,255,0.1) !important;
+                font-size: 0 !important; /* Hide text */
+            }
+            .sidebar-header > div a i { font-size: 1rem; color: #cbd5e1; margin: 0; }
 
             .search-box { padding: 10px 15px 5px; border-bottom: none; }
             .filter-box { padding: 0 15px 10px; border-bottom: none; }
@@ -745,9 +756,9 @@
         document.getElementById('filterToggleBtn').addEventListener('click', function() {
             document.getElementById('filterWrapper').classList.toggle('show');
             if(this.innerHTML.includes('展开')) {
-                this.innerHTML = '<i class="fa-solid fa-filter"></i> 收起筛选与检索';
+                this.innerHTML = '<i class="fa-solid fa-filter"></i> 收起筛选';
             } else {
-                this.innerHTML = '<i class="fa-solid fa-filter"></i> 展开筛选与检索';
+                this.innerHTML = '<i class="fa-solid fa-filter"></i> 展开筛选';
             }
         });
         
@@ -755,8 +766,7 @@
         const backToTopBtn = document.getElementById('backToTopBtn');
         let lastScrollTop = 0;
         
-        detailPanel.addEventListener('scroll', function() {
-            let st = this.scrollTop;
+        function handleScroll(st) {
             if (st > 300) backToTopBtn.classList.add('visible');
             else backToTopBtn.classList.remove('visible');
             
