@@ -20,9 +20,15 @@
     <style>
         .sync-container {
             max-width: 600px;
+            width: 90%;
+            box-sizing: border-box;
             margin: 80px auto;
             padding: 30px;
             text-align: center;
+        }
+        @media (max-width: 768px) {
+            .sync-container { margin: 40px auto 20px auto; padding: 20px; }
+            .btn-scan-qr { padding: 15px; }
         }
         
         .sync-hero-icon { font-size: 5rem; color: var(--dendro-primary); text-shadow: 0 0 30px var(--dendro-bg-glow); margin-bottom: 15px; animation: float 3s ease-in-out infinite; }
@@ -31,9 +37,13 @@
         /* Profile Card */
         .profile-card { background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; display: none; align-items: center; gap: 15px; margin-bottom: 20px; backdrop-filter: var(--glass-blur); transition: all 0.3s; }
         .profile-avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--dendro-primary); object-fit: cover; }
-        .profile-info { text-align: left; }
+        .profile-info { text-align: left; flex: 1; }
         .profile-name { font-weight: bold; font-size: 1rem; color: var(--text-primary); margin: 0 0 4px 0;}
         .profile-uid { font-size: 0.8rem; color: var(--text-secondary); margin: 0;}
+        .btn-profile-action { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-primary); border-radius: 8px; width: 36px; height: 36px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center;}
+        .btn-profile-action:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
+        #btnLogout:hover { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #ef4444; }
+        #btnDirectEntry:hover { background: rgba(16, 185, 129, 0.2); border-color: var(--dendro-primary); color: var(--dendro-primary); }
         
         /* Segmented Server Control */
         .server-segment { display: flex; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 4px; margin-bottom: 20px; border: 1px solid var(--glass-border);}
@@ -50,10 +60,8 @@
         .cookie-accordion { margin-bottom: 20px; }
         .cookie-toggle { width: 100%; text-align: center; color: var(--text-secondary); cursor: pointer; font-size: 0.9rem; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 5px; transition: color 0.3s;}
         .cookie-toggle:hover { color: var(--text-primary); }
-        .cookie-content { display: none; background: rgba(0,0,0,0.2); border-radius: 16px; border: 1px solid var(--glass-border); padding: 15px; }
-        .cookie-content.open { display: block; animation: fadeIn 0.3s ease; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .cookie-content { max-height: 0; opacity: 0; overflow: hidden; background: rgba(0,0,0,0.2); border-radius: 16px; border: 1px solid transparent; padding: 0 15px; transition: all 0.4s ease; box-sizing: border-box; }
+        .cookie-content.open { max-height: 600px; opacity: 1; border-color: var(--glass-border); padding: 15px; }
         
         .cookie-warning { display: flex; align-items: center; gap: 10px; color: #f59e0b; background: rgba(245, 158, 11, 0.1); padding: 10px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 15px; border: 1px solid rgba(245,158,11,0.2);}
         
@@ -144,6 +152,10 @@
                 <div class="profile-info">
                     <p class="profile-name" id="profileName">正在查询档案...</p>
                     <p class="profile-uid" id="profileUid">UID: --------</p>
+                </div>
+                <div class="profile-actions" style="display: flex; gap: 8px;">
+                    <button type="button" class="btn-profile-action" id="btnDirectEntry" title="直接进入控制台"><i class="fa-solid fa-arrow-right-to-bracket"></i></button>
+                    <button type="button" class="btn-profile-action" id="btnLogout" title="退出登录 (清除 Cookie)"><i class="fa-solid fa-right-from-bracket"></i></button>
                 </div>
             </div>
 
@@ -415,6 +427,18 @@
                 document.getElementById('profileName').textContent = '信息获取失败';
             }
         }
+        
+        // Profile Action Buttons
+        document.getElementById('btnDirectEntry').addEventListener('click', () => {
+            window.location.href = 'my_account.html';
+        });
+        document.getElementById('btnLogout').addEventListener('click', () => {
+            if(confirm('确定要清除已保存的登录凭据吗？')) {
+                localStorage.removeItem('genshinCookie');
+                localStorage.removeItem('genshinSyncUid');
+                window.location.reload();
+            }
+        });
 
         const logDetails = document.getElementById('logDetails');
         const logBox = document.getElementById('logBox');
