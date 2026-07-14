@@ -778,10 +778,14 @@
                 }
             }
             lastScrollTop = st <= 0 ? 0 : st;
-        });
+        }
+        
+        detailPanel.addEventListener('scroll', function() { handleScroll(this.scrollTop); });
+        window.addEventListener('scroll', function() { handleScroll(window.scrollY); });
         
         backToTopBtn.addEventListener('click', () => {
             detailPanel.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
         window.addEventListener('load', () => {
