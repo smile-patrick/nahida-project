@@ -66,6 +66,7 @@
         .search-box input:focus { border-color: var(--theme-primary, #10b981); box-shadow: 0 0 10px rgba(var(--theme-primary-rgb), 0.3); }
         
         .character-list { flex: 1; overflow-y: auto; padding: 12px; }
+        .apple-style-card { display: contents; }
         .character-item { 
             display: flex; align-items: center; padding: 12px; margin-bottom: 8px; 
             border-radius: 16px; cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
@@ -309,43 +310,51 @@
                 display: contents; 
             }
             .sidebar-header { 
-                display: flex; 
-                flex-direction: row; 
-                justify-content: space-between;
-                align-items: center; 
-                padding: 10px 15px; 
-                background: var(--bg-dark);
+                padding: 10px 20px !important; 
+                background: transparent !important; 
+                margin-bottom: 5px;
             }
-            .sidebar-header h2 { font-size: 1.1rem; margin: 0; width: auto; text-align: left; flex: 1;}
-            .sidebar-header p { display: none; }
-            .sidebar-header > div { display: flex; gap: 10px; margin-top: 0 !important; }
+            .sidebar-header .logo-area { gap: 0.5rem; }
+            .sidebar-header .leaf-svg { width: 30px !important; height: 30px !important; }
+            .sidebar-header .logo-text h1 { font-size: 1.2rem; margin: 0; }
+            .sidebar-header .logo-text .subtitle { font-size: 0.75rem; color: var(--text-muted); margin: 0; display: block; }
             
-            /* Turn nav buttons into circular icons on mobile */
-            .sidebar-header > div a { 
+            /* Hide the text in widgets for mobile to save space, make them circular icons */
+            .sidebar-header .header-widgets { display: flex; gap: 10px; }
+            .sidebar-header .header-widgets a { 
                 padding: 0 !important; 
                 border-radius: 50% !important; 
-                width: 36px; height: 36px; 
+                width: 38px; height: 38px; 
                 display: flex; align-items: center; justify-content: center;
                 background: rgba(255,255,255,0.05) !important;
                 border: 1px solid rgba(255,255,255,0.1) !important;
-                font-size: 0 !important; /* Hide text */
             }
-            .sidebar-header > div a i { font-size: 1rem; color: #cbd5e1; margin: 0; }
+            .sidebar-header .header-widgets a span { display: none; }
+            .sidebar-header .header-widgets a i { font-size: 1.1rem; margin: 0; }
 
+            .apple-style-card {
+                display: block;
+                margin: 0 15px 15px 15px;
+                background: rgba(30, 41, 59, 0.6);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border-radius: 24px;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                overflow: hidden;
+                
+                position: sticky;
+                top: 15px;
+                z-index: 100;
+            }
+            .filter-toggle-btn { margin: 15px auto 5px; }
             .search-box { padding: 10px 15px 5px; border-bottom: none; }
             .filter-box { padding: 0 15px 10px; border-bottom: none; }
             .character-list { 
                 display: flex; flex-direction: row; overflow-x: auto; overflow-y: hidden; 
-                padding: 10px 15px; gap: 10px;
+                padding: 10px 15px 15px 15px; gap: 10px;
                 -ms-overflow-style: none; scrollbar-width: none; 
-                
-                position: sticky; 
-                top: 0; 
-                z-index: 100; 
-                background: rgba(15, 23, 42, 0.95); 
-                backdrop-filter: blur(10px);
-                border-bottom: 1px solid rgba(255,255,255,0.1);
-                box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+                position: relative; top: auto; z-index: auto; background: transparent; backdrop-filter: none; border: none; box-shadow: none;
             }
             .character-list::-webkit-scrollbar { display: none; }
             .character-item { 
@@ -411,45 +420,62 @@
     <div class="hud-grid"></div>
     <div id="particles-js" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;"></div>
     <div class="app-wrapper" style="position:relative; z-index:2;">
-        <div class="app glass-panel">
+                <div class="app glass-panel">
             <div class="sidebar" style="border-right: 1px solid var(--glass-border);">
-            <div class="sidebar-header">
-                <h2><i class="fa-solid fa-address-card"></i> 虚空终端角色库</h2>
-                <p id="charCount">0 位角色</p>
-                <div style="margin-top: 12px;">
-                    <a href="sync.html" style="color: var(--text-secondary); font-size: 0.8rem; text-decoration: none; margin-right: 10px; background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-rotate"></i> 同步</a>
-                    <a href="index.html" style="color: var(--text-secondary); font-size: 0.8rem; text-decoration: none; background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-house"></i> 首页</a>
-                </div>
-            </div>
-            <button id="filterToggleBtn" class="filter-toggle-btn"><i class="fa-solid fa-filter"></i> 展开筛选与检索</button>
-            <div id="filterWrapper" class="filter-container-wrapper">
-                <div class="filter-container">
-                    <div class="search-box">
-                        <input type="text" id="searchInput" placeholder="检索角色档案 (Name)...">
-                    </div>
-                    <div class="filter-box">
-                        <div class="filter-row" id="elementFilters">
-                            <div class="filter-btn active" data-element="all">全部</div>
-                            <div class="filter-btn" data-element="风">风</div>
-                            <div class="filter-btn" data-element="火">火</div>
-                            <div class="filter-btn" data-element="水">水</div>
-                            <div class="filter-btn" data-element="冰">冰</div>
-                            <div class="filter-btn" data-element="雷">雷</div>
-                            <div class="filter-btn" data-element="岩">岩</div>
-                            <div class="filter-btn" data-element="草">草</div>
+                <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="logo-area">
+                        <div class="akasha-symbol">
+                            <svg viewBox="0 0 100 100" class="leaf-svg">
+                                <path d="M50,15 C55,35 75,45 85,55 C70,60 55,50 50,85 C45,50 30,60 15,55 C25,45 45,35 50,15 Z" fill="var(--theme-primary)"/>
+                                <circle cx="50" cy="50" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
                         </div>
-
-                        <div class="filter-row" id="rarityFilters">
-                            <div class="filter-btn active" data-rarity="all">全部</div>
-                            <div class="filter-btn" data-rarity="5">5星</div>
-                            <div class="filter-btn" data-rarity="4">4星</div>
+                        <div class="logo-text">
+                            <h1>AKASHA<span>.TERMINAL</span></h1>
+                            <p class="subtitle" id="charCount">0 位角色档案</p>
                         </div>
                     </div>
+                    <div class="header-widgets">
+                        <a href="sync.html" class="synth-btn" style="text-decoration:none;">
+                            <i class="fa-solid fa-rotate"></i>
+                            <span>数据同步</span>
+                        </a>
+                        <a href="index.html" class="sys-status" style="text-decoration:none; color:inherit;">
+                            <span class="status-dot online"></span>
+                            <span class="status-txt">首页控制台</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="apple-style-card">
+                    <button id="filterToggleBtn" class="filter-toggle-btn"><i class="fa-solid fa-filter"></i> 展开筛选与检索</button>
+                    <div id="filterWrapper" class="filter-container-wrapper">
+                        <div class="filter-container">
+                            <div class="search-box">
+                                <input type="text" id="searchInput" placeholder="检索角色档案 (Name)...">
+                            </div>
+                            <div class="filter-box">
+                                <div class="filter-row" id="elementFilters">
+                                    <div class="filter-btn active" data-element="all">全部</div>
+                                    <div class="filter-btn" data-element="风">风</div>
+                                    <div class="filter-btn" data-element="火">火</div>
+                                    <div class="filter-btn" data-element="水">水</div>
+                                    <div class="filter-btn" data-element="冰">冰</div>
+                                    <div class="filter-btn" data-element="雷">雷</div>
+                                    <div class="filter-btn" data-element="岩">岩</div>
+                                    <div class="filter-btn" data-element="草">草</div>
+                                </div>
+                                <div class="filter-row" id="rarityFilters">
+                                    <button class="filter-btn active" data-rarity="all">全部星级</button>
+                                    <button class="filter-btn" data-rarity="5">5★</button>
+                                    <button class="filter-btn" data-rarity="4">4★</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="character-list" id="characterList"></div>
                 </div>
             </div>
-            <div class="character-list" id="characterList"></div>
-        </div>
-        <div class="detail-panel" id="detailPanel">
+            <div class="detail-panel" id="detailPanel">
             <img id="element-bg-风" class="hero-element-bg" src="./assets/elements/Anemo.png" style="display: none;" alt="">
             <img id="element-bg-火" class="hero-element-bg" src="./assets/elements/Pyro.png" style="display: none;" alt="">
             <img id="element-bg-水" class="hero-element-bg" src="./assets/elements/Hydro.png" style="display: none;" alt="">
@@ -816,3 +842,4 @@
     </script>
 </body>
 </html>
+
