@@ -130,8 +130,9 @@
         }
         .hero-element-bg {
             position: absolute; right: -20px; top: 50%; transform: translateY(-50%); 
-            height: 250px; opacity: 0.2; z-index: 0; pointer-events: none;
-            filter: drop-shadow(0 0 30px rgba(var(--theme-primary-rgb), 1));
+            font-size: 250px; opacity: 0.15; z-index: 0; pointer-events: none;
+            color: var(--theme-primary-light);
+            text-shadow: 0 0 50px rgba(var(--theme-primary-rgb), 1);
             mix-blend-mode: plus-lighter;
         }
         .hero-card::before {
@@ -651,13 +652,12 @@
             } else {
                 constellationsHtml = '<div class="constellations-section"><div class="section-title"><i class="fa-solid fa-star"></i> 命之座网络</div><div style="text-align:center; padding:40px; color:#64748b;">暂无命座数据</div></div>';
             }
-            const hhElementMap = { '风': 'wind', '火': 'fire', '水': 'water', '冰': 'ice', '雷': 'electric', '岩': 'rock', '草': 'grass' };
-            const hhName = hhElementMap[char.element];
-            const bgIconUrl = hhName ? `https://genshin.honeyhunterworld.com/img/icons/element/${hhName}_35.webp` : '';
+            const faElementMap = { '风': 'fa-wind', '火': 'fa-fire', '水': 'fa-droplet', '冰': 'fa-snowflake', '雷': 'fa-bolt', '岩': 'fa-gem', '草': 'fa-leaf' };
+            const faName = faElementMap[char.element];
             
             panel.innerHTML = `
                 <div class="hero-card">
-                    ${bgIconUrl ? `<img src="${bgIconUrl}" class="hero-element-bg" alt="">` : ''}
+                    ${faName ? `<i class="fa-solid ${faName} hero-element-bg"></i>` : ''}
                     <div class="hero-inner">
                         <div class="hero-portrait"><img src="${char.portrait}" onerror="this.src='${char.icon}'"></div>
                         <div class="hero-info">
