@@ -19,16 +19,26 @@
     <link rel="stylesheet" href="style.css">
     <style>
         .sync-container {
-            max-width: 600px;
+            max-width: 460px;
             width: 90%;
             box-sizing: border-box;
-            margin: 80px auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-height: 90vh;
+            overflow-y: auto;
             padding: 30px;
             text-align: center;
         }
+        .sync-container::-webkit-scrollbar { display: none; }
+        .sync-container { -ms-overflow-style: none; scrollbar-width: none; }
+
         @media (max-width: 768px) {
-            .sync-container { margin: 40px auto 20px auto; padding: 20px; }
+            .sync-container { padding: 22px; width: 92%; }
             .btn-scan-qr { padding: 15px; }
+            .sync-hero-icon { font-size: 4rem; }
+            h2 { font-size: 1.5rem !important; }
         }
         
         .sync-hero-icon { font-size: 5rem; color: var(--dendro-primary); text-shadow: 0 0 30px var(--dendro-bg-glow); margin-bottom: 15px; animation: float 3s ease-in-out infinite; }
@@ -131,10 +141,10 @@
     <div class="hud-grid"></div>
     <div id="particles-js" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;"></div>
     
-    <a href="index.html" class="header-back"><i class="fa-solid fa-angle-left"></i> 返回控制台</a>
+    <a href="index.html" class="header-back"><i class="fa-solid fa-angle-left"></i> 返回主页</a>
     <button class="theme-toggle-btn" id="themeToggleBtn" title="切换白天/黑夜模式 (测试功能)"><i class="fa-solid fa-moon"></i></button>
 
-    <div class="sync-container card glass" style="position:relative; z-index:2;">
+    <div class="sync-container card glass" style="z-index:2;">
         
         <!-- Hero Graphic -->
         <i class="fa-solid fa-satellite-dish sync-hero-icon"></i>
