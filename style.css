@@ -2467,3 +2467,13 @@ body {
     50% { opacity: 1; }
 }
 
+/* Mobile Performance Optimizations */
+@media (max-width: 768px) {
+    :root {
+        --glass-blur: blur(2px) !important;
+    }
+    .glass, .glass-panel, .card, .filter-box, .search-box, .guide-sidebar {
+        backdrop-filter: blur(2px) !important;
+        -webkit-backdrop-filter: blur(2px) !important;
+    }
+}

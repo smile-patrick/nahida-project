@@ -63,14 +63,17 @@ function initLeafParticles() {
     const container = document.getElementById('leafContainer');
     if (!container) return;
 
-    const leafCount = 15;
+    const isMobile = window.innerWidth <= 768;
+    const leafCount = isMobile ? 3 : 15;
+    const maxLeaves = isMobile ? 5 : 25;
+
     for (let i = 0; i < leafCount; i++) {
         createLeaf(container, true);
     }
 
     // Periodically spawn new leaves
     setInterval(() => {
-        if (container.children.length < 25) {
+        if (container.children.length < maxLeaves) {
             createLeaf(container, false);
         }
     }, 4000);
