@@ -63,9 +63,6 @@ function initLeafParticles() {
     const container = document.getElementById('leafContainer');
     if (!container) return;
 
-    const isMobile = window.innerWidth <= 768;
-    if (isMobile) return; // Completely disable on mobile for performance
-
     const leafCount = 15;
     const maxLeaves = 25;
 
