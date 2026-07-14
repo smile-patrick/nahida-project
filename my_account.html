@@ -236,6 +236,24 @@
         .constellation-effect { font-size: 0.8rem; line-height: 1.6; color: #94a3b8; max-height: 120px; overflow-y: auto; padding-right: 5px;}
         .constellation-card.activated .constellation-effect { color: #cbd5e1; }
         
+        .filter-box { padding: 0 16px 12px; display: flex; flex-direction: column; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .filter-row { display: flex; gap: 8px; overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; padding-bottom: 4px; }
+        .filter-row::-webkit-scrollbar { display: none; }
+        .filter-btn { white-space: nowrap; padding: 4px 12px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; user-select: none;}
+        .filter-btn:hover { background: rgba(255,255,255,0.1); }
+        .filter-btn.active { background: rgba(var(--theme-primary-rgb), 0.2); border-color: var(--theme-primary); color: var(--theme-primary-light); }
+        
+        /* Global Loader Animation */
+        .app-loader {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: var(--bg-dark); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        .app-loader i { font-size: 4rem; color: #10b981; filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.5)); margin-bottom: 20px;}
+        .loader-text { font-family: var(--font-cyber); font-size: 1.2rem; color: #a7f3d0; letter-spacing: 2px;}
+        .app-loader.hidden { opacity: 0; visibility: hidden; }
+
         @media (max-width: 768px) { 
             body { overflow-y: auto; }
             .app-wrapper { height: auto; padding: 0; align-items: flex-start; }
@@ -247,7 +265,9 @@
                 border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1);
                 background: var(--bg-dark);
             } 
-            .sidebar-header, .search-box { display: none; }
+            .sidebar-header { display: none; }
+            .search-box { padding: 10px 15px 5px; border-bottom: none; }
+            .filter-box { padding: 0 15px 10px; border-bottom: none; }
             .character-list { 
                 display: flex; flex-direction: row; overflow-x: auto; overflow-y: hidden; 
                 padding: 10px 15px; gap: 10px;
@@ -304,6 +324,10 @@
     </style>
 </head>
 <body>
+    <div id="appLoader" class="app-loader">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <div class="loader-text">Loading Akasha Archives...</div>
+    </div>
     <div class="hud-grid"></div>
     <div id="particles-js" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;"></div>
     <div class="app-wrapper" style="position:relative; z-index:2;">
@@ -319,6 +343,29 @@
             </div>
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="检索角色档案 (Name)...">
+            </div>
+            <div class="filter-box">
+                <div class="filter-row" id="elementFilters">
+                    <div class="filter-btn active" data-element="all">全部</div>
+                    <div class="filter-btn" data-element="风">风</div>
+                    <div class="filter-btn" data-element="火">火</div>
+                    <div class="filter-btn" data-element="水">水</div>
+                    <div class="filter-btn" data-element="冰">冰</div>
+                    <div class="filter-btn" data-element="雷">雷</div>
+                    <div class="filter-btn" data-element="岩">岩</div>
+                    <div class="filter-btn" data-element="草">草</div>
+                </div>
+                <div class="filter-row" id="regionFilters">
+                    <div class="filter-btn active" data-region="all">全部</div>
+                    <div class="filter-btn" data-region="蒙德">蒙德</div>
+                    <div class="filter-btn" data-region="璃月">璃月</div>
+                    <div class="filter-btn" data-region="稻妻">稻妻</div>
+                    <div class="filter-btn" data-region="须弥">须弥</div>
+                    <div class="filter-btn" data-region="枫丹">枫丹</div>
+                    <div class="filter-btn" data-region="纳塔">纳塔</div>
+                    <div class="filter-btn" data-region="至冬">至冬</div>
+                    <div class="filter-btn" data-region="其他">其他</div>
+                </div>
             </div>
             <div class="character-list" id="characterList"></div>
         </div>
@@ -403,10 +450,34 @@
             if (times === 4) return 'sub-times-4';
             return 'sub-times-5';
         }
-        function renderCharacterList(filterText) {
-            filterText = filterText || '';
+        const regionMap = {
+            "琴": "蒙德", "安柏": "蒙德", "丽莎": "蒙德", "凯亚": "蒙德", "芭芭拉": "蒙德", "迪卢克": "蒙德", "雷泽": "蒙德", "温迪": "蒙德", "可莉": "蒙德", "班尼特": "蒙德", "诺艾尔": "蒙德", "菲谢尔": "蒙德", "砂糖": "蒙德", "莫娜": "蒙德", "迪奥娜": "蒙德", "阿贝多": "蒙德", "罗莎莉亚": "蒙德", "优菈": "蒙德", "米卡": "蒙德",
+            "魈": "璃月", "北斗": "璃月", "凝光": "璃月", "香菱": "璃月", "行秋": "璃月", "重云": "璃月", "刻晴": "璃月", "七七": "璃月", "钟离": "璃月", "辛焱": "璃月", "甘雨": "璃月", "胡桃": "璃月", "烟绯": "璃月", "申鹤": "璃月", "云堇": "璃月", "夜兰": "璃月", "白术": "璃月", "闲云": "璃月", "嘉明": "璃月", "瑶瑶": "璃月",
+            "神里绫华": "稻妻", "枫原万叶": "稻妻", "宵宫": "稻妻", "早柚": "稻妻", "雷电将军": "稻妻", "九条裟罗": "稻妻", "珊瑚宫心海": "稻妻", "托马": "稻妻", "荒泷一斗": "稻妻", "五郎": "稻妻", "八重神子": "稻妻", "神里绫人": "稻妻", "久岐忍": "稻妻", "鹿野院平藏": "稻妻", "绮良良": "稻妻", "千织": "稻妻",
+            "提纳里": "须弥", "柯莱": "须弥", "多莉": "须弥", "赛诺": "须弥", "坎蒂丝": "须弥", "妮露": "须弥", "纳西妲": "须弥", "莱依拉": "须弥", "流浪者": "须弥", "珐露珊": "须弥", "艾尔海森": "须弥", "迪希雅": "须弥", "卡维": "须弥", "赛索斯": "须弥",
+            "林尼": "枫丹", "琳妮特": "枫丹", "菲米尼": "枫丹", "那维莱特": "枫丹", "莱欧斯利": "枫丹", "芙宁娜": "枫丹", "夏洛蒂": "枫丹", "娜维娅": "枫丹", "夏沃蕾": "枫丹", "克洛琳德": "枫丹", "希格雯": "枫丹", "艾梅莉埃": "枫丹",
+            "玛拉妮": "纳塔", "基尼奇": "纳塔", "卡齐娜": "纳塔", "希诺宁": "纳塔", "恰斯卡": "纳塔", "欧洛伦": "纳塔", "玛薇卡": "纳塔", "茜特菈莉": "纳塔",
+            "达达利亚": "至冬", "阿蕾奇诺": "至冬",
+            "旅行者": "其他", "空": "其他", "荧": "其他", "埃洛伊": "其他"
+        };
+        
+        function getRegion(name) {
+            if (name.includes('旅行者')) return "其他";
+            return regionMap[name] || "其他";
+        }
+
+        let currentFilterElement = 'all';
+        let currentFilterRegion = 'all';
+        
+        function applyFilters() {
+            const searchText = document.getElementById('searchInput').value.trim();
             const container = document.getElementById('characterList');
-            const filtered = charactersData.filter(c => c.name.includes(filterText));
+            const filtered = charactersData.filter(char => {
+                const matchSearch = char.name.includes(searchText);
+                const matchElement = currentFilterElement === 'all' || char.element === currentFilterElement;
+                const matchRegion = currentFilterRegion === 'all' || getRegion(char.name) === currentFilterRegion;
+                return matchSearch && matchElement && matchRegion;
+            });
             container.innerHTML = filtered.map(char => `
                 <div class="character-item" data-id="${char.id}">
                     <div class="char-avatar"><img src="${char.icon}" onerror="this.style.display='none'"></div>
@@ -570,14 +641,40 @@
             `;
         }
         
-        document.getElementById('searchInput').addEventListener('input', function(e) {
-            renderCharacterList(e.target.value);
+        document.querySelectorAll('#elementFilters .filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('#elementFilters .filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilterElement = e.target.dataset.element;
+                applyFilters();
+            });
         });
         
+        document.querySelectorAll('#regionFilters .filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('#regionFilters .filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilterRegion = e.target.dataset.region;
+                applyFilters();
+            });
+        });
+
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+        
         if (charactersData.length > 0) {
-            renderCharacterList('');
+            applyFilters();
             selectCharacter(charactersData[0].id);
         }
+        
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('appLoader');
+                if (loader) {
+                    loader.classList.add('hidden');
+                    setTimeout(() => loader.style.display = 'none', 800);
+                }
+            }, 800);
+        });
     </script>
 </body>
 </html>
