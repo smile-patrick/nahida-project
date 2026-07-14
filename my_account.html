@@ -248,12 +248,15 @@
         .filter-container-wrapper.show { grid-template-rows: 1fr; opacity: 1; }
         .filter-container { overflow: hidden; }
         
+        .back-to-top-btn { position: fixed; bottom: 20px; right: 20px; width: 45px; height: 45px; border-radius: 50%; background: var(--theme-primary); color: #fff; border: none; font-size: 1.2rem; cursor: pointer; display: none; box-shadow: 0 4px 15px rgba(var(--theme-primary-rgb), 0.4); z-index: 100; transition: opacity 0.3s, transform 0.3s; opacity: 0; transform: translateY(20px); align-items: center; justify-content: center; }
+        .back-to-top-btn.visible { display: flex; opacity: 1; transform: translateY(0); }
+        
         /* Global Loader Animation */
         .app-loader {
             position: fixed; top:0; left:0; width:100%; height:100%;
             background: var(--bg-dark); z-index: 9999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
         .app-loader i { font-size: 4rem; color: #10b981; filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.5)); margin-bottom: 20px;}
         .loader-text { font-family: var(--font-cyber); font-size: 1.2rem; color: #a7f3d0; letter-spacing: 2px;}
@@ -394,6 +397,8 @@
         </div>
     </div>
     </div>
+    
+    <button id="backToTopBtn" class="back-to-top-btn"><i class="fa-solid fa-arrow-up"></i></button>
     
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
@@ -702,14 +707,43 @@
             }
         });
         
+        const detailPanel = document.getElementById('detailPanel');
+        const backToTopBtn = document.getElementById('backToTopBtn');
+        let lastScrollTop = 0;
+        
+        detailPanel.addEventListener('scroll', function() {
+            let st = this.scrollTop;
+            
+            // Back to top button visibility
+            if (st > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+            
+            // Auto-collapse filter when scrolling down
+            if (st > lastScrollTop && st > 50) {
+                const filterWrapper = document.getElementById('filterWrapper');
+                if (filterWrapper.classList.contains('show')) {
+                    filterWrapper.classList.remove('show');
+                    document.getElementById('filterToggleBtn').innerHTML = '<i class="fa-solid fa-filter"></i> 展开筛选与检索';
+                }
+            }
+            lastScrollTop = st <= 0 ? 0 : st;
+        });
+        
+        backToTopBtn.addEventListener('click', () => {
+            detailPanel.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const loader = document.getElementById('appLoader');
                 if (loader) {
                     loader.classList.add('hidden');
-                    setTimeout(() => loader.style.display = 'none', 800);
+                    setTimeout(() => loader.style.display = 'none', 300);
                 }
-            }, 800);
+            }, 300);
         });
     </script>
 </body>
