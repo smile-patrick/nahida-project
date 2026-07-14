@@ -417,7 +417,13 @@
             <div class="character-list" id="characterList"></div>
         </div>
         <div class="detail-panel" id="detailPanel">
-            <img id="persistentElementBg" class="hero-element-bg" src="" style="display: none;" alt="">
+            <img id="element-bg-风" class="hero-element-bg" src="./assets/elements/Anemo.png" style="display: none;" alt="">
+            <img id="element-bg-火" class="hero-element-bg" src="./assets/elements/Pyro.png" style="display: none;" alt="">
+            <img id="element-bg-水" class="hero-element-bg" src="./assets/elements/Hydro.png" style="display: none;" alt="">
+            <img id="element-bg-雷" class="hero-element-bg" src="./assets/elements/Electro.png" style="display: none;" alt="">
+            <img id="element-bg-草" class="hero-element-bg" src="./assets/elements/Dendro.png" style="display: none;" alt="">
+            <img id="element-bg-冰" class="hero-element-bg" src="./assets/elements/Cryo.png" style="display: none;" alt="">
+            <img id="element-bg-岩" class="hero-element-bg" src="./assets/elements/Geo.png" style="display: none;" alt="">
             <div id="detailContent">
                 <div class="empty-state">
                     <div style="font-size: 48px; margin-bottom: 20px; color: var(--dendro-primary); text-shadow: 0 0 20px var(--dendro-bg-glow);"><i class="fa-solid fa-database"></i></div>
@@ -557,22 +563,10 @@
             const panel = document.getElementById('detailContent');
             const elementDamageName = getElementDamageName(char.element);
             
-            const customElementMap = {
-                '风': './assets/elements/Anemo.png',
-                '火': './assets/elements/Pyro.png',
-                '水': './assets/elements/Hydro.png',
-                '雷': './assets/elements/Electro.png',
-                '草': './assets/elements/Dendro.png',
-                '冰': './assets/elements/Cryo.png',
-                '岩': './assets/elements/Geo.png'
-            };
-            const bgIconUrl = customElementMap[char.element] || '';
-            const persistentBg = document.getElementById('persistentElementBg');
-            if (bgIconUrl) {
-                persistentBg.src = bgIconUrl;
-                persistentBg.style.display = 'block';
-            } else {
-                persistentBg.style.display = 'none';
+            document.querySelectorAll('.hero-element-bg').forEach(el => el.style.display = 'none');
+            const bgEl = document.getElementById(`element-bg-${char.element}`);
+            if (bgEl) {
+                bgEl.style.display = 'block';
             }
             
             let relicsHtml = '';
@@ -764,6 +758,18 @@
                 if (charactersData.length > 0) {
                     applyFilters();
                     selectCharacter(charactersData[0].id);
+                    
+                    // Preload all assets in the background for 0ms click latency
+                    setTimeout(() => {
+                        const preload = (url) => { if(url) { const img = new Image(); img.decoding = 'async'; img.src = url; } };
+                        charactersData.forEach(char => {
+                            preload(char.portrait);
+                            preload(char.weapon_icon);
+                            if (char.relics) {
+                                char.relics.forEach(relic => preload(relic.icon));
+                            }
+                        });
+                    }, 1500);
                 }
             }, 300);
         });
