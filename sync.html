@@ -651,12 +651,13 @@
                             
                             setTimeout(() => {
                                 qrModal.style.display = 'none';
-                                addLog('✅ 扫码登录成功，已自动填充 Cookie！');
-                                addLog(`[开发者调试] uid: ${data.uid}, mid: ${data.mid}`);
-                                addLog(`[开发者调试] 获取到 SToken: ${data.stoken ? '✅ 是' : '❌ 否'}`);
-                                addLog(`[开发者调试] 获取到 LToken: ${data.ltoken ? '✅ 是' : '❌ 否'}`);
-                                addLog(`[开发者调试] 完整 Cookie 长度: ${cookieStr.length}`);
-                                if (data.dbg) addLog(`[开发者调试] 兑换日志: ${JSON.stringify(data.dbg)}`);
+                                addLog('✅ 扫码授权成功，正在自动启动神经元同步...');
+                                
+                                // Auto-trigger the sync process
+                                setTimeout(() => {
+                                    document.getElementById('syncBtn').click();
+                                }, 800);
+
                             }, 1000);
                         }
                     }
