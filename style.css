@@ -2460,7 +2460,39 @@ body {
 
 @keyframes guideSpin {
     0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+}
+
+/* Legal Footer */
+.legal-footer {
+    position: relative;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 25px 40px;
+    box-sizing: border-box;
+    z-index: 10;
+    text-align: left;
+    backdrop-filter: blur(10px);
+}
+.legal-footer h4 {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin: 0 0 10px 0;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.legal-footer p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 0 0 5px 0;
+    line-height: 1.6;
+}
+@media (max-width: 768px) {
+    .legal-footer { padding: 20px; }
+    .legal-footer h4 { font-size: 1rem; }
+    .legal-footer p { font-size: 0.75rem; }
 }
 
 @keyframes guidePulse {

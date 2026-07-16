@@ -18,18 +18,26 @@
     <!-- Custom Style Sheet -->
     <link rel="stylesheet" href="style.css">
     <style>
+        .sync-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+            padding: 40px 0;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
         .sync-container {
             max-width: 520px;
             width: 90%;
             box-sizing: border-box;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            max-height: 90vh;
-            overflow-y: auto;
+            position: relative;
             padding: 40px 30px;
             text-align: center;
+            margin: 0 auto;
         }
         .sync-container::-webkit-scrollbar { display: none; }
         .sync-container { -ms-overflow-style: none; scrollbar-width: none; }
@@ -141,7 +149,8 @@
     <div class="hud-grid"></div>
     <div id="particles-js" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;"></div>
     
-    <div class="sync-container card glass" style="z-index:2;">
+    <div class="sync-wrapper">
+        <div class="sync-container card glass">
         
         <div style="text-align: left; margin-bottom: 20px;">
             <a href="index.html" class="header-back" style="position: static; font-size: 1rem;"><i class="fa-solid fa-angle-left"></i> 返回主页</a>
@@ -149,7 +158,7 @@
         
         <!-- Hero Graphic -->
         <i class="fa-solid fa-satellite-dish sync-hero-icon"></i>
-        <h2 style="margin: 0 0 10px 0; font-size: 1.8rem; font-weight: 800; font-family: var(--font-cyber); color: var(--text-primary);">世界树网络直连</h2>
+        <h2 style="margin: 0 0 10px 0; font-size: 1.8rem; font-weight: 800; font-family: var(--font-sans); letter-spacing: 2px; color: var(--text-primary);">世界树网络直连</h2>
         <p style="color: var(--text-secondary); line-height: 1.6; font-size: 0.95rem; margin-bottom: 30px;">
             扫描授权以建立神经元连接，同步您的真实探险档案。
         </p>
@@ -266,6 +275,17 @@
             </div>
 
         </div>
+    </div> <!-- Closes .sync-container -->
+    </div> <!-- Closes .sync-wrapper -->
+
+    <!-- Document-flow Legal Footer placed below the 100vh wrapper -->
+    <div style="background: rgba(0, 0, 0, 0.4); border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 25px 40px; box-sizing: border-box; z-index: 10; text-align: left; backdrop-filter: blur(10px); position: relative; width: 100%;">
+        <div style="font-size: 1.1rem; color: var(--text-primary); margin: 0 0 10px 0; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-brands fa-pagelines"></i> <span>纳西妲虚空生态圈</span>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0 0 5px 0; line-height: 1.6;">智慧之叶常青 | 制作人: <strong>smile_小沐</strong></p>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0 0 5px 0; line-height: 1.6; margin-top: 15px;">本页面仅为同人展示用途，美术素材版权均属于原游戏开发商 (miHoYo)。</p>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0 0 5px 0; line-height: 1.6;">数据来源于米游社，本网站仅用于登录及数据统计，云端不会保存任何用户数据。</p>
     </div>
 
     <!-- Cookie Viewer Modal -->
@@ -305,7 +325,10 @@
             </div>
             <div class="qr-status" id="qrStatus">正在生成二维码...</div>
         </div>
+        
+        </div>
     </div>
+
 
     <!-- Geetest Container -->
     <div id="geetest-container">
@@ -1064,5 +1087,8 @@
             }, 1000);
         }
     </script>
+    
 </body>
 </html>
+
+
