@@ -19,41 +19,34 @@ document.addEventListener('DOMContentLoaded', () => {
 window.smoothReplaceHTML = function(element, newHTML, duration = 300, callback = null) {
     if (!element) return;
     
-    // 1. Lock current height
-    const currentHeight = element.offsetHeight;
-    element.style.height = currentHeight + 'px';
-    element.style.overflow = 'hidden';
-    element.style.transition = `opacity ${duration}ms ease, height ${duration}ms ease`;
+    // Using Web Animations API for guaranteed robust fading
+    const fadeOut = element.animate([
+        { opacity: element.style.opacity || 1 },
+        { opacity: 0 }
+    ], {
+        duration: duration,
+        easing: 'ease-in-out',
+        fill: 'forwards'
+    });
     
-    // 2. Fade out old content
-    element.style.opacity = '0';
-    
-    setTimeout(() => {
-        // 3. Swap content
+    fadeOut.onfinish = () => {
         element.innerHTML = newHTML;
+        const fadeIn = element.animate([
+            { opacity: 0 },
+            { opacity: 1 }
+        ], {
+            duration: duration,
+            easing: 'ease-in-out',
+            fill: 'forwards'
+        });
         
-        // 4. Measure new natural height
-        element.style.height = 'auto';
-        const newHeight = element.offsetHeight;
-        
-        // 5. Snap back to old height and force reflow
-        element.style.height = currentHeight + 'px';
-        void element.offsetHeight;
-        
-        // 6. Animate to new height and fade in
-        element.style.height = newHeight + 'px';
-        element.style.opacity = '1';
-        
-        if (typeof callback === 'function') {
-            callback();
-        }
-        
-        // 7. Cleanup after animation completes
-        setTimeout(() => {
-            element.style.height = 'auto';
-            element.style.overflow = '';
-        }, duration);
-    }, duration);
+        fadeIn.onfinish = () => {
+            element.style.opacity = '1';
+            if (typeof callback === "function") {
+                callback();
+            }
+        };
+    };
 };
 
 /* ==========================================================================
@@ -246,7 +239,7 @@ function initWeather() {
     }
 
     async function fetchWeather(cityName) {
-        await new Promise(r => window.smoothReplaceHTML(display, '<div class="weather-loading"><i class="fa-solid fa-spinner fa-spin"></i> 读取中...</div>', 200, r));
+        await new Promise(r => window.smoothReplaceHTML(display, '<div class="weather-loading"><i class="fa-solid akasha-spinner akasha-spin"></i> 读取中...</div>', 200, r));
         
         try {
             // Step 1: Geocoding API to resolve City name to Lat/Lon
@@ -484,7 +477,7 @@ function initMindReader() {
 
         // UI transitions to scanning state
         startScanBtn.disabled = true;
-        startScanBtn.innerHTML = '<i class="fa-solid fa-arrows-spin fa-spin"></i> 扫描虚空频率中...';
+        startScanBtn.innerHTML = '<i class="fa-solid fa-arrows-spin akasha-spin"></i> 扫描虚空频率中...';
         
         const scanLine = document.querySelector('.scan-line');
         const targetBox = document.querySelector('.target-box');
@@ -494,7 +487,7 @@ function initMindReader() {
         
         // Reset visual state
         targetIcon.style.display = 'block';
-        targetIcon.className = 'fa-solid fa-circle-notch fa-spin';
+        targetIcon.className = 'fa-solid fa-circle-notch akasha-spin';
         targetAvatar.style.display = 'none';
         targetAvatar.classList.remove('show');
         dendroLock.classList.remove('active');
@@ -578,6 +571,15 @@ function initInteractiveQuotes() {
     let index = 0;
 
     changeBtn.addEventListener('click', () => {
+        // Icon rotation effect
+        const icon = changeBtn.querySelector('i');
+        if (icon) {
+            icon.animate([
+                { transform: 'rotate(0deg)' },
+                { transform: 'rotate(360deg)' }
+            ], { duration: 800, easing: 'ease-in-out' });
+        }
+
         // Simple fade-out, change, fade-in transition
         quoteText.style.opacity = 0;
         
@@ -722,7 +724,7 @@ function initSumeruSynth() {
             // Check location on first play attempt to handle NetEase foreign IP restrictions
             if (!locationChecked) {
                 isChecking = true;
-                synthBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>网络检测中...</span>';
+                synthBtn.innerHTML = '<i class="fa-solid akasha-spinner akasha-spin"></i> <span>网络检测中...</span>';
                 try {
                     const res = await fetch('https://whois.pconline.com.cn/ipJson.jsp?json=true');
                     const buffer = await res.arrayBuffer();
@@ -893,7 +895,7 @@ function initFortune() {
         // Animation states
         window.smoothReplaceHTML(content, `
             <div class="animate-fade-in" style="text-align: center; padding: 1.5rem 0; color: var(--dendro-primary);">
-                <i class="fa-solid fa-arrows-spin fa-spin" style="font-size: 2rem;"></i>
+                <i class="fa-solid fa-arrows-spin akasha-spin" style="font-size: 2rem;"></i>
                 <p style="margin-top: 0.8rem; font-size: 0.85rem; color: var(--text-secondary);">正在向世界树发送请求...</p>
             </div>
         `);
@@ -1392,3 +1394,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+

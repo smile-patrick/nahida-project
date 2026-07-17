@@ -88,7 +88,7 @@
                     
                     <div class="profile-header">
                         <div class="avatar-wrapper">
-                            <img src="http://q.qlogo.cn/headimg_dl?dst_uin=1250986144&spec=640&img_type=jpg" alt="纳西妲" class="nahida-avatar" id="nahidaAvatar" onerror="this.onerror=null; this.src='assets/nahida_default.jpg';" onload="if(this.naturalWidth < 300 && this.naturalWidth > 0) { this.src='assets/nahida_default.jpg'; }">
+                            <img src="http://q.qlogo.cn/headimg_dl?dst_uin=1250986144&spec=640&img_type=jpg" alt="纳西妲" class="nahida-avatar" id="nahidaAvatar" onerror="this.onerror=null; this.src='assets/nahida_default.jpg';" onload="if(this.naturalWidth < 300 && this.naturalWidth > 0 && !this.src.includes('nahida_default.jpg')) { this.src='assets/nahida_default.jpg'; }">
                             <div class="akasha-earpiece">
                                 <div class="ear-leaf"></div>
                             </div>
@@ -126,14 +126,14 @@
                 </div>
 
                 <!-- WIDGET: Premium Irminsul Connection Banner -->
-                <div class="card irminsul-connect-card glass" style="padding: 0; overflow: hidden; position: relative; display: flex; align-items: center; border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: 0 0 30px rgba(16, 185, 129, 0.15); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
-                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(7, 23, 17, 0.8) 100%); z-index: 1;"></div>
+                <div class="card irminsul-connect-card glass" style="padding: 0; overflow: hidden; position: relative; display: flex; align-items: center; border: 1px solid rgba(var(--dendro-primary-rgb), 0.4); box-shadow: 0 0 30px rgba(var(--dendro-primary-rgb), 0.15); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(var(--dendro-primary-rgb), 0.15) 0%, var(--bg-darker) 100%); z-index: 1;"></div>
                     <!-- Decorative background leaves -->
-                    <i class="fa-solid fa-leaf" style="position: absolute; top: -20px; right: -20px; font-size: 10rem; color: rgba(16, 185, 129, 0.05); z-index: 1; transform: rotate(45deg);"></i>
+                    <i class="fa-solid fa-leaf" style="position: absolute; top: -20px; right: -20px; font-size: 10rem; color: rgba(var(--dendro-primary-rgb), 0.05); z-index: 1; transform: rotate(45deg);"></i>
                     
                     <div class="irminsul-content" style="position: relative; z-index: 2; padding: 2.5rem 2rem; width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
                         <div class="banner-text-content" style="flex: 1; min-width: 250px;">
-                            <h2 style="margin: 0 0 0.5rem 0; font-size: 1.6rem; color: #fff; display: flex; align-items: center; gap: 10px; text-shadow: 0 0 15px rgba(16, 185, 129, 0.6);">
+                            <h2 style="margin: 0 0 0.5rem 0; font-size: 1.6rem; color: #fff; display: flex; align-items: center; gap: 10px; text-shadow: 0 0 15px rgba(var(--dendro-primary-rgb), 0.6);">
                                 <i class="fa-brands fa-pagelines" style="color: var(--dendro-primary);"></i> 连接世界树 · 角色档案库
                             </h2>
                             <p style="margin: 0; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5;">
@@ -142,7 +142,7 @@
                             </p>
                         </div>
                         <div class="banner-action" style="flex-shrink: 0;">
-                            <a href="sync.html" id="connectIrminsulBtn" class="btn btn-primary" style="padding: 0.8rem 2rem; font-size: 1.1rem; border-radius: 30px; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); display: flex; align-items: center; gap: 10px; transition: transform 0.3s, box-shadow 0.3s; text-decoration: none;">
+                            <a href="sync.html" id="connectIrminsulBtn" class="btn btn-primary" style="padding: 0.8rem 2rem; font-size: 1.1rem; border-radius: 30px; box-shadow: 0 0 20px rgba(var(--dendro-primary-rgb), 0.4); display: flex; align-items: center; gap: 10px; transition: transform 0.3s, box-shadow 0.3s; text-decoration: none;">
                                 <i class="fa-solid fa-link"></i> 连接世界树
                             </a>
                         </div>
@@ -327,7 +327,7 @@
                     </div>
                     <div class="fortune-content" id="fortuneContent">
                         <div class="fortune-idle">
-                            <i class="fa-brands fa-pagelines" style="font-size: 2rem; color: var(--dendro-primary); margin-bottom: 0.5rem; filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4));"></i>
+                            <i class="fa-brands fa-pagelines" style="font-size: 2rem; color: var(--dendro-primary); margin-bottom: 0.5rem; filter: drop-shadow(0 0 8px rgba(var(--dendro-primary-rgb), 0.4));"></i>
                             <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">连接须弥地脉，解析今日的智慧箴言与代码运势</p>
                             <button id="drawFortuneBtn" class="btn btn-primary"><i class="fa-solid fa-link"></i> 抽取今日运势</button>
                         </div>
@@ -368,7 +368,7 @@
                 </div>
 
                 <!-- WIDGET: Guide Entry (Restored) -->
-                <a href="my_account.html" style="text-decoration: none;" class="card guide-entry-card glass">
+                <div style="text-decoration: none; cursor: not-allowed;" class="card guide-entry-card glass">
                     <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: transform 0.3s ease, box-shadow 0.3s ease; height: 100%;">
                         <i class="fa-solid fa-book-journal-whills" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem; text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);"></i>
                         <h3 style="margin: 0; color: #fff;">虚空档案 - 角色攻略</h3>
@@ -377,7 +377,7 @@
                             <i class="fa-solid fa-person-digging"></i> 施工中
                         </div>
                     </div>
-                </a>
+                </div>
             </section>
         </div>
     </main>
@@ -442,6 +442,8 @@
     <script src="script.js"></script>
 </body>
 </html>
+
+
 
 
 
