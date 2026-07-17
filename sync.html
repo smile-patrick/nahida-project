@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数据同步终端 | Akasha Sync</title>
+    <title>同步终端 | Akasha Sync</title>
+    <style>html, body { background-color: #071711 !important; margin: 0; padding: 0; }</style>
     
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&family=Noto+Serif+SC:wght@400;600;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -146,6 +147,31 @@
     </style>
 </head>
 <body>
+    <!-- Akasha Page Loader -->
+    <div id="akasha-loader" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #071711; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.6s ease, visibility 0.6s ease;">
+        <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 200px; height: 200px;">
+            <i class="fa-brands fa-pagelines" style="font-size: 4.5rem; color: #10b981; filter: drop-shadow(0 0 20px #10b981); animation: pulseLeaf 1.5s infinite alternate;"></i>
+            <div style="position: absolute; width: 140px; height: 140px; border: 2px dashed rgba(16, 185, 129, 0.4); border-radius: 50%; animation: spinRing 4s linear infinite;"></div>
+            <div style="position: absolute; width: 180px; height: 180px; border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 50%; animation: spinRingReverse 6s linear infinite;"></div>
+        </div>
+        <div style="color: #10b981; font-family: 'Share Tech Mono', monospace; font-size: 1.2rem; text-shadow: 0 0 10px rgba(16,185,129,0.5); letter-spacing: 3px; margin-top: 1.5rem;">
+            CONNECTING TO IRMINSUL...
+        </div>
+        <style>
+            @keyframes pulseLeaf { 0% { transform: scale(0.9); opacity: 0.7; } 100% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 30px #10b981); } }
+            @keyframes spinRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            @keyframes spinRingReverse { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
+        </style>
+        <script>
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    const loader = document.getElementById('akasha-loader');
+                    loader.style.opacity = '0';
+                    setTimeout(() => loader.style.visibility = 'hidden', 600);
+                }, 800);
+            });
+        </script>
+    </div>
     <div class="hud-grid"></div>
     <div id="particles-js" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;"></div>
     

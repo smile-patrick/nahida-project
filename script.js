@@ -1269,19 +1269,35 @@ function initAkashaQuiz() {
 
     let currentRiddle = null;
 
+    function loadNextQuestion() {
+        const quizBody = document.getElementById('quizBody');
+        if (quizBody) quizBody.style.opacity = '0';
+        
+        setTimeout(() => {
+            let nextRiddle = riddles[Math.floor(Math.random() * riddles.length)];
+            while (riddles.length > 1 && nextRiddle === currentRiddle) {
+                nextRiddle = riddles[Math.floor(Math.random() * riddles.length)];
+            }
+            currentRiddle = nextRiddle;
+            
+            questionEl.innerText = currentRiddle.q;
+            optionsEl.innerHTML = '';
+            
+            currentRiddle.opts.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => handleAnswer(btn, index);
+                optionsEl.appendChild(btn);
+            });
+            
+            if (quizBody) quizBody.style.opacity = '1';
+        }, 300);
+    }
+
     authBtn.addEventListener('click', () => {
         modal.classList.add('active');
-        currentRiddle = riddles[Math.floor(Math.random() * riddles.length)];
-        questionEl.innerText = currentRiddle.q;
-        optionsEl.innerHTML = '';
-        
-        currentRiddle.opts.forEach((opt, index) => {
-            const btn = document.createElement('button');
-            btn.className = 'quiz-option-btn';
-            btn.innerText = opt;
-            btn.onclick = () => handleAnswer(btn, index);
-            optionsEl.appendChild(btn);
-        });
+        loadNextQuestion();
     });
 
     closeBtn.addEventListener('click', () => {
@@ -1308,8 +1324,8 @@ function initAkashaQuiz() {
             playSynthSound(200, 'sawtooth', 0.2, 0.5); // Error tone
             
             setTimeout(() => {
-                modal.classList.remove('active');
-            }, 2000);
+                loadNextQuestion();
+            }, 800);
         }
     }
 }
@@ -1345,4 +1361,34 @@ function spawnSingleDust(container) {
 
 document.addEventListener('DOMContentLoaded', () => {
     initDustParticles();
+});
+
+
+
+// Page Transition for Irminsul Connection
+document.addEventListener('DOMContentLoaded', () => {
+    const connectBtn = document.getElementById('connectIrminsulBtn');
+    if (connectBtn) {
+        connectBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100vw';
+            overlay.style.height = '100vh';
+            overlay.style.backgroundColor = '#071711';
+            overlay.style.zIndex = '999999';
+            overlay.style.opacity = '0';
+            overlay.style.transition = 'opacity 0.3s ease';
+            document.body.appendChild(overlay);
+            
+            void overlay.offsetWidth; // Force reflow
+            overlay.style.opacity = '1';
+            
+            setTimeout(() => {
+                window.location.href = connectBtn.href;
+            }, 300);
+        });
+    }
 });

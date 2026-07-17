@@ -1411,6 +1411,10 @@ body {
     transform: scale(1);
 }
 
+.quiz-body {
+    transition: opacity 0.3s ease;
+}
+
 .quiz-header {
     display: flex;
     justify-content: space-between;
@@ -1498,14 +1502,16 @@ body {
         display: contents;
     }
 
-    .main-card { order: 1; } /* 纳西妲 */
+    .main-card { order: 1; } /* 主资料卡 */
+    .irminsul-connect-card { order: 1; } /* 世界树档案库 (排在主卡后) */
     .mind-reader-card { order: 2; } /* 元素战技 */
     .clock-card { order: 3; } /* 虚空数据中心 */
     .weather-card { order: 4; } /* 气象站 */
     .fortune-card { order: 5; } /* 运势 */
-    .music-card { order: 6; } /* 留声机 */
+    .music-card { order: 6; } /* 音乐 */
     .speed-dial-card { order: 7; } /* 导航 */
-    .wintool-card { order: 8; } /* 工具箱 */
+    .wintool-card { order: 8; } /* 云图 */
+    .guide-entry-card { order: 9; } /* 角色攻略 */
 
     .scanner-container {
         display: flex;
@@ -1526,6 +1532,14 @@ body {
 }
 
 @media (max-width: 768px) {
+    .irminsul-content {
+        justify-content: center !important;
+        text-align: center;
+    }
+    .irminsul-content h2 {
+        justify-content: center !important;
+    }
+
     .app-header {
         flex-direction: column;
         align-items: flex-start;

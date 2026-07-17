@@ -59,6 +59,7 @@
                 </div>
             </div>
             <div class="header-widgets">
+                
                 <div class="audio-controls-wrapper">
                     <!-- Audio Synth Toggle -->
                     <button class="synth-btn" id="synthBtn" title="播放须弥微风曲">
@@ -70,6 +71,7 @@
                     <span class="status-dot online"></span>
                     <span class="status-txt">世界树网络: 已连接</span>
                 </div>
+                <!-- Entrance to Terminal (Auth Button) -->
                 <button class="btn btn-outline" id="akashaAuthBtn" title="虚空权限认证" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">
                     <i class="fa-solid fa-fingerprint"></i> <span>虚空认证</span>
                 </button>
@@ -123,6 +125,30 @@
 
                 </div>
 
+                <!-- WIDGET: Premium Irminsul Connection Banner -->
+                <div class="card irminsul-connect-card glass" style="padding: 0; overflow: hidden; position: relative; display: flex; align-items: center; border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: 0 0 30px rgba(16, 185, 129, 0.15); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(7, 23, 17, 0.8) 100%); z-index: 1;"></div>
+                    <!-- Decorative background leaves -->
+                    <i class="fa-solid fa-leaf" style="position: absolute; top: -20px; right: -20px; font-size: 10rem; color: rgba(16, 185, 129, 0.05); z-index: 1; transform: rotate(45deg);"></i>
+                    
+                    <div class="irminsul-content" style="position: relative; z-index: 2; padding: 2.5rem 2rem; width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+                        <div class="banner-text-content" style="flex: 1; min-width: 250px;">
+                            <h2 style="margin: 0 0 0.5rem 0; font-size: 1.6rem; color: #fff; display: flex; align-items: center; gap: 10px; text-shadow: 0 0 15px rgba(16, 185, 129, 0.6);">
+                                <i class="fa-brands fa-pagelines" style="color: var(--dendro-primary);"></i> 连接世界树 · 角色档案库
+                            </h2>
+                            <p style="margin: 0; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5;">
+                                接入虚空终端，同步您的旅行者数据<br>
+                                随时查看您的专属角色练度与深渊攻略指南
+                            </p>
+                        </div>
+                        <div class="banner-action" style="flex-shrink: 0;">
+                            <a href="sync.html" id="connectIrminsulBtn" class="btn btn-primary" style="padding: 0.8rem 2rem; font-size: 1.1rem; border-radius: 30px; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); display: flex; align-items: center; gap: 10px; transition: transform 0.3s, box-shadow 0.3s; text-decoration: none;">
+                                <i class="fa-solid fa-link"></i> 连接世界树
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Interactive "All Schemes to Know" Mind Reader Widget -->
                 <div class="card mind-reader-card glass" style="overflow:visible;">
                     <div class="card-header">
@@ -153,7 +179,7 @@
                         </div>
                         <div class="scanner-info">
                             <p class="scan-instruction">
-                                纳西妲按下元素战技，通过虚空终端读取周围须弥伙伴的"所思所想"。
+                                纳西妲按下元素战技，通过虚空终端读取周围须弥伙伴的"所思所想"
                             </p>
                             <div class="thought-bubble" id="thoughtBubble">
                                 <i class="fa-solid fa-comment-dots"></i>
@@ -165,6 +191,8 @@
                         </div>
                     </div>
                 </div>
+
+
 
                 <!-- WIDGET: Speed Dial (Akasha Data Nodes) -->
                 <div class="card speed-dial-card glass">
@@ -218,7 +246,7 @@
                         </div>
                     </div>
                     <p class="wintool-desc">
-                        “方便·轻盈·快捷·守护·干净·新生~” 一款极客打造的纯净 Windows 工具箱。无广告弹窗、体积小巧、功能齐全。
+                        “方便·轻盈·快捷·守护·干净·新生~” 一款极客打造的纯净 Windows 工具箱。无广告弹窗、体积小巧、功能齐全
                     </p>
                     
                     <div class="wintool-features">
@@ -270,7 +298,7 @@
                             <div class="glow-point"></div>
                         </div>
                         <div class="year-tips">
-                            <span>年轮如树，落叶为土，智慧在岁月中生长。</span>
+                            <span>年轮如树，落叶为土，智慧在岁月中生长</span>
                         </div>
                     </div>
                 </div>
@@ -300,7 +328,7 @@
                     <div class="fortune-content" id="fortuneContent">
                         <div class="fortune-idle">
                             <i class="fa-brands fa-pagelines" style="font-size: 2rem; color: var(--dendro-primary); margin-bottom: 0.5rem; filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4));"></i>
-                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">连接须弥地脉，解析今日的智慧箴言与代码运势。</p>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">连接须弥地脉，解析今日的智慧箴言与代码运势</p>
                             <button id="drawFortuneBtn" class="btn btn-primary"><i class="fa-solid fa-link"></i> 抽取今日运势</button>
                         </div>
                     </div>
@@ -339,15 +367,17 @@
                     </div>
                 </div>
 
-                <!-- WIDGET: Guide Entry -->
-                <div class="card guide-entry-card glass" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; cursor: not-allowed; opacity: 0.8; transition: transform 0.3s ease, box-shadow 0.3s ease;" onclick="alert('暂未完善，半成品敬请期待')">
-                    <i class="fa-solid fa-person-digging" style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem; text-shadow: 0 0 15px rgba(245, 158, 11, 0.4);"></i>
-                    <h3 style="margin: 0; color: #fff;">虚空档案 - 角色攻略</h3>
-                    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: var(--text-muted);">Akasha Archives Database</p>
-                    <div style="margin-top: 1rem; background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.8rem; color: #fcd34d;">
-                        <i class="fa-solid fa-lock"></i> 暂未完善，半成品敬请期待
+                <!-- WIDGET: Guide Entry (Restored) -->
+                <a href="my_account.html" style="text-decoration: none;" class="card guide-entry-card glass">
+                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: transform 0.3s ease, box-shadow 0.3s ease; height: 100%;">
+                        <i class="fa-solid fa-book-journal-whills" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem; text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);"></i>
+                        <h3 style="margin: 0; color: #fff;">虚空档案 - 角色攻略</h3>
+                        <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: var(--text-muted);">Akasha Archives Database</p>
+                        <div style="margin-top: 1rem; background: rgba(255, 152, 0, 0.2); border: 1px solid #ff9800; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.8rem; color: #ffb74d;">
+                            <i class="fa-solid fa-person-digging"></i> 施工中
+                        </div>
                     </div>
-                </div>
+                </a>
             </section>
         </div>
     </main>
@@ -358,7 +388,7 @@
             <div class="footer-section">
                 <h4><i class="fa-brands fa-pagelines"></i> 纳西妲虚空生态圈</h4>
                 <p>智慧之叶常青 | 制作人: <strong>smile_小沐</strong></p>
-                <p class="copyright-text">本网页仅为同人展示用途，美术素材版权均属于原游戏开发商 (miHoYo)。</p>
+                <p class="copyright-text">本网页仅为同人展示用途，美术素材版权均属于原游戏开发商 (miHoYo)</p>
             </div>
             
             <div class="footer-section">
@@ -375,7 +405,7 @@
                     <div>昨日访问统计：<span id="stat_yesterday" class="stat-highlight">...</span> 节点</div>
                 </div>
                 <p class="ai-tip">
-                    <i class="fa-solid fa-robot"></i> 本项目部分工作流由 <strong>Antigravity AI</strong> 协同完成。
+                    <i class="fa-solid fa-robot"></i> 本项目部分工作流由 <strong>Antigravity AI</strong> 协同完成
                 </p>
             </div>
         </div>
@@ -412,3 +442,5 @@
     <script src="script.js"></script>
 </body>
 </html>
+
+
