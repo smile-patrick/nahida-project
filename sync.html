@@ -635,11 +635,12 @@
                     challenge: challenge,
                     offline: false,
                     new_captcha: true,
-                    product: "popup",
+                    product: "bind",
+                    protocol: "https://",
+                    api_server: "api.geetest.com",
                     width: "300px"
                 }, function (captchaObj) {
                     captchaInstance = captchaObj;
-                    captchaObj.appendTo("#captcha-box");
                     captchaObj.onReady(function () {
                         captchaObj.verify();
                     });
