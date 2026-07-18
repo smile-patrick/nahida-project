@@ -30,6 +30,26 @@ export default async function handler(req, res) {
         const ds = getDS(bodyStr, "");
         const headers = getHeaders(cookieStr, ds);
 
+        const challengePath = "game_record/app/genshin/api/character/list";
+
+        if (geetest_challenge && geetest_validate) {
+            const verifyUrl = "https://api-takumi-record.mihoyo.com/game_record/app/card/wapi/verifyVerification";
+            const verifyBody = {
+                geetest_challenge: geetest_challenge,
+                geetest_validate: geetest_validate,
+                geetest_seccode: geetest_seccode || `${geetest_validate}|jordan`
+            };
+            const verifyBodyStr = JSON.stringify(verifyBody);
+            
+            const vDs = getDS(verifyBodyStr, "");
+            const vHeaders = getHeaders(cookieStr, vDs);
+            vHeaders["x-rpc-challenge_game"] = "2";
+            vHeaders["x-rpc-challenge_path"] = challengePath;
+            vHeaders["Content-Type"] = "application/json";
+            
+            await fetch(verifyUrl, { method: 'POST', headers: vHeaders, body: verifyBodyStr });
+        }
+
         // Add Geetest headers if present
         if (geetest_challenge) headers["x-rpc-challenge"] = geetest_challenge;
         if (geetest_validate) headers["x-rpc-validate"] = geetest_validate;
@@ -59,7 +79,7 @@ export default async function handler(req, res) {
             const verifyHeaders = getHeaders(cookieStr, verifyDs);
             
             verifyHeaders["x-rpc-challenge_game"] = "2";
-            verifyHeaders["x-rpc-challenge_path"] = "https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/character/list";
+            verifyHeaders["x-rpc-challenge_path"] = "game_record/app/genshin/api/character/list";
             
             const verifyResp = await fetch(verifyUrl, {
                 method: 'GET',

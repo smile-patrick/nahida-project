@@ -626,6 +626,7 @@
         let captchaInstance = null;
         function handleGeetest(gt, challenge) {
             return new Promise((resolve, reject) => {
+                let isResolved = false;
                 document.getElementById('geetest-container').style.display = 'block';
                 document.getElementById('captcha-box').innerHTML = '';
                 
@@ -643,9 +644,9 @@
                         captchaObj.verify();
                     });
                     captchaObj.onSuccess(function () {
+                        isResolved = true;
                         const result = captchaObj.getValidate();
                         document.getElementById('geetest-container').style.display = 'none';
-                        captchaObj.destroy();
                         resolve({
                             geetest_challenge: result.geetest_challenge,
                             geetest_validate: result.geetest_validate,
