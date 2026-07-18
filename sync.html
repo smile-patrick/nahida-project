@@ -900,7 +900,7 @@
                 let processedCount = 0;
                 
                 // Concurrency Pool Setup
-                const CONCURRENCY = 10;
+                const CONCURRENCY = 3;
                 let currentIndex = 0;
                 let activeRequests = 0;
                 let hasError = false;
@@ -916,9 +916,23 @@
                     
                     try {
                         // Short delay to stagger requests slightly
-                        await sleep(idx * 50); 
+                        await sleep(idx * 150); 
                         
-                        const detailData = await fetchWithGeetest('/api/getDetail', { uid, server, cookie, character_id: char.id });
+                        let detailData;
+                        for (let r = 0; r < 3; r++) {
+                            try {
+                                detailData = await fetchWithGeetest('/api/getDetail', { uid, server, cookie, character_id: char.id });
+                                break;
+                            } catch(e) {
+                                if (e.message.includes("Too Many Requests")) {
+                                    if (r === 2) throw e;
+                                    addLog(`⚠️ 请求频繁，稍后重试 [${char.name}]...`);
+                                    await sleep(2000 + Math.random() * 1000);
+                                } else {
+                                    throw e;
+                                }
+                            }
+                        }
                         
                         if (detailData.success) {
                             fullData[char.id] = { basic: char, detail: detailData.data };
