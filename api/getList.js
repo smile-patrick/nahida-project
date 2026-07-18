@@ -44,12 +44,30 @@ export default async function handler(req, res) {
         const data = await response.json();
 
         // Handle risk control (Geetest)
-        if (data.retcode === -3101 || (data.data && data.data.risk_code === 315)) {
+        if (data.retcode === 1034 || data.retcode === -3101 || (data.data && data.data.risk_code === 315)) {
+            let gt = data.data?.gt || data.data?.risk_info?.gt;
+            let challenge = data.data?.challenge || data.data?.risk_info?.challenge;
+
+            // If missing, fetch from createVerification
+            if (!gt || !challenge) {
+                try {
+                    const verifyUrl = "https://api-takumi-record.mihoyo.com/game_record/app/card/wapi/createVerification?is_high=true";
+                    const verifyResponse = await fetch(verifyUrl, { method: 'GET', headers: headers });
+                    const verifyData = await verifyResponse.json();
+                    if (verifyData.retcode === 0 && verifyData.data) {
+                        gt = verifyData.data.gt;
+                        challenge = verifyData.data.challenge;
+                    }
+                } catch (e) {
+                    console.error("Fetch verification failed", e);
+                }
+            }
+
             return res.status(200).json({
                 success: false,
                 is_risk: true,
-                gt: data.data?.gt || data.data?.risk_info?.gt,
-                challenge: data.data?.challenge || data.data?.risk_info?.challenge
+                gt: gt,
+                challenge: challenge
             });
         }
 
